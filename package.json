@@ -1,0 +1,24 @@
+{
+  "type": "module",
+  "name": "PTUDW-Final-Project-Online_Auction",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nhatcuongti/PTUDW-Final-Project-Online_Auction.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nhatcuongti/PTUDW-Final-Project-Online_Auction/issues"
+  },
+  "homepage": "https://github.com/nhatcuongti/PTUDW-Final-Project-Online_Auction#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
