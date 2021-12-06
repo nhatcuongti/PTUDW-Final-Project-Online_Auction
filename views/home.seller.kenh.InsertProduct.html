@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.5.3/js/fileinput.min.js" integrity="sha512-ebAffknD5Pws5Z4PFd4scDe8iJ0LCgszPvO5tRQEKtjbHhzxrmvkbmZXtJlBDRXsNiDrs48qU2cUR1BhvBZyxA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .card-img-top {
+            max-height: 300px;
+        }
+        
+        .border-bottom {
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar has-background-grey-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://bulma.io">
+                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a href="#" class="navbar-item text-decoration-none">
+                    Kênh người bán 
+                </a>
+                <p class="navbar-item">
+                    >
+                </p>
+                <a href="#" class="navbar-item text-decoration-none">
+                    Quản lý sản phẩm - Thêm sản phẩm
+                </a>
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <div href="#" class="navbar-link">
+                        <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>
+                        <p class="ml-3">nhatcuongti</p>
+                    </div>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item text-decoration-none">
+                            <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i> Thông tin cá nhân
+                        </a>
+                        <a class="navbar-item text-decoration-none">
+                            <i class="fa fa-cube fa-2x mr-1" aria-hidden="true"></i> Kênh Người bán
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item text-decoration-none">
+                            <i class="fa fa-sign-out fa-2x mr-2" aria-hidden="true"></i> Đăng xuất
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section>
+        <div class="row">
+            <div class="col-sm-3 has-background-grey-light pt-6">
+                <aside class="menu">
+                    <ul class="menu-list">
+                        <a class="menu-label ">
+                            <i class="fa fa-tachometer fa-2x" aria-hidden="true"></i> Thông tin chung
+                        </a>
+                    </ul>
+
+                    <ul class="menu-list">
+                        <li>
+                            <a>
+                                <i class="fa fa-cube fa-2x" aria-hidden="true"></i> Quản lý sản phẩm
+                            </a>
+                            <ul>
+                                <li><a>Tất cả sản phẩm</a></li>
+                                <li><a class="is-active">Thêm sản phẩm</a></li>
+                            </ul>
+                        </li>
+
+                    </ul>
+
+                </aside>
+            </div>
+
+            <div class="col-sm-9">
+                <div class="container">
+                    <p class="h3">
+                        <b>Thêm sản phẩm</b>
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
+                                <div class="card-body">
+                                    <p class="h5">
+                                        <b>Danh mục</b>
+                                    </p>
+
+                                    <div class="btn-group w-100">
+                                        <button class="btn btn-secondary btn-lg d-flex justify-content-between" type="button" data-toggle="dropdown" aria-expanded="false">
+                                          <span>
+                                              Thể thao
+                                          </span>
+                                          <i class="fa fa-caret-down mt-1" aria-hidden="true"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="#">Áo</a>
+                                            <a class="dropdown-item" href="#">Quần</a>
+                                            <a class="dropdown-item" href="#">Công nghệ</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
+                                <div class="card-body">
+                                    <p class="h5">
+                                        <b>Danh mục con</b>
+                                    </p>
+
+                                    <div class="btn-group w-100">
+                                        <button class="btn btn-secondary btn-lg d-flex justify-content-between" type="button" data-toggle="dropdown" aria-expanded="false">
+                                          <span>
+                                              Bóng
+                                          </span>
+                                          <i class="fa fa-caret-down mt-1" aria-hidden="true"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="#">Tạ</a>
+                                            <a class="dropdown-item" href="#">Xe đạp</a>
+                                            <a class="dropdown-item" href="#">Dây</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm">
+
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+                        <div class="col">
+                            <form>
+                                <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
+                                    <div class="card-header ">
+                                        <b class="h3">Thông tin sản phẩm</b>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="TenSanPham">Tên sản phẩm</label>
+                                                    <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="Áo Hoddie xám chất lượng cao ..." autofocus>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <div class="form-group">
+                                                            <label for="TenSanPham">Giá khởi điểm</label>
+                                                            <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="120.000">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <div class="form-group">
+                                                            <label for="TenSanPham">Bước giá</label>
+                                                            <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="100.000">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <div class="form-group">
+                                                            <label for="TenSanPham">Giá mua ngay</label>
+                                                            <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="1.000.000">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="TenSanPham">Tự động gia hạn</label>
+                                                    <div>
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
+                                                            <label class="custom-control-label" for="customRadioInline1">Có</label>
+                                                        </div>
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
+                                                            <label class="custom-control-label" for="customRadioInline2">Không</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="TenSanPham">Bidder có thể đấu giá</label>
+                                                <div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
+                                                        <label class="custom-control-label" for="customRadioInline1">Tất cả</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
+                                                        <label class="custom-control-label" for="customRadioInline2">Bidder Uy Tín</label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="TenSanPham">Ảnh chính của sản phẩm</label>
+                                                    <!-- <img id="blah" alt="your image" width="100" height="100" />
+                                                    <input type="file" onchange="document.getElementById('blah').src = window.URL.createObjectURL(this.files[0])"> -->
+                                                    <input type="file" id="imgupload" style="display:none" />
+                                                    <button id="OpenImgUpload">Image Upload</button>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="TenSanPham">Ảnh phụ </label>
+                                                <input type="file" id="imgupload" style="display:none" />
+                                                <button id="OpenImgUpload">Image Upload</button>
+                                                <input type="file" id="imgupload" style="display:none" />
+                                                <button id="OpenImgUpload">Image Upload</button>
+                                                <input type="file" id="imgupload" style="display:none" />
+                                                <button id="OpenImgUpload">Image Upload</button>
+
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <b>Mô tả sản phẩm</b>
+                                                <textarea class="form-control border-dark" style="height: 200px" placeholder="Mô tả sản phẩm" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-muted">
+                                        <a class="btn btn-lg btn-primary" href="#" role="button">
+                                            <i class="fa fa-eye fa-2x" aria-hidden="true"></i>
+                                            <span class="h3">Review sản phẩm</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+
+    <script>
+        $('#OpenImgUpload').click(function() {
+            $('#imgupload').trigger('click');
+        });
+
+        // $('#imgupload').click(function() {
+        //     document.getElementById('OpenImgUpload').src = window.URL.createObjectURL(this.files[0])
+        // })
+    </script>
+</body>
+
+</html>
