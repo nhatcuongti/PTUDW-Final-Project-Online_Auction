@@ -18,6 +18,7 @@ app.get('/signup', function (req, res) {
     res.sendFile(__dirname + '/views/signup.html');
 });
 
+
 const port = 3000;
 app.listen(port, function () {
     console.log(`Example app listening at http://localhost:${port}`);
