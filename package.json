@@ -19,6 +19,13 @@
   },
   "homepage": "https://github.com/nhatcuongti/PTUDW-Final-Project-Online_Auction#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "express-handlebars": "^6.0.2",
+    "mongodb": "^4.2.1",
+    "mongoose": "^6.0.15",
+    "numeral": "^2.0.6"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0"
   }
 }
