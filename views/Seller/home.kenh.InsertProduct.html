@@ -149,9 +149,6 @@
                             </div>
                         </div>
 
-                        <div class="col-sm">
-
-                        </div>
                     </div>
 
                     <div class="row mt-5">
@@ -165,30 +162,30 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    <label for="TenSanPham">Tên sản phẩm</label>
+                                                    <label for="TenSanPham" class="h4">Tên sản phẩm</label>
                                                     <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="Áo Hoddie xám chất lượng cao ..." autofocus>
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <div class="row">
-                                                    <div class="col-lg-4">
+                                                    <div class="col-xl-4 ">
                                                         <div class="form-group">
-                                                            <label for="TenSanPham">Giá khởi điểm</label>
+                                                            <label for="TenSanPham" class="h4">Giá khởi điểm</label>
                                                             <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="120.000">
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-4">
+                                                    <div class="col-xl-4">
                                                         <div class="form-group">
-                                                            <label for="TenSanPham">Bước giá</label>
+                                                            <label for="TenSanPham" class="h4">Bước giá</label>
                                                             <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="100.000">
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-4">
+                                                    <div class="col-xl-4">
                                                         <div class="form-group">
-                                                            <label for="TenSanPham">Giá mua ngay</label>
+                                                            <label for="TenSanPham" class="h4">Giá mua ngay</label>
                                                             <input type="textTenSanPham" id="TenSanPham" class="form-control" placeholder="1.000.000">
                                                         </div>
                                                     </div>
@@ -202,7 +199,7 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    <label for="TenSanPham">Tự động gia hạn</label>
+                                                    <label for="TenSanPham" class="h4">Tự động gia hạn</label>
                                                     <div>
                                                         <div class="custom-control custom-radio custom-control-inline">
                                                             <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
@@ -217,7 +214,7 @@
                                             </div>
 
                                             <div class="col-sm-6">
-                                                <label for="TenSanPham">Bidder có thể đấu giá</label>
+                                                <label for="TenSanPham" class="h4">Bidder có thể đấu giá</label>
                                                 <div>
                                                     <div class="custom-control custom-radio custom-control-inline">
                                                         <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
@@ -235,7 +232,7 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    <label for="TenSanPham">Ảnh chính của sản phẩm</label>
+                                                    <label for="TenSanPham" class="h4">Ảnh chính của sản phẩm</label>
                                                     <!-- <img id="blah" alt="your image" width="100" height="100" />
                                                     <input type="file" onchange="document.getElementById('blah').src = window.URL.createObjectURL(this.files[0])"> -->
                                                     <input type="file" id="imgupload" style="display:none" />
@@ -245,7 +242,7 @@
                                             </div>
 
                                             <div class="col-sm-6">
-                                                <label for="TenSanPham">Ảnh phụ </label>
+                                                <label for="TenSanPham" class="h4">Ảnh phụ </label>
                                                 <input type="file" id="imgupload" style="display:none" />
                                                 <button id="OpenImgUpload">Image Upload</button>
                                                 <input type="file" id="imgupload" style="display:none" />
@@ -260,7 +257,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <b>Mô tả sản phẩm</b>
-                                                <textarea class="form-control border-dark" style="height: 200px" placeholder="Mô tả sản phẩm" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                                <textarea class="form-control border-dark" style="height: 500px" placeholder="Mô tả sản phẩm" id="exampleFormControlTextarea1" rows="3"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -286,6 +283,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+    <script src="https://cdn.tiny.cloud/1/o97nc395odxihuh8oga04zckhjjvpcyw7fhsbn13j2t1j9as/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>tinymce.init({ selector:'textarea' });</script>
 
     <script>
         $('#OpenImgUpload').click(function() {
