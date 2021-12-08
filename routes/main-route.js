@@ -1,19 +1,41 @@
 import express from 'express';
 import productModel from '../models/product-model.js';
+import moment from 'moment';
 
 const router = express.Router();
 
 router.get('/detail', async function (req, res) {
 
     //await productModel.add();
+    /*
     const product = await productModel.find();
     console.log(product);
     res.render('detail', {
         product
-    });
+    })
+    ;*/
+    res.render('detail');
 });
-router.get('/', function (req, res) {
-    res.render('home');
+router.get('/', async function (req, res) {
+    let now = new Date();
+    const proNearEnd = await productModel.findNearEnd(now);
+    const proMostBid = await productModel.findMostBid(now);
+    const proHighestPrice = await productModel.findHighestPrice(now);
+    for (let i = 0; i < proNearEnd.length; i++) {
+        proNearEnd[i].proStartDate = moment(proNearEnd[i].proStartDate).format('DD/MM/YYYY')
+        proNearEnd[i].time = Math.ceil(Math.abs(proNearEnd[i].proEndDate - now) / (1000 * 60 * 60));
+        proMostBid[i].proStartDate = moment(proMostBid[i].proStartDate).format('DD/MM/YYYY')
+        proMostBid[i].time = Math.ceil(Math.abs(proMostBid[i].proEndDate - now) / (1000 * 60 * 60));
+        proHighestPrice[i].proStartDate = moment(proHighestPrice[i].proStartDate).format('DD/MM/YYYY')
+        proHighestPrice[i].time = Math.ceil(Math.abs(proHighestPrice[i].proEndDate - now) / (1000 * 60 * 60));
+    }
+    now = moment(now).format('DD/MM/YYYY HH:mm:ss')
+    res.render('home', {
+        now,
+        proNearEnd,
+        proMostBid,
+        proHighestPrice
+    });
 });
 router.get('/search', function (req, res) {
     res.render('search');

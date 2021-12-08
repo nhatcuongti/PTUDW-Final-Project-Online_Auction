@@ -1,305 +1,105 @@
-<p class="has-text-centered h2">
-    TOP 5 SẢN PHẨM GẦN KẾT THÚC
+<p class="has-text-centered h5">
+    Lần cuối cập nhật: <strong> {{this.now}} </strong>
 </p>
-<p class="has-text-centered">
-    Lần cuối cập nhật: <strong> 14:24:45 01/12/2021 </strong>
+<p class="has-text-centered h2">
+    <strong> TOP 5 SẢN PHẨM GẦN KẾT THÚC </strong>
 </p>
 <div class="row justify-content-center">
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
+    {{#each this.proNearEnd}}
+        <div class="card" style="width: 18.5rem;">
+            <a style="text-decoration:none" href="/product/{{_id}}">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                    </figure>
+                </div>
+            </a>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        <a style="text-decoration:none" href="/product/{{_id}}">
+                            <p class="title is-4">{{proName}}</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="content">
+                    <p> Giá hiện tại: {{format_number proCurBidPrice}}</p>
+                    <p> Người đặt hiện tại: {{curBidderInfo}} </p>
+                    <p> Giá mua ngay: {{format_number proBuyNowPrice}}</p>
+                    <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
+                    <p> Thời gian còn lại: {{format_number time}} giờ</p>
+                    <p> Số lượt ra giá: {{proBidQuantity}}</p>
                 </div>
             </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
         </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
+    {{/each}}
 </div>
 <p>&nbsp;</p>
 <p class="has-text-centered h2">
-    TOP 5 SẢN PHẨM CÓ NHIỀU LƯỢT RA GIÁ NHẤT
+    <strong> TOP 5 SẢN PHẨM CÓ NHIỀU LƯỢT RA GIÁ NHẤT </strong>
 </p>
 <div class="row justify-content-center">
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
+    {{#each this.proMostBid}}
+        <div class="card" style="width: 18.5rem;">
+            <a style="text-decoration:none" href="/product/{{_id}}">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                    </figure>
+                </div>
+            </a>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        <a style="text-decoration:none" href="/product/{{_id}}">
+                           <p class="title is-4">{{proName}}</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="content">
+                    <p> Giá hiện tại: {{format_number proCurBidPrice}}</p>
+                    <p> Người đặt hiện tại: {{curBidderInfo}} </p>
+                    <p> Giá mua ngay: {{format_number proBuyNowPrice}}</p>
+                    <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
+                    <p> Thời gian còn lại: {{format_number time}} giờ</p>
+                    <p> Số lượt ra giá: {{proBidQuantity}}</p>
                 </div>
             </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
         </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
+    {{/each}}
 </div>
 <p>&nbsp;</p>
 <p class="has-text-centered h2">
-    TOP 5 SẢN PHẨM CÓ GIÁ CAO NHẤT
+    <strong> TOP 5 SẢN PHẨM CÓ GIÁ CAO NHẤT </strong>
 </p>
 <div class="row justify-content-center">
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
+    {{#each this.proHighestPrice}}
+        <div class="card" style="width: 18.5rem;">
+            <a style="text-decoration:none" href="/product/{{_id}}">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                    </figure>
+                </div>
+            </a>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        <a style="text-decoration:none" href="/product/{{_id}}">
+                            <p class="title is-4">{{proName}}</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="content">
+                    <p> Giá hiện tại: {{format_number proCurBidPrice}}</p>
+                    <p> Người đặt hiện tại: {{curBidderInfo}} </p>
+                    <p> Giá mua ngay: {{format_number proBuyNowPrice}}</p>
+                    <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
+                    <p> Thời gian còn lại: {{format_number time}} giờ</p>
+                    <p> Số lượt ra giá: {{proBidQuantity}}</p>
                 </div>
             </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
         </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
-                </div>
-            </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
-        </div>
-    </div>
+    {{/each}}
 </div>
 <p>&nbsp;</p>
