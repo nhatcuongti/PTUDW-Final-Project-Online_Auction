@@ -44,6 +44,13 @@ async function findHighestPriceFunc(collection, now) {
   return await collection.find({ proEndDate: {$gt: now} }).sort({proCurBidPrice: -1}).limit(5).toArray();
 }
 
+async function findByIDFunc(collection, id) {
+  return await collection.find({ _id: new ObjectId(id) }).toArray();
+}
+
+async function findByCategoryFunc(collection, cat) {
+  return await collection.find({ proType: cat }).limit(5).toArray();
+}
 
 export default {
   /*
@@ -72,36 +79,60 @@ export default {
     }
   },
    */
-  async findNearEnd(time) {
+  async findNearEnd(now) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await findNearEndFunc(collection, time);
+      return await findNearEndFunc(collection, now);
     } catch (e) {
       console.error(e);
     } finally {
       await mongoClient.close()
     }
   },
-  async findMostBid(time) {
+  async findMostBid(now) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await findMostBidFunc(collection, time);
+      return await findMostBidFunc(collection, now);
     } catch (e) {
       console.error(e);
     } finally {
       await mongoClient.close()
     }
   },
-  async findHighestPrice(time) {
+  async findHighestPrice(now) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await findHighestPriceFunc(collection, time);
+      return await findHighestPriceFunc(collection, now);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async findByID(id) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await findByIDFunc(collection, id);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async findByCategory(cat) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await findByCategoryFunc(collection, cat);
     } catch (e) {
       console.error(e);
     } finally {

@@ -4,17 +4,18 @@ import moment from 'moment';
 
 const router = express.Router();
 
-router.get('/detail', async function (req, res) {
-
-    //await productModel.add();
-    /*
-    const product = await productModel.find();
-    console.log(product);
-    res.render('detail', {
-        product
-    })
-    ;*/
-    res.render('detail');
+router.get('/product/:id', async function (req, res) {
+    const proID = req.params.id;
+    const proInfo = await productModel.findByID(proID);
+    if(typeof (proInfo) === 'undefined')
+        res.redirect('/');
+    else {
+        const proSame = await productModel.findByCategory(proInfo[0].proType);
+        res.render('detail', {
+            proInfo,
+            proSame
+        });
+    }
 });
 router.get('/', async function (req, res) {
     let now = new Date();
@@ -38,6 +39,7 @@ router.get('/', async function (req, res) {
     });
 });
 router.get('/search', function (req, res) {
+
     res.render('search');
 });
 router.get('/signup', function (req, res) {
