@@ -1,0 +1,40 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 has-background-grey-lighter">
+            <ul class="nav flex-column">
+                <div class="h4 text-center ml-auto mr-auto p-4">Lịch sử đấu giá</div>
+                <li class="nav-item">
+                    <a class="nav-link h6 text-center" href="/user/auction-history">Đang đấu giá</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link h6 text-center" href="/user/auction-already-history">Đã đấu giá</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-9">
+            {{#each this.product}}
+                <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img src="..." class="card-img" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+
+                                <h5 class="card-title">{{name}}</h5>
+
+
+                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                <div class="d-flex">
+                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                    <div class="flex-fill"><a href="/user/auction-already-comment?id={{productID}}"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+
+    </div>
+</div>

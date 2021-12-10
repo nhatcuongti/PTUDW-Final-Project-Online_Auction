@@ -5,6 +5,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import numeral from 'numeral';
 import mainRoute from './routes/main-route.js'
+import account  from "./routes/account.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -26,7 +27,7 @@ app.use('/public', express.static('public'));
 
 
 app.use('/', mainRoute);
-
+app.use('/user', account);
 
 const port = 3000;
 app.listen(port, function () {
