@@ -1,35 +1,50 @@
 <p class="has-text-centered h2">
     KẾT QUẢ TÌM KIẾM: ...
 </p>
-<div class="row justify-content-center">
-    <div class="card" style="width: 15rem;">
-        <div class="card-image">
-            <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-            </figure>
-        </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4 has-text-centered">Tên sản phẩm</p>
+{{#if this.curPage.check}}
+    <div class="row justify-content-center">
+        <div class="card" style="width: 15rem;">
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                </figure>
+            </div>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-content">
+                        <p class="title is-4 has-text-centered">Tên sản phẩm</p>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <p> Giá: </p>
+                    <p> Mô tả: </p>
                 </div>
             </div>
-
-            <div class="content">
-                <p> Giá: </p>
-                <p> Mô tả: </p>
-            </div>
         </div>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     </div>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-</div>
-<p>&nbsp;</p>
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-    <a class="pagination-previous">Previous</a>
-    <a class="pagination-next">Next page</a>
-    <ul class="pagination-list">
-        <li><a class="pagination-link is-current" aria-label="Goto page 1">1</a></li>
-        <li><a class="pagination-link" aria-label="Goto page 45">2</a></li>
-        <li><a class="pagination-link" aria-label="Goto page 86">3</a></li>
-    </ul>
-</nav>
+    <p>&nbsp;</p>
+    <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
+        {{#if this.prevPage.check}}
+            <a class="pagination-previous" href="search?page={{this.prevPage.value}}">Previous page</a>
+        {{/if}}
+        {{#if this.nexPage.check}}
+            <a class="pagination-next" href="search?page={{this.nexPage.value}}">Next page</a>
+        {{/if}}
+        <ul class="pagination-list">
+            {{#if this.prevPage.check}}
+                <li><a class="pagination-link" href="search?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+            {{/if}}
+                <li><a class="pagination-link is-current">{{this.curPage.value}}</a></li>
+            {{#if this.nexPage.check}}
+                <li><a class="pagination-link" href="search?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+            {{/if}}
+        </ul>
+    </nav>
+    {{else}}
+    <p class="h2">
+        Không tìm thấy kết quả sản phẩm
+    </p>
+{{/if}}
+
