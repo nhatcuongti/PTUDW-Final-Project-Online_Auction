@@ -39,8 +39,24 @@ router.get('/', async function (req, res) {
     });
 });
 router.get('/search', function (req, res) {
+    const limit = 9;
+    const page = req.query.page || 1;
+    //const offset = (page - 1) * limit;
 
-    res.render('search');
+    const total = 32;
+    let nPage = Math.floor(total / limit);
+    if (total % limit > 0) nPage++;
+
+    let nexPage = {check: true, value: (+page + 1)};
+    let curPage = {check: (+page > 0 && +page <= nPage), value: +page};
+    let prevPage = {check: true, value: (+page - 1)};
+    if (nexPage.value === nPage + 1) nexPage.check = false;
+    if (prevPage.value === 0) prevPage.check = false;
+    res.render('search', {
+        nexPage,
+        curPage,
+        prevPage
+    });
 });
 router.get('/signup', function (req, res) {
     res.render('signup');
