@@ -4,7 +4,7 @@ import findAll from "../models/account-model.js";
 const router = express.Router();
 
 router.get('/favorite',  function (req, res) {
-    let list = findAll();
+    let list = findAll.findAll();
     res.render('viewAccount/favorite', {
         product: list
     });
