@@ -52,6 +52,35 @@ async function findByCategoryFunc(collection, cat) {
   return await collection.find({ proType: cat }).limit(5).toArray();
 }
 
+async function countProduct(collection) {
+  return await collection.count();
+}
+
+async function searchByTypeFunc(collection, keyword, type, limit, offset) {
+  if (type === 'name')
+    return await collection.aggregate([
+        {
+          '$search':{
+            'index': 'custom',
+            'text': {
+              'query': keyword,
+              'path': 'proName'
+            }
+          }
+        }]).skip(offset).limit(limit).toArray();
+  else
+    return await collection.aggregate([
+        {
+          '$search':{
+            'index': 'custom',
+            'text': {
+              'query': keyword,
+              'path': 'proType'
+            }
+          }
+    }]).skip(offset).limit(limit).toArray();
+}
+
 export default {
   /*
   async add() {
@@ -133,6 +162,30 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       return await findByCategoryFunc(collection, cat);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async countProduct() {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await countProduct(collection);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async searchByType(keyword, type, limit, offset) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await searchByTypeFunc(collection, keyword, type, limit, offset);
     } catch (e) {
       console.error(e);
     } finally {

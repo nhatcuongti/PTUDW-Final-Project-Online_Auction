@@ -38,24 +38,34 @@ router.get('/', async function (req, res) {
         proHighestPrice
     });
 });
-router.get('/search', function (req, res) {
+router.get('/search', async function (req, res) {
+    const keyword = req.query.keyword;
+    const type = req.query.with;
     const limit = 9;
     const page = req.query.page || 1;
-    //const offset = (page - 1) * limit;
-
-    const total = 32;
+    const offset = (page - 1) * limit;
+    //console.log(await productModel.countProduct());
+    const total = await productModel.countProduct();
     let nPage = Math.floor(total / limit);
     if (total % limit > 0) nPage++;
-
+    const proResult = await productModel.searchByType(keyword, type, limit, offset);
+    //console.log(proResult);
     let nexPage = {check: true, value: (+page + 1)};
     let curPage = {check: (+page > 0 && +page <= nPage), value: +page};
     let prevPage = {check: true, value: (+page - 1)};
     if (nexPage.value === nPage + 1) nexPage.check = false;
     if (prevPage.value === 0) prevPage.check = false;
+    for (const item of proResult) {
+        item.time = Math.ceil(Math.abs(item.proEndDate - new Date()) / (1000 * 60 * 60));
+        item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY')
+    }
     res.render('search', {
+        keyword,
+        type,
         nexPage,
         curPage,
-        prevPage
+        prevPage,
+        proResult
     });
 });
 router.get('/signup', function (req, res) {

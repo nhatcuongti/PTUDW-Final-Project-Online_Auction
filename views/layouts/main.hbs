@@ -21,41 +21,41 @@
     </div>
     <div class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item" href="/">
+            <a style="text-decoration:none" class="navbar-item" href="/">
                 <strong>Trang chủ</strong>
             </a>
-            <a class="navbar-item" href="/product">
+            <a style="text-decoration:none" class="navbar-item" href="/product">
                 <strong>Sản phẩm</strong>
             </a>
         </div>
-        <form class="navbar-item">
+        <form class="navbar-item" action="/search" method="get">
             <div class="control has-icons-left">
-                <input class="input" type="text" placeholder="Nhập từ khóa tìm kiếm">
+                <input class="input" type="text" placeholder="Nhập từ khóa tìm kiếm" name="keyword">
                 <span class="icon is-left is-small">
-                        <i class="fa fa-search"></i>
-                    </span>
+                    <i class="fa fa-search"></i>
+                </span>
             </div>
             <div class="select">
-                <select>
+                <select name="with">
                     <option value="name">Theo tên</option>
                     <option value="category">Theo danh mục</option>
                 </select>
             </div>
-            <div>&nbsp&nbsp&nbsp&nbsp</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
             <button class="button is-success" type="submit">
                 <span>Tìm kiếm</span>
                 <span class="icon is-small">
-                        <i class="fa fa-search"></i>
-                    </span>
+                    <i class="fa fa-search"></i>
+                </span>
             </button>
         </form>
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons">
-                    <a class="button is-primary">
+                    <a style="text-decoration:none" class="button is-primary">
                         <strong>Đăng nhập</strong>
                     </a>
-                    <a class="button is-light">
+                    <a style="text-decoration:none" class="button is-light">
                         Đăng ký
                     </a>
                 </div>
@@ -66,7 +66,7 @@
 <div class="row">
     <nav class="navbar" role="navigation" aria-label="dropdown navigation">
         <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
+            <a style="text-decoration:none" class="navbar-link" >
                 <strong> Thời trang </strong>
             </a>
             <div class="navbar-dropdown">
@@ -79,7 +79,7 @@
             </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
+            <a style="text-decoration:none" class="navbar-link">
                 <strong> Điện tử </strong>
             </a>
             <div class="navbar-dropdown">
@@ -93,9 +93,8 @@
         </div>
     </nav>
 </div>
-
 {{{body}}}
-<footer class="footer has-background-grey-light">
+<footer class="footer has-background-grey-light" id="footer">
     <div class="row">
         <div class="col-4">
             <div class="content">
@@ -103,21 +102,21 @@
                     <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
                 </p>
                 <p>
-                        <span class="icon is-small">
-                            <i class="fa fa-map-marker"></i>
-                        </span>
+                    <span class="icon is-small">
+                        <i class="fa fa-map-marker"></i>
+                    </span>
                     <span>Địa chỉ: University of Science</span>
                 </p>
                 <p>
-                        <span class="icon is-small">
-                            <i class="fa fa-phone"></i>
-                        </span>
+                    <span class="icon is-small">
+                        <i class="fa fa-phone"></i>
+                    </span>
                     <span>Số điện thoại: +84123-456-789</span>
                 </p>
                 <p>
-                        <span class="icon is-small">
-                            <i class="fa fa-envelope"></i>
-                        </span>
+                    <span class="icon is-small">
+                        <i class="fa fa-envelope"></i>
+                    </span>
                     <span>Email: admin@gmail.com</span>
                 </p>
             </div>
