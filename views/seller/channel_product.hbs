@@ -1,0 +1,92 @@
+ <div class="container">
+    <div class="card-header row">
+        <div class="col-md-6 mt-2">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text" id="btnGroupAddon">Hiển thị theo</div>
+                </div>
+                <div class="dropdow">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                      Tất cả
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="#">Đang đấu giá</a>
+                      <a class="dropdown-item" href="#">Sắp hết hạn</a>
+                      <a class="dropdown-item" href="#">Chưa được đấu giá</a>
+                      <a class="dropdown-item" href="#">Đã hết hạn</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Product Name..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+                      Search
+                      <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+        </div>
+
+
+    </div>
+
+
+
+    <div class="row mt-3" >
+        {{#each this.products}}
+            <div class="col-lg-3 col-md-6 p-3">
+                <div class="card h-100">
+
+                    <img src = "https://htsport.vn/wp-content/uploads/2019/11/4-size-giay-lon-nhat-1-300x300.jpg"
+                         class="card-img-top"
+                         alt="Hình">
+
+                    <div class="card-body">
+                        <p class="h4">{{proName}}</p>
+                        <p class="text-danger h3">
+                            {{format_number proCurBidPrice}}
+                        </p>
+                        <p>
+                            <b>
+                                Thời hạn :
+                            </b>
+                            <span class="text-danger">
+                                {{proEndDate}}
+                            </span>
+
+                        </p>
+
+
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary mt-4" href="/seller/channel/product/detail/{{_id}}" role="button">
+                            Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+
+    </div>
+    <nav class="pagination is-centered mt-5 mb-5" role="navigation" aria-label="pagination">
+        <a class="pagination-previous">Previous</a>
+        <a class="pagination-next">Next page</a>
+        <ul class="pagination-list">
+            <li><a class="pagination-link" aria-label="Goto page 1">1</a></li>
+            <li><span class="pagination-ellipsis">&hellip;</span></li>
+            <li><a class="pagination-link" aria-label="Goto page 45">45</a></li>
+            <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
+            <li><a class="pagination-link" aria-label="Goto page 47">47</a></li>
+            <li><span class="pagination-ellipsis">&hellip;</span></li>
+            <li><a class="pagination-link" aria-label="Goto page 86">86</a></li>
+        </ul>
+    </nav>
+
+
+</div>
+
+

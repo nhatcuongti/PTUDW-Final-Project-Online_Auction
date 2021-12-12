@@ -1,14 +1,14 @@
-import express from 'express';
 import morgan from 'morgan';
 import { engine } from 'express-handlebars'
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import express_section from 'express-handlebars-sections'
+import localMDW from "./middlewares/local.mdw.js";
+import express from 'express';
 import numeral from 'numeral';
 import mainRoute from './routes/main-route.js'
 import account  from "./routes/account.js";
 import seller from "./routes/seller.route.js"
-import express_section from 'express-handlebars-sections'
-import localMDW from "./middlewares/local.mdw.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();

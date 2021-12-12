@@ -1,0 +1,352 @@
+{{#section 'js'}}
+    <!--    <script src="https://cdn.tiny.cloud/1/o97nc395odxihuh8oga04zckhjjvpcyw7fhsbn13j2t1j9as/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>-->
+    <!--    <script>tinymce.init({ selector:'textarea' });</script>-->
+    <script>
+        $("#main-image").on("click", function(){
+            $("#my_file").trigger("click")
+        })
+
+        $("#image1").on("click", function(){
+            $("#my_file1").trigger("click")
+        })
+
+        $("#image2").on("click", function(){
+            $("#my_file2").trigger("click")
+        })
+
+        // Jquery Dependency
+
+        $("input[data-type='currency']").on({
+            keyup: function() {
+                formatCurrency($(this));
+            },
+            blur: function() {
+                formatCurrency($(this), "blur");
+            }
+        });
+
+
+        function formatNumber(n) {
+            // format number 1000000 to 1,234,567
+            return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        }
+
+
+        function formatCurrency(input, blur) {
+            // appends $ to value, validates decimal side
+            // and puts cursor back in right position.
+
+            // get input value
+            var input_val = input.val();
+
+            // don't validate empty input
+            if (input_val === "") { return; }
+
+            // original length
+            var original_len = input_val.length;
+
+            // initial caret position
+            var caret_pos = input.prop("selectionStart");
+
+            // check for decimal
+            if (input_val.indexOf(".") >= 0) {
+
+                // get position of first decimal
+                // this prevents multiple decimals from
+                // being entered
+                var decimal_pos = input_val.indexOf(".");
+
+                // split number by decimal point
+                var left_side = input_val.substring(0, decimal_pos);
+                var right_side = input_val.substring(decimal_pos);
+
+                // add commas to left side of number
+                left_side = formatNumber(left_side);
+
+                // validate right side
+                right_side = formatNumber(right_side);
+
+                // On blur make sure 2 numbers after decimal
+                if (blur === "blur") {
+                    right_side += "00";
+                }
+
+                // Limit decimal to only 2 digits
+                right_side = right_side.substring(0, 2);
+
+                // join number by .
+                input_val = "$" + left_side + "." + right_side;
+
+            } else {
+                // no decimal entered
+                // add commas to number
+                // remove all non-digits
+                input_val = formatNumber(input_val);
+                input_val = "$" + input_val;
+
+                // final formatting
+                if (blur === "blur") {
+                    input_val += ".00";
+                }
+            }
+
+            // send updated string to input
+            input.val(input_val);
+
+            // put caret back in the right position
+            var updated_len = input_val.length;
+            caret_pos = updated_len - original_len + caret_pos;
+            input[0].setSelectionRange(caret_pos, caret_pos);
+        }
+
+
+
+    </script>
+
+
+{{/section}}
+
+<div class="container">
+    <p class="h3">
+        <b>Thêm sản phẩm</b>
+    </p>
+
+    <form action="" method="post">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <p class="h5">
+                                <b>Danh mục</b>
+                            </p>
+
+                            <div class="btn-group w-100">
+
+                                <select class="custom-select bg-secondary text-white" name="catParent" id="inputGroupSelect01" >
+                                    <option disabled selected>Danh mục cha</option>
+                                    <option value="1">Áo</option>
+                                    <option value="2">Quần</option>
+                                    <option value="3">Công Nghệ</option>
+                                </select>
+<!--                                <button class="btn btn-secondary btn-lg d-flex justify-content-between" type="button" data-toggle="dropdown" aria-expanded="false">-->
+<!--                                    <span>-->
+<!--                                          Thể thao-->
+<!--                                    </span>-->
+<!--                                    <i class="fa fa-caret-down mt-1" aria-hidden="true"></i>-->
+<!--                                </button>-->
+<!--                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+<!--                                    <a class="dropdown-item" href="#">Áo</a>-->
+<!--                                    <a class="dropdown-item" href="#">Quần</a>-->
+<!--                                    <a class="dropdown-item" href="#">Công nghệ</a>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <p class="h5">
+                                <b>Danh mục con</b>
+                            </p>
+
+                            <select class="custom-select bg-secondary text-white" name="catChild" id="inputGroupSelect01">
+                                <option value="" disabled selected>Danh mục con</option>
+                                <option value="1">Áo</option>
+                                <option value="2">Quần</option>
+                                <option value="3">Công Nghệ</option>
+                            </select>
+                        </div>
+
+<!--                        <div class="btn-group w-100">-->
+<!--                            <button class="btn btn-secondary btn-lg d-flex justify-content-between" type="button" data-toggle="dropdown" aria-expanded="false">-->
+<!--                          <span>-->
+<!--                              Bóng-->
+<!--                          </span>-->
+<!--                                <i class="fa fa-caret-down mt-1" aria-hidden="true"></i>-->
+<!--                            </button>-->
+<!--                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+<!--                                <a class="dropdown-item" href="#">Tạ</a>-->
+<!--                                <a class="dropdown-item" href="#">Xe đạp</a>-->
+<!--                                <a class="dropdown-item" href="#">Dây</a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-5">
+            <div class="col">
+                <form>
+                    <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
+                        <div class="card-header ">
+                            <b class="h3">Thông tin sản phẩm</b>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="TenSanPham" class="h4">Tên sản phẩm</label>
+                                        <input type="text" id="TenSanPham" name="proName" class="form-control" placeholder="Áo Hoddie xám chất lượng cao ..." required>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-xl-4 ">
+                                            <div class="form-group">
+                                                <label for="TenSanPham" class="h4">Giá khởi điểm</label>
+                                                <input type="number" name="firstPrice" id="TenSanPham" class="form-control" placeholder="120.000" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4">
+                                            <div class="form-group">
+                                                <label for="TenSanPham" class="h4">Bước giá</label>
+                                                <input type="number" id="TenSanPham" name="proPriceStep" class="form-control" placeholder="100.000" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4">
+                                            <div class="form-group">
+                                                <label for="TenSanPham" class="h4">Giá mua ngay</label>
+                                                <input type="text"
+                                                       name="currency-field"
+                                                       id="currency-field"
+                                                       pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
+                                                       value=""
+                                                       data-type="currency"
+                                                       placeholder="$1,000,000.00">
+
+<!--                                                <input type="number" id="TenSanPham" name="proBuyNowPrice" class="form-control" placeholder="1.000.000" required>-->
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="TenSanPham" class="h4">Tự động gia hạn</label>
+                                        <div>
+                                            <div class="custom-control custom-radio custom-control-inline" >
+                                                <input type="radio" id="customRadioInline1" value="true" name="autoExtend" class="custom-control-input" checked>
+                                                <label class="custom-control-label" for="customRadioInline1">Có</label>
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline" >
+                                                <input type="radio" id="customRadioInline2" value="no" name="autoExtend" class="custom-control-input">
+                                                <label class="custom-control-label" for="customRadioInline2">Không</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label for="TenSanPham" class="h4">Bidder có thể đấu giá</label>
+                                    <div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="customRadioInline3" value="true" name="bidderRange" class="custom-control-input">
+                                            <label class="custom-control-label" for="customRadioInline3">Tất cả</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="customRadioInline4" value="false" name="bidderRange" class="custom-control-input" checked>
+                                            <label class="custom-control-label" for="customRadioInline4">Bidder Uy Tín</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="TenSanPham" class="h4">Ảnh chính của sản phẩm</label>
+                                        <img
+                                                src="https://www.lifewire.com/thmb/P856-0hi4lmA2xinYWyaEpRIckw=/1920x1326/filters:no_upscale():max_bytes(150000):strip_icc()/cloud-upload-a30f385a928e44e199a62210d578375a.jpg"
+                                                alt="Press here to upload image"
+                                                width="300px"
+                                                height="300px"
+                                                id="main-image"
+                                                class="d-block"
+                                                style="cursor: pointer;">
+
+
+
+                                        <input type="file"
+                                               id="my_file"
+                                               style="display:none"
+                                               onchange="document.getElementById('main-image').src = window.URL.createObjectURL(this.files[0])"/>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label for="TenSanPham" class="h4">Ảnh phụ </label>
+                                    <div>
+                                        <img
+                                                src="https://www.lifewire.com/thmb/P856-0hi4lmA2xinYWyaEpRIckw=/1920x1326/filters:no_upscale():max_bytes(150000):strip_icc()/cloud-upload-a30f385a928e44e199a62210d578375a.jpg"
+                                                alt="Press here to upload image"
+                                                width="300px"
+                                                height="300px"
+                                                id="image1"
+                                                style="cursor: pointer;">
+
+                                        <input type="file"
+                                               id="my_file1"
+                                               style="display:none"
+                                               onchange="document.getElementById('image1').src = window.URL.createObjectURL(this.files[0])"/>
+
+                                        <img
+                                                src="https://www.lifewire.com/thmb/P856-0hi4lmA2xinYWyaEpRIckw=/1920x1326/filters:no_upscale():max_bytes(150000):strip_icc()/cloud-upload-a30f385a928e44e199a62210d578375a.jpg"
+                                                alt="Press here to upload image"
+                                                width="300px"
+                                                height="300px"
+                                                id="image2"
+                                                style="cursor: pointer;">
+
+                                        <input type="file"
+                                               id="my_file2"
+                                               style="display:none"
+                                               onchange="document.getElementById('image2').src = window.URL.createObjectURL(this.files[0])"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <b class="h4">Mô tả sản phẩm</b>
+                                    <textarea class="form-control border-dark" name="proDescription" style="height: 500px" placeholder="Mô tả sản phẩm" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer text-muted">
+<!--                            <a class="btn btn-lg btn-primary" href="#" role="button">-->
+<!--                                <i class="fa fa-eye fa-2x" aria-hidden="true"></i>-->
+<!--                                <span class="h3">Review sản phẩm</span>-->
+<!--                            </a>-->
+                            <button class="btn btn-lg btn-primary" type="submit">
+                                <i class="fa fa-eye fa-2x" aria-hidden="true"></i>
+                                <span class="h3">Thêm sản phẩm</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+    </form>
+
+</div>
