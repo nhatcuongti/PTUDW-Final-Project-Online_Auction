@@ -81,6 +81,10 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset) {
     }]).skip(offset).limit(limit).toArray();
 }
 
+async function getAllFunc(collection){
+  return await collection.find().toArray();
+}
+
 export default {
   /*
   async add() {
@@ -192,4 +196,17 @@ export default {
       await mongoClient.close()
     }
   },
+
+  async getAll() {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await getAllFunc(collection);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  }
 };
