@@ -10,6 +10,8 @@ import mainRoute from './routes/main-route.js'
 import account  from "./routes/account.js";
 import seller from "./routes/seller.route.js"
 
+
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(morgan('dev'));

@@ -1,5 +1,18 @@
+{{#section 'js'}}
+    <script>
+        $('.delItem').on('click', function (e){
+            const id = $(this).data('id');
+            $('#txtProID').val(id);
+            $('#formDel').submit();
+        });
+    </script>
+{{/section}}
+
 <p><h1 class="display-4 text-center"> <small>Danh sách yêu thích</small></h1></p>
 <p class="container-fluid">
+    <form action="/user/favorite" method="post" id="formDel">
+        <input type="text" name="id" id="txtProID" hidden>
+    </form>
     {{#each this.product}}
         <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
             <div class="row no-gutters">
@@ -9,8 +22,12 @@
                 <div class="col-md-8">
                     <div class="card-body">
                         <div class="d-flex">
-                            <div><h5 class="card-title">{{name}}</h5></div>
-                            <div class="flex-fill"><a href="#"><i class="fa fa-times float-right" aria-hidden="true"></i></a></div>
+                            <div><h5 class="card-title">{{proName}}</h5></div>
+                            <div class="flex-fill">
+                                <a data-id="{{_id}}" class="delItem" id="delItem" href="#">
+                                    <i class="fa fa-times float-right" aria-hidden="true"></i>
+                                </a>
+                            </div>
                         </div>
 
                         <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
