@@ -63,6 +63,12 @@ async function getAllFunc(collection){
   return await collection.find().toArray();
 }
 
+async function insertDataFunc(collection, data){
+  var idImageInsert;
+  await collection.insertOne(data);
+  return data._id;
+}
+
 export default {
   async findTopExpiration(now) {
     try {
@@ -157,6 +163,19 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       return await getAllFunc(collection);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+
+  async insertData(data){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await insertDataFunc(collection, data);
     } catch (e) {
       console.error(e);
     } finally {
