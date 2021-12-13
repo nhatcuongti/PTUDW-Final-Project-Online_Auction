@@ -4,7 +4,7 @@
 <p>&nbsp;</p>
 {{#if this.curPage.check}}
     <div class="row">
-        {{#each this.proResult}}
+        {{#each this.listResult}}
             <div class="col-4 d-flex justify-content-center">
                 <div class="card" style="width: 23rem;">
                     <a style="text-decoration:none" href="/product/{{_id}}">
@@ -26,7 +26,11 @@
                             <p> Giá hiện tại: {{format_number proCurBidPrice}}</p>
                             <p> Người đặt hiện tại: {{curBidderInfo}} </p>
                             <p> Giá mua ngay: {{format_number proBuyNowPrice}}</p>
-                            <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
+                            {{#if check}}
+                                <p><strong> Ngày đăng sản phẩm: {{proStartDate}} </strong></p>
+                            {{else}}
+                                <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
+                            {{/if}}
                             <p> Thời gian còn lại: {{format_number time}} giờ</p>
                             <p> Số lượt ra giá: {{proBidQuantity}}</p>
                         </div>
