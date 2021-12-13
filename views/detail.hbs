@@ -1,3 +1,18 @@
+{{#section 'js'}}
+    <script>
+        $('.addItemFavorite').on('click', function (e){
+            const id = $(this).data('id');
+            $('#txtProID').val(id);
+            $('#formAddFavorite').submit();
+            alert.
+        });
+    </script>
+{{/section}}
+
+<form action="/user/favorite/add" method="post" id="formAddFavorite">
+    <input type="text" name="id" id="txtProID" hidden>
+</form>
+
 {{#each this.proInfo}}
     <div class="row">
         <div class="col-1"></div>
@@ -47,7 +62,7 @@
           <p>&nbsp;</p>
           <div class="row">
             <div class="col-12">
-              <button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button>
+              <a data-id="{{_id}}" class="addItemFavorite" href="#"><button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button></a>
               <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button>
               <button type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button>
             </div>

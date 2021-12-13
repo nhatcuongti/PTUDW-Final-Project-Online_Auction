@@ -1,3 +1,18 @@
+{{#section 'js'}}
+    <script>
+        $('.addItemFavorite').on('click', function (e){
+            const id = $(this).data('id');
+            $('#txtProID').val(id);
+            $('#formAddFavorite').submit();
+            alert("Đã thêm vào danh sách yêu thích")
+        });
+    </script>
+{{/section}}
+
+<form action="/user/favorite/add" method="post" id="formAddFavorite">
+    <input type="text" name="id" id="txtProID" hidden>
+</form>
+
 <p class="has-text-centered h5">
     Lần cuối cập nhật: <strong> {{this.now}} </strong>
 </p>
@@ -14,6 +29,9 @@
                     </figure>
                 </div>
             </a>
+            <div class="content">
+                <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
+            </div>
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">
@@ -48,6 +66,9 @@
                     </figure>
                 </div>
             </a>
+            <div class="content">
+                <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
+            </div>
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">
@@ -82,6 +103,9 @@
                     </figure>
                 </div>
             </a>
+            <div class="content">
+                <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
+            </div>
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">

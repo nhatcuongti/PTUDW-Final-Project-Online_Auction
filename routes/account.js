@@ -4,7 +4,7 @@ import account from "../models/account-model.js";
 const router = express.Router();
 
 router.get('/favorite',  async function (req, res) {
-    let list = await account.findByIDFavorite("01")
+    let list = await account.showFavoriteList("01")
     res.render('viewAccountBidder/favorite', {
         product: account.getDetailProductFavorite(list)
     });
@@ -13,8 +13,14 @@ router.get('/favorite',  async function (req, res) {
 router.post('/favorite',  async function (req, res) {
     const proID = req.body.id;
     console.log(proID);
-    await account.deleteOneFavorite(proID, '01');
+    await account.deleteOneFavorite('01', proID);
     res.redirect('back')
+});
+
+router.post('/favorite/add',  async function (req, res) {
+    const proID = req.body.id;
+    console.log(proID);
+    await account.addOneFavorite('01', proID);
 });
 
 router.get('/auction-history',  function (req, res) {

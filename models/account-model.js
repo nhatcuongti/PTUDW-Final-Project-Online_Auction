@@ -8,7 +8,11 @@ const list = [
     {productID: 3, name: 'bàn gỗ 4'},
 ];
 
-async function findByIDFavoriteFunc(collection, id) {
+async function findByIDFunc(collection, userID,proID){
+    return collection.findOne({userID: userID, proID: new ObjectId(proID)})
+}
+
+async function showFavoriteListFunc(collection, id) {
     return await collection.aggregate([
         { $lookup:
                 {
@@ -21,17 +25,21 @@ async function findByIDFavoriteFunc(collection, id) {
     ]).toArray();
 }
 
-function deleteOneFavoriteFunc(collection, pro, user) {
-    return collection.findOneAndDelete({proID: new ObjectId(pro)})
+async function deleteOneFavoriteFunc(collection, userID, proID) {
+    return collection.findOneAndDelete({userID: userID,proID: new ObjectId(proID)})
+}
+
+async function addOneFavoriteFunc(collection, userID, proID) {
+    return collection.insertOne({userID: userID,proID: new ObjectId(proID)})
 }
 
 export default {
-    async findByIDFavorite(id) {
+    async showFavoriteList(id) {
         try {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('favoriteList');
-            return await findByIDFavoriteFunc(collection, id);
+            return await showFavoriteListFunc(collection, id);
         } catch (e) {
             console.error(e);
         } finally {
@@ -46,18 +54,35 @@ export default {
         return listTemp;
     },
 
-    async deleteOneFavorite(proID, userID) {
+    async deleteOneFavorite(userID, proID) {
         try {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('favoriteList');
-            await deleteOneFavoriteFunc(collection, proID, userID);
+            await deleteOneFavoriteFunc(collection, userID, proID);
         } catch (e) {
             console.error(e);
         } finally {
             await mongoClient.close()
         }
     },
+
+    async addOneFavorite(userID, proID) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('favoriteList');
+            if(await findByIDFunc(collection, userID, proID) === null){
+                await addOneFavoriteFunc(collection, userID, proID);
+            };
+
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+
 
 }
 
