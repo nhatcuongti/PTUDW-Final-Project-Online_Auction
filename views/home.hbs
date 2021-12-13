@@ -5,7 +5,7 @@
     <strong> TOP 5 SẢN PHẨM GẦN KẾT THÚC </strong>
 </p>
 <div class="row justify-content-center">
-    {{#each this.proNearEnd}}
+    {{#each this.listExpiration}}
         <div class="card" style="width: 18.5rem;">
             <a style="text-decoration:none" href="/product/{{_id}}">
                 <div class="card-image">
@@ -39,7 +39,7 @@
     <strong> TOP 5 SẢN PHẨM CÓ NHIỀU LƯỢT RA GIÁ NHẤT </strong>
 </p>
 <div class="row justify-content-center">
-    {{#each this.proMostBid}}
+    {{#each this.listMostBid}}
         <div class="card" style="width: 18.5rem;">
             <a style="text-decoration:none" href="/product/{{_id}}">
                 <div class="card-image">
@@ -73,7 +73,7 @@
     <strong> TOP 5 SẢN PHẨM CÓ GIÁ CAO NHẤT </strong>
 </p>
 <div class="row justify-content-center">
-    {{#each this.proHighestPrice}}
+    {{#each this.listTopPrice}}
         <div class="card" style="width: 18.5rem;">
             <a style="text-decoration:none" href="/product/{{_id}}">
                 <div class="card-image">
