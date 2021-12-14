@@ -47,11 +47,11 @@
                 if (data === false) {
                     alert('Not available!');
                 } else {
-                    console.log(data);
                     $.each(data, function (i, item) {
+                        console.log(data)
                         $('#selectCatChild').append($('<option>', {
-                            value: item._id,
-                            text : item.catChildName
+                            value: i,
+                            text : item
                         }));
                     });
                 }
@@ -159,7 +159,7 @@
                                 <select class="custom-select bg-secondary text-white" name="catParent" id="selectCatParent" >
                                     <option disabled selected>Danh mục cha</option>
                                     {{#each this.catList}}
-                                        <option value="{{id}}">{{name}}</option>
+                                        <option value="{{_id}}">{{catParent}}</option>
                                     {{/each}}
                                 </select>
                             </div>

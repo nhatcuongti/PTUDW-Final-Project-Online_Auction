@@ -5,7 +5,8 @@ export default {
     formatForInsert(dataProduct){
         const goodData = {};
         goodData.proName = dataProduct.proName;
-        goodData.proType = new ObjectID(dataProduct.catChild);
+        goodData.proType = new ObjectID(dataProduct.catParent);
+        goodData.catChildType = dataProduct.catChild;
         goodData.autoExtend = (dataProduct.autoExtend === 'true');
         goodData.bidderType = (dataProduct.bidderRange === 'true');
         goodData.proDescription = dataProduct.proDescription;
@@ -41,10 +42,10 @@ export default {
 
     async formatCategory(dataProduct){
         //format category
-        const cat =await modelCategory.findByID(dataProduct.proType);
-        console.log(cat);
+        const cat = await modelCategory.findByID(dataProduct.proType);
         if (cat != null) {
-            const catName = cat[0].catParentName + " - " + cat[0].catChildName;
+            const i = dataProduct.catChildType;
+            const catName = cat[0].catParent + " - " + cat[0].catChild[i];
             dataProduct.catName = catName;
         }
     }

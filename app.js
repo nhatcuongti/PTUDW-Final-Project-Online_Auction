@@ -26,6 +26,9 @@ app.engine('hbs', engine({
         format_number(val) {
             return numeral(val).format('0, 0');
         },
+        format_date(val){
+            return val.toLocaleString("en-GB");
+        },
         section: express_section()
     }
 }));

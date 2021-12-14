@@ -10,6 +10,22 @@
     </style>
 {{/section}}
 
+{{#section 'js'}}
+        <script src="https://cdn.tiny.cloud/1/o97nc395odxihuh8oga04zckhjjvpcyw7fhsbn13j2t1j9as/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+        <script>
+            tinymce.init({
+                selector: '#txtArea',
+                plugins: 'paste image link autolink lists table media',
+                menubar: false,
+                toolbar: [
+                    'undo redo | bold italic underline strikethrough | numlist bullist | alignleft aligncenter alignright | forecolor backcolor | table link image media',
+                ],
+                height:'500'
+            });
+
+        </script>
+{{/section}}
+
 
 
  <div class="container">
@@ -58,86 +74,74 @@
         </div>
 
         <div class="col-lg-7">
-            <div class="card h-100">
-                <div class="card-header">
-                    <div class="h2">
+            <div class="h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="h2 border-bottom">
                         <b>{{this.product.proName}}</b>
                         <a href="#" role="button" class="h3 ml-5">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
                         </a>
                     </div>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <p class="mb-4">
-                        <b class="h5">Giá hiện tại : </b>
-                        <span class="text-danger h3">{{format_number this.product.proCurBidPrice}}</span>
-                    </p>
 
-                    <p class="mb-4">
-                        <b class="h5">Giá mua ngay :  </b>
-                        <span class="text-danger h3">{{format_number this.product.proBuyNowPrice}}</span>
-                    </p>
+                    <ul class="list-group border-bottom" >
+                        <li class="list-group-item" style="background-color:  #f7f7f9;">
+                            <p class="mb-4 font-weight-bolder" >
+                                <b class="h5">Giá hiện tại : </b>
+                                <span class="h5">{{format_number this.product.proCurBidPrice}} VNĐ</span>
+                            </p>
+                        </li>
+                        <li class="list-group-item" style="background-color:  #f7f7f9;">
+                            <p class="mb-4 font-weight-bolder">
+                                <b class="h5">Giá mua ngay :  </b>
+                                <span class="h5">{{format_number this.product.proBuyNowPrice}} VNĐ</span>
+                            </p>
+                        </li>
+                        <li class="list-group-item" style="background-color:  #f7f7f9;">
+                            <p class="mb-4 font-weight-bolder">
+                                <b class="h5">Danh mục : </b>
+                                <span class="h5">
+                                    {{this.product.catName}}
 
+                                </span>
 
-                    <p class="mb-4">
-                        <b class="h5">Danh mục : </b>
-                        <span class="text-secondary h3">
-                            {{this.product.catName}}
-
-                        </span>
-
-                        <a href="#" class="h2 ml-3">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                        </a>
-                    </p>
-
-                    <div class="input-group input-group-sm mb-3">
-                        <div class="input-group-prepend">
+                                <a href="#" class="h2 ml-3">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </a>
+                            </p>
+                        </li>
+                        <li class="list-group-item" style="background-color:  #f7f7f9;">
+                            <div class="input-group input-group-sm mb-3">
+                                <div class="input-group-prepend">
                             <span class="input-group-text bg-white border-0 p-0" id="inputGroup-sizing-sm">
                                 <b class="h5">Người đặt giá cao nhất :   </b>
-                                <span class="text-info h3">{{this.product.curBidderInfo}}</span>
+                                <span class="h5">{{this.product.curBidderInfo}}</span>
                             </span>
-                        </div>
-                    </div>
-
-                    <div class="mt-auto">
-                        <a class="btn btn-outline-success" href="/seller/channel/product/detail/{{this.product._id}}/list" role="button">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            <span>
-                                Danh sách người mua
-                            </span>
-                        </a>
-                    </div>
-
-
-
-                </div>
-                <div class="card-footer text-muted">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p>
-                                Ngày bán : {{this.product.proStartDate}}
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item" style="background-color:  #f7f7f9;">
+                            <p class="mb-4 font-weight-bolder">
+                                <b class="h5">Ngày bán :  </b>
+                                <span class="h5">{{format_date this.product.proStartDate}} </span>
                             </p>
-                        </div>
-
-                        <div class="col-md-6">
-                            <p>
-                                Ngày kết thúc : {{this.product.proEndDate}}
+                        </li>
+                        <li class="list-group-item" style="background-color:  #f7f7f9;">
+                            <p class="mb-4 font-weight-bolder">
+                                <b class="h5">Ngày kết thúc :  </b>
+                                <span class="h5">{{format_date this.product.proEndDate}} </span>
                             </p>
-                        </div>
+                        </li>
+                    </ul>
 
-                        <div class="col-md-6">
-                            <p>
-                                Giá khởi điểm : <b>100.000 VNĐ</b>
-                            </p>
+                    <div class="row m-0 mt-5">
+                        <div class="mt-auto">
+                            <a class="btn btn-outline-success" href="/seller/channel/product/detail/{{this.product._id}}/list" role="button">
+                                <i class="fa fa-list" aria-hidden="true"></i>
+                                <span>
+                                    Danh sách người mua
+                                </span>
+                            </a>
                         </div>
-
-                        <div class="col-md-6">
-                            <p>
-                                Mã hàng : {{_id}}
-                            </p>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -147,15 +151,37 @@
     <div class="row m-0 mt-5">
         <div class="card w-100">
             <div class="card-header d-flex justify-content-between">
-                <b class="h3 m-0 mt-1">Mô tả sản phẩm</b>
-
-                <a class="btn btn-outline-primary" href="#" role="button">
-                    <i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i>
-                    <span class="h5">Thêm mô tả</span>
-                </a>
+                <nav>
+                    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">
+                            <i class="fa fa-info-circle fa-2x mr-2" aria-hidden="true"></i>
+                            Thông tin sản phẩm
+                        </a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">
+                            <i class="fa fa-plus-circle fa-2x mr-2" aria-hidden="true"></i>
+                            Thêm thông tin
+                        </a>
+                    </div>
+                </nav>
             </div>
             <div class="card-body p-3">
-                {{{this.product.proDescription}}}
+                <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        {{{this.product.proDescription}}}
+                    </div>
+                    <div class="tab-pane fade"  id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <form method="post" action='/seller/channel/product/detail/{{this.product._id}}'>
+                            <textarea class="form-control border-dark" name="proDescription"  placeholder="Mô tả sản phẩm" id="txtArea" rows="3"></textarea>
+                            <button class="btn btn-lg btn-primary mt-5" type="submit">
+                                <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+                                <span class="h3">Lưu</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
             </div>
         </div>
 

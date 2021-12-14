@@ -20,8 +20,8 @@ async function getCatParentFunc(collection){
   return await collection.distinct('catParentName');
 }
 
-async function getCatChildFunc(collection, CatParent){
-  return await collection.find({catParentName : CatParent}).toArray();
+async function getCatChildFunc(collection, id){
+  return await collection.find({_id : new ObjectId(id)}).toArray();
 }
 
 async function insertDataFunc(collection, data){
@@ -86,12 +86,12 @@ export default {
     }
   },
 
-  async getCatChild(CatParent){
+  async getCatChild(id){
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('category');
-      return await getCatChildFunc(collection, CatParent);
+      return await getCatChildFunc(collection, id);
     } catch (e) {
       console.error(e);
     } finally {
