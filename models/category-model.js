@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 
 
 async function findByIDFunc(collection, id) {
-  return await collection.find({ _id: new ObjectId(id) }).toArray();
+  return await collection.find({ _id: id }).toArray();
 }
 
 async function countProduct(collection) {
@@ -33,9 +33,13 @@ export default {
   async findByID(id) {
     try {
       await mongoClient.connect();
-      const db = mongoClient.db('onlineauction');
+      const db =  mongoClient.db('onlineauction');
       const collection = db.collection('category');
-      return await findByIDFunc(collection, id);
+      const cat =  await findByIDFunc(collection, id);
+      if (cat.length === 0)
+        return null;
+
+      return cat;
     } catch (e) {
       console.error(e);
     } finally {

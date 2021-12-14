@@ -69,6 +69,12 @@ async function insertDataFunc(collection, data){
   return data._id;
 }
 
+async function updateDescriptionFunc(collection, ProID, description){
+  return await collection.updateMany({_id : ProID}, {$set: {proDescription: description}});
+}
+
+
+
 export default {
   async findTopExpiration(now) {
     try {
@@ -176,6 +182,19 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       return await insertDataFunc(collection, data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+
+  async updateDescription(ProID, description){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await updateDescriptionFunc(collection, ProID, description);
     } catch (e) {
       console.error(e);
     } finally {

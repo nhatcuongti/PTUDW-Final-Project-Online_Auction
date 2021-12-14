@@ -82,7 +82,7 @@
                     <p class="mb-4">
                         <b class="h5">Danh mục : </b>
                         <span class="text-secondary h3">
-                            {{this.product.proType}}
+                            {{this.product.catName}}
 
                         </span>
 
@@ -154,12 +154,8 @@
                     <span class="h5">Thêm mô tả</span>
                 </a>
             </div>
-            <div class="card-body p-0">
-
-<!--                <textarea class="form-control" style="height:500px;" id="exampleFormControlTextarea1" rows="3">{{this.product.proDescription}}</textarea>-->
-                <p style="height: 500px">
-                    {{this.product.proDescription}}
-                </p>
+            <div class="card-body p-3">
+                {{{this.product.proDescription}}}
             </div>
         </div>
 

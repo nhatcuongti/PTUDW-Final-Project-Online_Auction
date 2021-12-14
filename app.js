@@ -9,6 +9,8 @@ import numeral from 'numeral';
 import mainRoute from './routes/main-route.js'
 import account  from "./routes/account.js";
 import seller from "./routes/seller.route.js"
+import asyncErrors from 'express-async-errors';
+
 
 
 

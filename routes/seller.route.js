@@ -2,7 +2,7 @@ import express from 'express';
 import modelProduct from '../models/product-model.js';
 import modelCategory from '../models/category-model.js'
 import multer  from 'multer'
-import formatProductData from '../utils/format-product.js'
+import formatProduct from '../utils/format-product.js'
 import fs from 'fs'
 import path from 'path'
 import productModel from "../models/product-model.js";
@@ -19,6 +19,10 @@ router.get("/channel", (req, res) => {
 router.get("/channel/product", async (req, res) => {
     res.locals.XemSanPham.isActive = true;
     const products = await modelProduct.getAll();
+
+
+    for (const product of products)
+        formatProduct.formatDate(product);
 
     res.render("./seller/channel_product", {
         layout: "seller.layout.hbs",
@@ -39,7 +43,6 @@ router.get("/channel/product/insert", async (req, res) => {
         count++;
     }
 
-    console.log(catList);
     res.render("./seller/channel_product_insert", {
         layout: "seller.layout.hbs",
         catList
@@ -48,8 +51,10 @@ router.get("/channel/product/insert", async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
+        console.log(`Destination : ${file.fieldname}`);
         if (file.fieldname === 'main-image') {
-            req.body = formatProductData(req.body);
+            console.log(req.body);
+            req.body = formatProduct.formatForInsert(req.body);
             await modelProduct.insertData(req.body);
         }
         const idImage = req.body._id;
@@ -62,8 +67,7 @@ const storage = multer.diskStorage({
         cb(null, `public/${idImage}/`)
     },
     filename: function (req, file, cb) {
-        // console.log(path.extname(file.originalname));
-        console.log(file);
+        console.log(`Filename : ${file.fieldname}`);
         if (file.fieldname === 'main-image')
             cb(null, `main-thumb.jpg`);
         else if (file.fieldname === 'image1')
@@ -77,9 +81,11 @@ const upload = multer({ storage: storage })
 const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
 
 
-router.post("/channel/product/insert", cpUpload , (req, res) => {
+router.post("/channel/product/insert", cpUpload , async (req, res) => {
+    await modelProduct.updateDescription(req.body._id, req.body.proDescription);
     res.redirect(`/seller/channel/product/detail/${req.body._id}`);
 })
+
 
 router.get("/channel/product/insert/review", (req, res) => {
     res.locals.ThemSanPham.isActive = true;
@@ -90,9 +96,9 @@ router.get("/channel/product/insert/review", (req, res) => {
 
 router.get("/channel/product/detail/:id", async function(req, res) {
     const ProID = req.params.id;
-    const list =  await modelProduct.findById(id);
+    const list =  await modelProduct.findById(ProID);
     const product = list[0];
-    console.log(product);
+    await formatProduct.formatCategory(product);
     res.locals.XemSanPham.isActive = true;
     res.locals.XemChiTiet.isActive = true;
     res.render("./seller/channel_product_detail", {
