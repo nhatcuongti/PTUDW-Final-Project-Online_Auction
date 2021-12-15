@@ -29,9 +29,11 @@
                     </figure>
                 </div>
             </a>
-            <div class="content">
-                <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
-            </div>
+            {{#if ../auth}}
+                <div class="content">
+                    <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
+                </div>
+            {{/if}}
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">
@@ -66,9 +68,11 @@
                     </figure>
                 </div>
             </a>
+            {{#if ../auth}}
             <div class="content">
                 <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
             </div>
+            {{/if}}
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">
@@ -103,9 +107,11 @@
                     </figure>
                 </div>
             </a>
-            <div class="content">
-                <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
-            </div>
+            {{#if ../auth}}
+                <div class="content">
+                    <a data-id="{{_id}}" class="addItemFavorite"><button type="button" class="btn is-info btn-lg btn-block button is-rounded mb-1">Thêm vào yêu thích</button></a>
+                </div>
+            {{/if}}
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">

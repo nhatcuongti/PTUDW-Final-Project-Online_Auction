@@ -9,7 +9,7 @@ const list = [
 ];
 
 async function findByIDFunc(collection, userID,proID){
-    return collection.findOne({userID: userID, proID: new ObjectId(proID)})
+    return collection.findOne({userID: new ObjectId(userID), proID: new ObjectId(proID)})
 }
 
 async function showFavoriteListFunc(collection, id) {
@@ -25,12 +25,17 @@ async function showFavoriteListFunc(collection, id) {
     ]).toArray();
 }
 
+// async function showFavoriteListFunc(collection, id) {
+//     let userFavorite = await collection.find({userID: id},{}).toArray();
+//     userFavorite.list
+// }
+
 async function deleteOneFavoriteFunc(collection, userID, proID) {
-    return collection.findOneAndDelete({userID: userID,proID: new ObjectId(proID)})
+    return collection.findOneAndDelete({userID: new ObjectId(userID),proID: new ObjectId(proID)})
 }
 
 async function addOneFavoriteFunc(collection, userID, proID) {
-    return collection.insertOne({userID: userID,proID: new ObjectId(proID)})
+    return collection.insertOne({userID: new ObjectId(userID),proID: new ObjectId(proID)})
 }
 
 export default {
@@ -72,7 +77,9 @@ export default {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('favoriteList');
-            if(await findByIDFunc(collection, userID, proID) === null){
+            const check = await findByIDFunc(collection, userID, proID);
+            console.log(check)
+            if(check  === null ){
                 await addOneFavoriteFunc(collection, userID, proID);
             };
 

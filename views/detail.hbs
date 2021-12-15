@@ -4,7 +4,6 @@
             const id = $(this).data('id');
             $('#txtProID').val(id);
             $('#formAddFavorite').submit();
-            alert.
         });
     </script>
 {{/section}}
@@ -57,15 +56,19 @@
             </div>
           </div>
           <p>&nbsp;</p>
-          <p> <strong> Giá đấu hiện tại: {{format_number proCurBidPrice}}</strong> </p>
+            {{#if ../auth}}
+                <p> <strong> Giá đấu hiện tại: {{format_number proCurBidPrice}}</strong> </p>
+            {{/if}}
           <p> <strong> Giá mua ngay: {{format_number proBuyNowPrice}} </strong> </p>
           <p>&nbsp;</p>
           <div class="row">
-            <div class="col-12">
-              <a data-id="{{_id}}" class="addItemFavorite" href="#"><button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button></a>
-              <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button>
-              <button type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button>
-            </div>
+              {{#if ../auth}}
+                    <div class="col-12">
+                      <a data-id="{{_id}}" class="addItemFavorite" href="#"><button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button></a>
+                      <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button>
+                      <button type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button>
+                    </div>
+              {{/if}}
           </div>
         </div>
     </div>

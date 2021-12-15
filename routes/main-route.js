@@ -26,6 +26,8 @@ router.get('/', async function (req, res) {
     const listExpiration = await productModel.findTopExpiration(now);
     const listMostBid = await productModel.findTopBid(now);
     const listTopPrice = await productModel.findTopPrice(now);
+
+
     for (let i = 0; i < listExpiration.length; i++) {
         listExpiration[i].proStartDate = moment(listExpiration[i].proStartDate).format('DD/MM/YYYY')
         listExpiration[i].time = Math.ceil(Math.abs(listExpiration[i].proEndDate - now) / (1000 * 60 * 60));
@@ -39,7 +41,8 @@ router.get('/', async function (req, res) {
         now,
         listExpiration,
         listMostBid,
-        listTopPrice
+        listTopPrice,
+        auth: req.session.auth
     });
 });
 router.get('/search', async function (req, res) {
@@ -122,6 +125,12 @@ router.post('/login', async function (req, res) {
             err_msg: 'Invalid email or password!'
         });
     }
+});
+// Tam thoi de day nhe :((
+router.post('/account/logout',  async function (req, res) {
+    req.session.auth = false;
+    req.session.user = null;
+    res.redirect('/');
 });
 
 router.get('/account', async function (req, res) {

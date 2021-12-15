@@ -1,10 +1,13 @@
 import express from 'express';
 import account from "../models/account-model.js";
+import auth from "../middlewares/auth-mdw.js";
 
 const router = express.Router();
 
-router.get('/favorite',  async function (req, res) {
-    let list = await account.showFavoriteList("01")
+router.get('/favorite', auth ,async function (req, res) {
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    let list = await account.showFavoriteList(userID)
     res.render('viewAccountBidder/favorite', {
         product: account.getDetailProductFavorite(list)
     });
@@ -12,16 +15,21 @@ router.get('/favorite',  async function (req, res) {
 
 router.post('/favorite',  async function (req, res) {
     const proID = req.body.id;
-    console.log(proID);
-    await account.deleteOneFavorite('01', proID);
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    await account.deleteOneFavorite(userID, proID);
     res.redirect('back')
 });
 
 router.post('/favorite/add',  async function (req, res) {
     const proID = req.body.id;
-    console.log(proID);
-    await account.addOneFavorite('01', proID);
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    await account.addOneFavorite(userID, proID);
+    res.redirect('back');
 });
+
+
 
 router.get('/auction-history',  function (req, res) {
     // let list = account.findAll();
