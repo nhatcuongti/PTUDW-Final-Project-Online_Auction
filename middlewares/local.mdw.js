@@ -7,4 +7,11 @@ export default function (app) {
         res.locals.XemChiTiet = {isActive:false};
         next();
     });
+    app.use(async function (req, res, next) {
+        if (typeof (req.session.auth) === 'undefined')
+            req.session.auth = false;
+        res.locals.auth = req.session.auth;
+        res.locals.user = req.session.user;
+        next();
+    });
 }

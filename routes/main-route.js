@@ -2,6 +2,9 @@ import express from 'express';
 import productModel from '../models/product-model.js';
 import moment from 'moment';
 import mailing from "../utils/mailing.js";
+import entryModel from '../models/entry-model.js'
+import bcrypt from 'bcryptjs';
+import randomstring from 'randomstring';
 
 const router = express.Router();
 
@@ -70,7 +73,62 @@ router.get('/search', async function (req, res) {
     });
 });
 router.get('/signup', function (req, res) {
-    res.render('signup');
+    res.render('signup', {
+        layout: 'navbar.hbs',
+    });
+});
+router.post('/signup', async function (req, res) {
+    const salt = bcrypt.genSaltSync(10);
+    let account = {
+        email: req.body.email,
+        name: req.body.name,
+        address: req.body.address,
+        pass: bcrypt.hashSync(req.body.pass, salt),
+        role: 'bidder',
+        badScore: 0,
+        goodScore: 0,
+        verified: false
+    };
+    const id = await entryModel.addAccount(account);
+    await mailing.sendEmail(account.email, 'Account verification', `You have to visit this link below to finish verification:\nhttp://localhost:3000/verify/${randomstring.generate(50)}/${id.toString()}`);
+    res.redirect('/login');
+});
+
+router.get('/verify/:random/:id', async function (req, res) {
+    await entryModel.verifyAccount(req.params.id);
+    res.redirect('/login');
+});
+
+router.get('/login', async function (req, res) {
+    res.render('signin', {
+        layout: 'navbar.hbs',
+    });
+});
+
+router.post('/login', async function (req, res) {
+    const user = {
+        email: req.body.email,
+        verified: true
+    };
+    const account = await entryModel.loginAccount(user, req.body.pass);
+    if (account.length != 0) {
+        req.session.auth = true;
+        req.session.user = account;
+        res.redirect(req.session.retUrl || '/');
+    }
+    else {
+        res.render('signin', {
+            layout: 'navbar.hbs',
+            err_msg: 'Invalid email or password!'
+        });
+    }
+});
+
+router.get('/account', async function (req, res) {
+    const account = await entryModel.checkAccount(req.query.email);
+    if (account.length === 0)
+        return res.json(true);
+    return res.json(false);
 });
 
 export default router;

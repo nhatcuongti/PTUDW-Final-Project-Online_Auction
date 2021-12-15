@@ -13,7 +13,7 @@ export default {
                 }
             });
             await transporter.sendMail({
-                from: 'Admin <onlineauction.mailing@gmail.com>',
+                from: 'Mailing System <onlineauction.mailing@gmail.com>',
                 to: email,
                 subject: subject,
                 text: text

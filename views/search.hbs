@@ -5,7 +5,7 @@
 {{#if this.curPage.check}}
     <div class="row">
         {{#each this.listResult}}
-            <div class="col-4 d-flex justify-content-center">
+            <div class="col-3 d-flex justify-content-center">
                 <div class="card" style="width: 23rem;">
                     <a style="text-decoration:none" href="/product/{{_id}}">
                         <div class="card-image">
@@ -60,13 +60,15 @@
     {{else}}
     <p class="h2">
         Không tìm thấy kết quả sản phẩm
-        <style>
-            #footer {
-                position: fixed;
-                bottom: 0;
-                width: 100%;
-            }
-        </style>
+        {{#section 'css'}}
+            <style>
+                #footer {
+                    position: fixed;
+                    bottom: 0;
+                    width: 100%;
+                }
+            </style>
+        {{/section}}
     </p>
 {{/if}}
 
