@@ -1,6 +1,9 @@
 import express from 'express';
 import account from "../models/account-model.js";
 import auth from "../middlewares/auth-mdw.js";
+import product from "../models/product-model.js";
+import * as Console from "console";
+import moment from "moment/moment.js";
 
 const router = express.Router();
 
@@ -9,7 +12,7 @@ router.get('/favorite', auth ,async function (req, res) {
     const userID = temp[0]._id;
     let list = await account.showFavoriteList(userID)
     res.render('viewAccountBidder/favorite', {
-        product: account.getDetailProductFavorite(list)
+        product: list
     });
 });
 
@@ -31,27 +34,32 @@ router.post('/favorite/add',  async function (req, res) {
 
 
 
-router.get('/auction-history',  function (req, res) {
+router.get('/auction-history',  async function (req, res) {
     // let list = account.findAll();
-    // res.render('viewAccountBidder/viewHistory/auction-history',{
-    //     product:list
-    // });
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    let list = await account.showBidderHistory(userID)
+    //console.log(list);
+    res.render('viewAccountBidder/viewHistory/auction-history',{
+            product: account.getProductsOnAuction(list)
+        }
+    );
 });
-router.get('/auction-already-history',  function (req, res) {
-    // let list = account.findAll();
-    // res.render('viewAccountBidder/viewHistory/auction-already-history',{
-    //     product:list
-    // });
+router.get('/auction-already-history',  async function (req, res) {
+
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    let list = await account.showBidderHistory(userID)
+    res.render('viewAccountBidder/viewHistory/auction-already-history',{
+        product: account.getSuccessfulAuction(userID, list)
+    });
 });
 
-router.get('/auction-already-comment',  function (req, res) {
-    // let item = account.findByID(req.query.id);
-    // let list = []
-    // list.push(item);
-    // console.log(item);
-    // res.render('viewAccountBidder/viewHistory/auction-already-comment',{
-    //     product:list
-    // });
+router.get('/auction-already-comment',  async function (req, res) {
+    let item = await product.findById(req.query.id);
+    res.render('viewAccountBidder/viewHistory/auction-already-comment', {
+        product: item
+    });
 });
 
 router.get('/update-profile',  function (req, res) {

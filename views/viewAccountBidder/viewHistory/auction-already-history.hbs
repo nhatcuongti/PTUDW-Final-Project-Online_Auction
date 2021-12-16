@@ -7,7 +7,7 @@
                     <a class="nav-link h6 text-center" href="/user/auction-history">Đang đấu giá</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link h6 text-center" href="/user/auction-already-history">Đã đấu giá</a>
+                    <a class="nav-link h6 text-center bg-light  " href="/user/auction-already-history">Đấu giá thành công</a>
                 </li>
             </ul>
         </div>
@@ -20,15 +20,16 @@
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
-
-                                <h5 class="card-title">{{name}}</h5>
+                                {{#each details}}
+                                <h5 class="card-title">{{proName}}</h5>
 
 
                                 <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
                                 <div class="d-flex">
                                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                    <div class="flex-fill"><a href="/user/auction-already-comment?id={{productID}}"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a></div>
+                                    <div class="flex-fill"><a href="/user/auction-already-comment?id={{_id}}"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a></div>
                                 </div>
+                                {{/each}}
                             </div>
                         </div>
                     </div>

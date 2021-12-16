@@ -26,8 +26,6 @@ export default function (app) {
         }else {
             res.locals.user = req.session.user;
         }
-        console.log(req.session.auth)
-        console.log(req.session.user)
         next();
     });
 }

@@ -1,5 +1,6 @@
 import mongoClient from '../utils/db.js'
 import { ObjectId } from "mongodb";
+import moment from "moment/moment.js";
 
 const list = [
     {productID: 0, name: 'bàn gỗ 1fffffffffffffffffffffffff'},
@@ -14,12 +15,28 @@ async function findByIDFunc(collection, userID,proID){
 
 async function showFavoriteListFunc(collection, id) {
     return await collection.aggregate([
+        { $match: { userID: new ObjectId(id) } },
         { $lookup:
                 {
                     from: 'product',
                     localField: 'proID',
                     foreignField: '_id',
-                    as: 'favoritedetails'
+                    as: 'details'
+                }
+        }
+    ]).toArray();
+}
+
+async function showBidderHistoryFunc(collection, id) {
+    // let time = moment().format();
+    return await collection.aggregate([
+        { $match: { userID: new ObjectId(id) } },
+        { $lookup:
+                {
+                    from: 'product',
+                    localField: 'proID',
+                    foreignField: '_id',
+                    as: 'details'
                 }
         }
     ]).toArray();
@@ -51,13 +68,23 @@ export default {
             await mongoClient.close()
         }
     },
-    getDetailProductFavorite(list){
+    getProductsOnAuction (list){
         let listTemp = [];
         list.forEach(function (e) {
-            listTemp.push(e.favoritedetails[0])
+            if(e.details[0].proEndDate > new Date())
+                listTemp.push(e)
         })
         return listTemp;
     },
+    getSuccessfulAuction(userID,list){
+        let listTemp = [];
+        list.forEach(function (e) {
+            if( e.details[0].proEndDate <= new Date()&&e.details[0].curBidderInfo == new ObjectId(userID))
+                listTemp.push(e)
+        })
+        return listTemp;
+    },
+
 
     async deleteOneFavorite(userID, proID) {
         try {
@@ -87,6 +114,18 @@ export default {
             console.error(e);
         } finally {
             await mongoClient.close()
+        }
+    },
+    async showBidderHistory(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('bidderHistory');
+            return await showBidderHistoryFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close();
         }
     },
 
