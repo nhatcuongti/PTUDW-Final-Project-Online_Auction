@@ -1,8 +1,38 @@
+{{#section 'js'}}
+    <script>
+        $('#homePageNavbar').hide();
+
+        $('#btn1').on('click', function (e) {
+            $('#btn1').each(function () {
+                $(this).addClass('active');
+            })
+            $('#radioLike').each(function () {
+                $(this).prop("checked", true);
+            })
+            $('#btn2').each(function () {
+                $(this).removeClass('active');
+            })
+        });
+        $('#btn2').on('click', function (e) {
+            $('#btn2').each(function () {
+                $(this).addClass('active');
+            })
+            $('#radioDisLike').each(function () {
+                $(this).prop("checked", true);
+            })
+            $('#btn1').each(function () {
+                $(this).removeClass('active');
+            })
+        });
+    </script>
+{{/section}}
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-sm-3 has-background-grey-lighter">
             <ul class="nav flex-column">
                 <div class="h4 text-center ml-auto mr-auto p-4">Lịch sử đấu giá</div>
+                <hr class="navbar-divider">
+
                 <li class="nav-item">
                     <a class="nav-link h6 text-center" href="/user/auction-history">Đang đấu giá</a>
                 </li>
@@ -31,20 +61,41 @@
                         </div>
                     </div>
                 </div>
-            {{/each}}
+
             <div>
-                <form action="" method="post">
-                    <div class="form-group">
-                        <div class="form-group">
-                            <label for="comment">Comment:</label>
-                            <textarea class="form-control" rows="5" id="comment"></textarea>
+                <form id="formComment" action="/user/auction-already-comment" method="post">
+                    <div class="container-fluid">
+                        <div class="row justify-content-start">
+                            <div class="col-sm-2 mt-auto mb-auto flex-fill">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rate" id="radioLike" value="true" hidden>
+                                    <label class="btn btn-outline-primary" id="btn1" for="btn-check-outlined"><i
+                                            class="fa fa-thumbs-o-up fa-2x" aria-hidden="true"></i></label><br>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rate" id="radioDisLike" value="false" hidden>
+                                    <label class="btn btn-outline-primary" id="btn2" for="btn-check-outlined"><i
+                                            class="fa fa-thumbs-o-down fa-2x" aria-hidden="true"></i></label><br>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="comment">Comment:</label>
+                                        <textarea class="form-control" rows="5" id="comment" name="textArea"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="text" name="proID" value="{{_id}}" hidden>
                         </div>
                     </div>
-                    <div class="align-content-">
-                        <div class="bnt btn-primary ml-auto mr-auto mb-3 text-center" style="max-width: 30vw"  type="submit">Gửi</div>
+                    <div class="align-content-center d-flex">
+                        <button class="btn btn-primary btn-lg ml-auto mr-auto mb-3 text-center" type="submit">Gửi</button>
                     </div>
                 </form>
             </div>
+            {{/each}}
         </div>
 
     </div>

@@ -34,7 +34,7 @@ router.post('/favorite/add',  async function (req, res) {
 
 
 
-router.get('/auction-history',  async function (req, res) {
+router.get('/auction-history',auth,  async function (req, res) {
     // let list = account.findAll();
     const temp = req.session.user;
     const userID = temp[0]._id;
@@ -45,7 +45,7 @@ router.get('/auction-history',  async function (req, res) {
         }
     );
 });
-router.get('/auction-already-history',  async function (req, res) {
+router.get('/auction-already-history', auth ,async function (req, res) {
 
     const temp = req.session.user;
     const userID = temp[0]._id;
@@ -55,11 +55,24 @@ router.get('/auction-already-history',  async function (req, res) {
     });
 });
 
-router.get('/auction-already-comment',  async function (req, res) {
+router.get('/auction-already-comment',auth  ,async function (req, res) {
     let item = await product.findById(req.query.id);
     res.render('viewAccountBidder/viewHistory/auction-already-comment', {
         product: item
     });
+});
+router.post('/auction-already-comment',auth  ,async function (req, res) {
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    const productDetail = await product.findById(req.body.proID)
+    console.log(req.body)
+    if(req.body.rate === 'true')
+        var rate = true;
+    else
+        rate = false
+    console.log(rate)
+    await account.bidderComment(userID, req.body.proID, productDetail[0],rate, req.body.textArea);
+    res.redirect('/user/auction-already-history');
 });
 
 router.get('/update-profile',  function (req, res) {

@@ -1,6 +1,6 @@
 import mongoClient from '../utils/db.js'
 import { ObjectId } from "mongodb";
-import moment from "moment/moment.js";
+import productMD from "./product-model.js";
 
 const list = [
     {productID: 0, name: 'bàn gỗ 1fffffffffffffffffffffffff'},
@@ -53,6 +53,28 @@ async function deleteOneFavoriteFunc(collection, userID, proID) {
 
 async function addOneFavoriteFunc(collection, userID, proID) {
     return collection.insertOne({userID: new ObjectId(userID),proID: new ObjectId(proID)})
+}
+
+async function bidderCommentFunc(dbo,collection, userID, proID, productDetail,rate, comment) {
+    if(productDetail.isBidderComment)
+        return
+    const check = await collection.findOne({proID: proID});
+    if(check === null) {
+        dbo.collection('product').findOneAndUpdate({_id: new ObjectId(proID)}, {$set: {isBidderComment: true}})
+        return collection.insertOne({
+            proID: proID,
+            bidderComment: comment,
+            sellerComment: "",
+            bidderRate: rate,
+            sellerRate: "",
+            bidderID: userID,
+            sellerID: productDetail.sellerInfo
+        })
+    }
+    else{
+        dbo.collection('product').updateOne({_id: new ObjectId(proID)}, {$set: {isBidderComment: true}})
+        return collection.updateOne({proID: proID}, {$set: {bidderComment: comment, bidderRate: rate}})
+    }
 }
 
 export default {
@@ -126,6 +148,18 @@ export default {
             console.error(e);
         } finally {
             await mongoClient.close();
+        }
+    },
+    async bidderComment(userID, proID,productDetail,rate,comment ) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('comment');
+            await bidderCommentFunc(db,collection,userID, proID,productDetail,rate,comment);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
         }
     },
 

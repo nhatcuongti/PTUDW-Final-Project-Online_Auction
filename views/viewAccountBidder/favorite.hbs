@@ -1,5 +1,7 @@
 {{#section 'js'}}
     <script>
+        $('#homePageNavbar').hide();
+
         $('.delItem').on('click', function (e){
             const id = $(this).data('id');
             $('#txtProID').val(id);
@@ -39,5 +41,8 @@
                 </div>
             </div>
         </div>
+    {{else}}
+        <hr class="navbar-divider">
+        <div class="h4 text-center mt-5 mb-5">Hiện tại bạn chưa có sản phẩm yêu thích nào</div>
     {{/each}}
 </p>
