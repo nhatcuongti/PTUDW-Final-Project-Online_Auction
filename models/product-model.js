@@ -22,14 +22,8 @@ async function findByCategoryFunc(collection, cat) {
   return await collection.find({ proType: cat }).limit(5).toArray();
 }
 
-async function countTotalProductFunc(collection) {
-  return await collection.count();
-}
-
-async function searchByTypeFunc(collection, keyword, type, limit, offset) {
+async function countTotalSearchProductFunc(collection, keyword, type) {
   if (type === 'name') {
-    //collection.createIndex({proName: 'text'});
-    //return await collection.find({$text: {$search: keyword}}).skip(offset).limit(limit).toArray();
     return await collection.aggregate([
       {
         '$search':{
@@ -40,11 +34,12 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset) {
             'fuzzy': {}
           }
         }
-      }]).skip(offset).limit(limit).toArray();
+      },
+      {
+        $count: 'total'
+      }]).toArray();
   }
-  else {
-    //collection.createIndex({proType: 'text'});
-    //return await collection.find({$text: {$search: keyword}}).skip(offset).limit(limit).toArray();
+  else if (type === 'category') {
     return await collection.aggregate([
       {
         '$search':{
@@ -55,7 +50,68 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset) {
             'fuzzy': {}
           }
         }
-      }]).skip(offset).limit(limit).toArray();
+      },
+      {
+        $count: 'total'
+      }]).toArray();
+  }
+
+}
+
+async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) {
+  if (type === 'name') {
+    if(sort === 'price-ascending')
+      return await collection.aggregate([
+        {
+          '$search':{
+            'index': 'custom',
+            'text': {
+              'query': keyword,
+              'path': 'proName',
+              'fuzzy': {}
+            }
+          }
+        }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();
+    else if(sort === 'time-descending')
+      return await collection.aggregate([
+        {
+          '$search':{
+            'index': 'custom',
+            'text': {
+              'query': keyword,
+              'path': 'proName',
+              'fuzzy': {}
+            }
+          }
+        }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();
+  }
+  else if (type === 'category') {
+    //collection.createIndex({proType: 'text'});
+    //return await collection.find({$text: {$search: keyword}}).skip(offset).limit(limit).toArray();
+    if(sort === 'price-ascending')
+      return await collection.aggregate([
+        {
+          '$search':{
+            'index': 'custom',
+            'text': {
+              'query': keyword,
+              'path': 'proType',
+              'fuzzy': {}
+            }
+          }
+        }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();
+    else if(sort === 'time-descending')
+      return await collection.aggregate([
+        {
+          '$search':{
+            'index': 'custom',
+            'text': {
+              'query': keyword,
+              'path': 'proType',
+              'fuzzy': {}
+            }
+          }
+        }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();
   }
 }
 
@@ -136,25 +192,24 @@ export default {
       await mongoClient.close()
     }
   },
-  async countTotalProduct() {
+  async countTotalSearchProduct(keyword, type) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await countTotalProductFunc(collection);
+      return await countTotalSearchProductFunc(collection, keyword, type);
     } catch (e) {
       console.error(e);
     } finally {
       await mongoClient.close()
     }
   },
-  async searchByType(keyword, type, limit, offset) {
+  async searchByType(keyword, type, limit, offset, sort) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      const result = await searchByTypeFunc(collection, keyword, type, limit, offset);
-      //await collection.dropIndexes();
+      const result = await searchByTypeFunc(collection, keyword, type, limit, offset, sort);
       return result;
     } catch (e) {
       console.error(e);

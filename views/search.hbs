@@ -1,6 +1,20 @@
 <p class="has-text-centered h2">
     Kết quả tìm kiếm: {{this.keyword}}
 </p>
+<div class="d-flex justify-content-end">
+    <div>
+        <span>Sắp xếp theo:</span>
+        <select class="bootstrap-select" onchange="location = this.value;">
+            {{#if this.sortType}}
+                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}" selected>Giá tăng dần</option>
+                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending">Thời gian kết thúc giảm dần</option>
+            {{else}}
+                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}">Giá tăng dần</option>
+                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending" selected>Thời gian kết thúc giảm dần</option>
+            {{/if}}
+        </select>
+    </div>
+</div>
 <p>&nbsp;</p>
 {{#if this.curPage.check}}
     <div class="row">
@@ -42,18 +56,34 @@
     <p>&nbsp;</p>
     <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
         {{#if this.prevPage.check}}
-            <a class="pagination-previous" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}">Previous page</a>
+            {{#if this.sortType}}
+                <a class="pagination-previous page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}">Previous page</a>
+            {{else}}
+                <a class="pagination-previous page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}&sort=time-descending">Previous page</a>
+            {{/if}}
         {{/if}}
         {{#if this.nexPage.check}}
-            <a class="pagination-next" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}">Next page</a>
+            {{#if this.sortType}}
+                <a class="pagination-next page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}">Next page</a>
+            {{else}}
+                <a class="pagination-next page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}&sort=time-descending">Next page</a>
+            {{/if}}
         {{/if}}
         <ul class="pagination-list">
             {{#if this.prevPage.check}}
-                <li><a class="pagination-link" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                {{#if this.sortType}}
+                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                {{else}}
+                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}&sort=time-descending">{{this.prevPage.value}}</a></li>
+                {{/if}}
             {{/if}}
-                <li><a class="pagination-link is-current">{{this.curPage.value}}</a></li>
+                <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
             {{#if this.nexPage.check}}
-                <li><a class="pagination-link" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                {{#if this.sortType}}
+                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                {{else}}
+                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}&sort=time-descending">{{this.nexPage.value}}</a></li>
+                {{/if}}
             {{/if}}
         </ul>
     </nav>

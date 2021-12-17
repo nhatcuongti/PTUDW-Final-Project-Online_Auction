@@ -26,8 +26,6 @@ router.get('/', async function (req, res) {
     const listExpiration = await productModel.findTopExpiration(now);
     const listMostBid = await productModel.findTopBid(now);
     const listTopPrice = await productModel.findTopPrice(now);
-
-
     for (let i = 0; i < listExpiration.length; i++) {
         listExpiration[i].proStartDate = moment(listExpiration[i].proStartDate).format('DD/MM/YYYY')
         listExpiration[i].time = Math.ceil(Math.abs(listExpiration[i].proEndDate - now) / (1000 * 60 * 60));
@@ -46,15 +44,19 @@ router.get('/', async function (req, res) {
     });
 });
 router.get('/search', async function (req, res) {
+    const sort = req.query.sort || 'price-ascending';
+    let sortType = false;
+    if(sort === 'price-ascending') sortType = true;
     const keyword = req.query.keyword;
     const type = req.query.with;
     const limit = 9;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
-    const total = await productModel.countTotalProduct();
+    const temp = await productModel.countTotalSearchProduct(keyword, type);
+    const total = temp[0].total;
     let nPage = Math.floor(total / limit);
     if (total % limit > 0) nPage++;
-    const listResult = await productModel.searchByType(keyword, type, limit, offset);
+    const listResult = await productModel.searchByType(keyword, type, limit, offset, sort);
     let nexPage = {check: true, value: (+page + 1)};
     let curPage = {check: (+page > 0 && +page <= nPage && listResult.length != 0 ), value: +page};
     let prevPage = {check: true, value: (+page - 1)};
@@ -67,6 +69,7 @@ router.get('/search', async function (req, res) {
         item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY');
     }
     res.render('search', {
+        sortType,
         keyword,
         type,
         nexPage,
