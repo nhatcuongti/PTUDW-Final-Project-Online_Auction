@@ -42,6 +42,21 @@ async function showBidderHistoryFunc(collection, id) {
     ]).toArray();
 }
 
+async function showAllCommentFunc(collection, id) {
+    // let time = moment().format();
+    return await collection.aggregate([
+        { $match: { bidderID: id } },
+        { $lookup:
+                {
+                    from: 'product',
+                    localField: 'proID',
+                    foreignField: '_id',
+                    as: 'details'
+                }
+        }
+    ]).toArray();
+}
+
 // async function showFavoriteListFunc(collection, id) {
 //     let userFavorite = await collection.find({userID: id},{}).toArray();
 //     userFavorite.list
@@ -62,18 +77,18 @@ async function bidderCommentFunc(dbo,collection, userID, proID, productDetail,ra
     if(check === null) {
         dbo.collection('product').findOneAndUpdate({_id: new ObjectId(proID)}, {$set: {isBidderComment: true}})
         return collection.insertOne({
-            proID: proID,
+            proID: new ObjectId(proID),
             bidderComment: comment,
             sellerComment: "",
             bidderRate: rate,
-            sellerRate: "",
+            sellerRate: false,
             bidderID: userID,
             sellerID: productDetail.sellerInfo
         })
     }
     else{
         dbo.collection('product').updateOne({_id: new ObjectId(proID)}, {$set: {isBidderComment: true}})
-        return collection.updateOne({proID: proID}, {$set: {bidderComment: comment, bidderRate: rate}})
+        return collection.updateOne({proID: new ObjectId(proID)}, {$set: {bidderComment: comment, bidderRate: rate}})
     }
 }
 
@@ -162,6 +177,34 @@ export default {
             await mongoClient.close()
         }
     },
+    async showAllComment(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('comment');
+            return await showAllCommentFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    getCommentFromeSeller(list) {
+        var commentFromeSellerList = []
+        list.forEach(function (e){
+            if(e.details[0].isSellerComment)
+                commentFromeSellerList.push(e)
+        })
+        return commentFromeSellerList;
+    },
+    countGoodComment(list) {
+        var countGoodComment = 0
+        list.forEach(function (e){
+            if(e.sellerRate)
+                countGoodComment++
+        })
+        return countGoodComment;
+    }
 
 
 }

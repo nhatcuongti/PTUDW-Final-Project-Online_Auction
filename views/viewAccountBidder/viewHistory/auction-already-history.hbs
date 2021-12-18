@@ -41,16 +41,18 @@
                                         </div>
                                     {{else}}
                                         <div class="flex-fill">
-                                            <a href="/user/auction-already-comment?id={{_id}}"><button class="btn btn-secondary float-right" aria-hidden="true" disabled>Đã nhận xét</button></a>
+                                            <a href="#"><button class="btn btn-secondary float-right" aria-hidden="true" disabled>Đã nhận xét</button></a>
                                         </div>
                                     {{/unless}}
-
-                                </div>
                                 {{/each}}
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
+            {{else}}
+                <p class="h4 text-center mt-5">Bạn chưa đấu giá thành công sản phẩm nào cả, hãy đấu giá ngay</p>
             {{/each}}
         </div>
 

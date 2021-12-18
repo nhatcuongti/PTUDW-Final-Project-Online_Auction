@@ -50,6 +50,7 @@ router.get('/auction-already-history', auth ,async function (req, res) {
     const temp = req.session.user;
     const userID = temp[0]._id;
     let list = await account.showBidderHistory(userID)
+    console.log(account.getSuccessfulAuction(userID, list))
     res.render('viewAccountBidder/viewHistory/auction-already-history',{
         product: account.getSuccessfulAuction(userID, list)
     });
@@ -82,7 +83,24 @@ router.get('/update-profile',  function (req, res) {
 router.get('/change-password',  function (req, res) {
     res.render('viewAccountBidder/viewProfile/change-password');
 });
-router.get('/comment-for-bidder',  function (req, res) {
-    res.render('viewAccountBidder/comment-for-bidder');
+router.get('/comment-from-seller', auth, async function (req, res) {
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    let list = account.getCommentFromeSeller(await account.showAllComment(userID))
+    const countList = Object.keys(list).length
+    const countGoodComment = account.countGoodComment(list)
+    let likeRate = 0;
+    let dislikeRate = 0;
+    if(countList != 0){
+        likeRate = Math.round(countGoodComment*1000.0/countList)/10
+        dislikeRate = Math.round((100 - likeRate)*10)/10
+    }
+    console.log(countList)
+    res.render('viewAccountBidder/comment-from-seller', {
+        product: list,
+        total: countList,
+        likeRate: likeRate,
+        dislikeRate: dislikeRate
+    });
 });
 export default router;
