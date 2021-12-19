@@ -41,37 +41,60 @@ router.get("/channel/product/insert", async (req, res) => {
     })
 })
 
+const uploadData = async (req, res, next) => {
+    req.body = formatProduct.formatForInsert(req.body);
+    await modelProduct.insertData(req.body);
+    console.log(req.body._id);
+    next();
+}
+
+//Upload Image
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
-        console.log(`Destination : ${file.fieldname}`);
-        if (file.fieldname === 'main-image') {
-            req.body = formatProduct.formatForInsert(req.body);
-            await modelProduct.insertData(req.body);
-        }
-        const idImage = req.body._id;
-
-        const dir = `./public/${idImage}`
+        const dir = `./public/image`
         if (!fs.existsSync(dir)){
-            fs.mkdirSync(dir, {recursive:true});
+            fs.mkdirSync(dir, {recursive: true});
+            console.log("Create Folder");
         }
-        cb(null, `public/${idImage}/`)
+        cb(null, `public/image`)
     },
-    filename: function (req, file, cb) {
-        console.log(`Filename : ${file.fieldname}`);
-        if (file.fieldname === 'main-image')
+    filename: async function (req, file, cb) {
+        if (file.fieldname === 'main-image'){
             cb(null, `main-thumb.jpg`);
-        else if (file.fieldname === 'image1')
+            console.log("Create main-thumb.jpg");
+        }
+        else if (file.fieldname === 'image1'){
             cb(null, `thumb1.jpg`);
-        else
+            console.log("Create thumb1.jpg")
+        }
+        else{
             cb(null, `thumb2.jpg`);
+            console.log("Create thumb2.jpg")
+        }
     }
 })
 
 const upload = multer({ storage: storage })
 const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
 
+const uploadAfterImage = async (req, res, next) => {
+    req.body = formatProduct.formatForInsert(req.body);
+    await modelProduct.insertData(req.body);
+    console.log(req.body);
+    next();
+}
 
-router.post("/channel/product/insert", cpUpload , async (req, res) => {
+router.post("/channel/product/insert", cpUpload,  uploadAfterImage, async (req, res) => {
+    //Change folder name
+    const oldFolderName = "./public/image";
+    const newFolderName = `./public/${req.body._id}`;
+    fs.rename(oldFolderName, newFolderName, (err) => {
+        if (err){
+            console.log("Some thing Wrong !!");
+        }
+        console.log("Directory change name successfully !!")
+    });
+
     await modelProduct.updateDescription(req.body._id, req.body.proDescription);
     res.redirect(`/seller/channel/product/detail/${req.body._id}`);
 })
