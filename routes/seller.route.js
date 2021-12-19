@@ -59,16 +59,18 @@ const storage = multer.diskStorage({
         cb(null, `public/image`)
     },
     filename: async function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        console.log(ext);
         if (file.fieldname === 'main-image'){
-            cb(null, `main-thumb.jpg`);
+            cb(null, `main-thumb${ext}`);
             console.log("Create main-thumb.jpg");
         }
         else if (file.fieldname === 'image1'){
-            cb(null, `thumb1.jpg`);
+            cb(null, `thumb1${ext}`);
             console.log("Create thumb1.jpg")
         }
         else{
-            cb(null, `thumb2.jpg`);
+            cb(null, `thumb2${ext}`);
             console.log("Create thumb2.jpg")
         }
     }
@@ -88,15 +90,15 @@ router.post("/channel/product/insert", cpUpload,  uploadAfterImage, async (req, 
     //Change folder name
     const oldFolderName = "./public/image";
     const newFolderName = `./public/${req.body._id}`;
-    fs.rename(oldFolderName, newFolderName, (err) => {
+    fs.rename(oldFolderName, newFolderName, async (err) => {
         if (err){
             console.log("Some thing Wrong !!");
         }
-        console.log("Directory change name successfully !!")
+
+        await modelProduct.updateDescription(req.body._id, req.body.proDescription);
+        res.redirect(`/seller/channel/product/detail/${req.body._id}`);
     });
 
-    await modelProduct.updateDescription(req.body._id, req.body.proDescription);
-    res.redirect(`/seller/channel/product/detail/${req.body._id}`);
 })
 
 
