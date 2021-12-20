@@ -5,6 +5,7 @@ import multer  from 'multer'
 import formatProduct from '../utils/format-product.js'
 import fs from 'fs'
 import path from 'path'
+import page from "../utils/page.js";
 import {ObjectId} from "mongodb";
 
 const router = express.Router();
@@ -20,7 +21,7 @@ router.get("/channel/product", async (req, res) => {
     res.locals.XemSanPham.isActive = true;
     let products = null;
     const categories = await modelCategory.getAll();
-
+    //Handle Category
     const catParentFind = req.query.catParent;
     const catChildFind = req.query.catChild;
     if (catParentFind != undefined && catChildFind != undefined)
@@ -30,16 +31,36 @@ router.get("/channel/product", async (req, res) => {
     else
         products = await modelProduct.getAll();
 
-    // for (const product of products)
-    //     await formatProduct.formatCategory(product);
 
-    // for (const product of products)
-    //     formatProduct.formatDate(product);
+    //Handle page
+    let nPage = Math.floor((products.length - 1) / 6) + 1;
+    const choosenPage = req.query.page;
+    console.log("Page : " + choosenPage);
+    let prevPage = {check:true, value : 0};
+    let nextPage = {check:true, value : 0};
+    let curPage = {check:true, value : 0};
+    await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );
+    console.log(prevPage);
+    console.log(curPage);
+    console.log(nextPage);
+
+    // Find Product  with category
+    //Find offset base on curPage
+    let limitProduct = 6;
+    let offset = ((+choosenPage - 1) * limitProduct) || 0;
+    console.log("offset : " + offset)
+    const numberProduct = products.length;
+    products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)
+
+
 
     res.render("./seller/channel_product", {
         layout: "seller.layout.hbs",
         products,
-        categories
+        categories,
+        prevPage,
+        nextPage,
+        curPage
     })
 })
 

@@ -37,6 +37,11 @@ export default {
       const db =  mongoClient.db('onlineauction');
       const collection = db.collection('category');
       const cat =  await findByIDFunc(collection, id);
+
+      let prevPage = null;
+      let nextPage = null;
+      let curPage = null;
+
       if (cat.length === 0)
         return null;
 

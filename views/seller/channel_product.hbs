@@ -1,3 +1,15 @@
+{{#section 'js'}}
+    <script>
+        $('.clickElement').on("click", (e) => {
+            alert($(this).data('time'));
+        })
+    </script>
+
+
+
+
+{{/section}}
+
  <div class="container">
     <div class="card-header row">
         <div class="col-md-6 mt-2">
@@ -34,6 +46,7 @@
 
     </div>
 
+
      <div class="row">
          <nav class="navbar" id="homePageNavbar" role="navigation" aria-label="dropdown navigation">
              <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product">
@@ -57,56 +70,64 @@
      </div>
 
 
-
     <div class="row mt-3" >
         {{#each this.products}}
-            <div class="col-lg-4 col-md-6 p-3">
-                <div class="card h-100">
+            <a class="col-lg-4 col-md-6 p-3 clickElement" style="text-decoration: none" href="/seller/channel/product/detail/{{_id}}">
+                    <div class="card h-100">
+                        <img src = "https://htsport.vn/wp-content/uploads/2019/11/4-size-giay-lon-nhat-1-300x300.jpg"
+                             class="card-img-top"
+                             alt="Hình"
+                             width="200"
+                             height="200">
 
-                    <img src = "https://htsport.vn/wp-content/uploads/2019/11/4-size-giay-lon-nhat-1-300x300.jpg"
-                         class="card-img-top"
-                         alt="Hình">
-
-                    <div class="card-body">
-                        <p class="h4">{{proName}}</p>
-                        <p class="text-danger h3">
-                            {{format_number proCurBidPrice}}
-                        </p>
-                        <p>
-                            <b>
-                                Thời hạn :
-                            </b>
-                            <span class="text-danger">
+                        <div class="card-body">
+                            <p class="h4 font-weight-bold">{{proName}}</p>
+                            <p >
                                 {{format_duration proEndDate}}
-                            </span>
+                            </p>
+                        </div>
 
-                        </p>
 
+                        <div class="card-footer justify-content-between">
+                            <p class="h5">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                <span class="countTime" data-time="{{proEndDate}}">
+                                    {{format_duration proEndDate}}
+                                </span>
+                            </p>
 
+                            <p class="h4">
+                                {{format_number proCurBidPrice}} ₫
+                            </p>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                        <a class="btn btn-primary mt-4" href="/seller/channel/product/detail/{{_id}}" role="button">
-                            Xem chi tiết
-                        </a>
-                    </div>
-                </div>
-            </div>
+            </a>
         {{/each}}
 
     </div>
-    <nav class="pagination is-centered mt-5 mb-5" role="navigation" aria-label="pagination">
-        <a class="pagination-previous">Previous</a>
-        <a class="pagination-next">Next page</a>
-        <ul class="pagination-list">
-            <li><a class="pagination-link" aria-label="Goto page 1">1</a></li>
-            <li><span class="pagination-ellipsis">&hellip;</span></li>
-            <li><a class="pagination-link" aria-label="Goto page 45">45</a></li>
-            <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
-            <li><a class="pagination-link" aria-label="Goto page 47">47</a></li>
-            <li><span class="pagination-ellipsis">&hellip;</span></li>
-            <li><a class="pagination-link" aria-label="Goto page 86">86</a></li>
-        </ul>
-    </nav>
+
+
+     <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
+         {{#if this.prevPage.check}}
+                 <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.prevPage.value}}">Previous page</a>
+         {{/if}}
+
+         {{#if this.nextPage.check}}
+             <a class="pagination-next page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.nextPage.value}}">Next page</a>
+         {{/if}}
+
+         <ul class="pagination-list">
+             {{#if this.prevPage.check}}
+                     <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+             {{/if}}
+
+             <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+
+             {{#if this.nextPage.check}}
+                     <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.nextPage.value}}">{{this.nextPage.value}}</a></li>
+             {{/if}}
+         </ul>
+     </nav>
 
 
 </div>

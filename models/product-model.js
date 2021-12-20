@@ -224,6 +224,7 @@ export default {
       await mongoClient.close()
     }
   },
+
   async searchByType(keyword, type, limit, offset, sort) {
     try {
       await mongoClient.connect();
