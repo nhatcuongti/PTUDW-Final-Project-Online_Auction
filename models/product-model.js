@@ -18,8 +18,15 @@ async function findByIdFunc(collection, id) {
   return await collection.find({ _id: new ObjectId(id) }).toArray();
 }
 
-async function findByCategoryFunc(collection, cat) {
-  return await collection.find({ proType: cat }).limit(5).toArray();
+async function findByCategoryParentFunc(collection, cat, numberProduct) {
+  if (numberProduct === undefined)
+    return await collection.find({ proType: cat }).toArray();
+  else
+    return await collection.find({ proType: cat }).limit(numberProduct).toArray();
+}
+
+async function findByCategoryFunc(collection, catID, catChildType) {
+  return await collection.find({ proType: catID, catChildType: catChildType}).toArray();
 }
 
 async function countTotalSearchProductFunc(collection, keyword, type) {
@@ -180,12 +187,25 @@ export default {
       await mongoClient.close()
     }
   },
-  async findByCategory(cat) {
+  async findByCategoryParent(cat, numberProduct) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await findByCategoryFunc(collection, cat);
+      return await findByCategoryParentFunc(collection, cat, numberProduct);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async findByCategory(catID, catChildType){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      const id = new ObjectId(catID);
+      return await findByCategoryFunc(collection, id, catChildType);
     } catch (e) {
       console.error(e);
     } finally {

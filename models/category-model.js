@@ -24,6 +24,7 @@ async function getCatChildFunc(collection, id){
   return await collection.find({_id : new ObjectId(id)}).toArray();
 }
 
+
 async function insertDataFunc(collection, data){
    await collection.insertOne(data);
 }
@@ -98,7 +99,6 @@ export default {
       await mongoClient.close()
     }
   },
-
   async insertData(data){
     try {
       await mongoClient.connect();

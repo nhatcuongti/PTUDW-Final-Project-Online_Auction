@@ -18,15 +18,28 @@ router.get("/channel", (req, res) => {
 
 router.get("/channel/product", async (req, res) => {
     res.locals.XemSanPham.isActive = true;
-    const products = await modelProduct.getAll();
+    let products = null;
+    const categories = await modelCategory.getAll();
 
+    const catParentFind = req.query.catParent;
+    const catChildFind = req.query.catChild;
+    if (catParentFind != undefined && catChildFind != undefined)
+        products = await modelProduct.findByCategory(catParentFind, catChildFind);
+    else if (catParentFind != undefined)
+        products = await modelProduct.findByCategoryParent(new ObjectId(catParentFind));
+    else
+        products = await modelProduct.getAll();
 
-    for (const product of products)
-        formatProduct.formatDate(product);
+    // for (const product of products)
+    //     await formatProduct.formatCategory(product);
+
+    // for (const product of products)
+    //     formatProduct.formatDate(product);
 
     res.render("./seller/channel_product", {
         layout: "seller.layout.hbs",
-        products
+        products,
+        categories
     })
 })
 

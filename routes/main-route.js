@@ -14,7 +14,7 @@ router.get('/product/:id', async function (req, res) {
     if(typeof (proInfo) === 'undefined')
         res.redirect('/');
     else {
-        const listSimilarity = await productModel.findByCategory(proInfo[0].proType);
+        const listSimilarity = await productModel.findByCategoryParent(proInfo[0].proType, 5);
         res.render('detail', {
             proInfo,
             listSimilarity

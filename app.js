@@ -11,6 +11,7 @@ import account  from "./routes/account.js";
 import seller from "./routes/seller.route.js"
 import session from 'express-session';
 import asyncErrors from 'express-async-errors';
+import modelCategory from "./models/category-model.js";
 
 
 
@@ -29,6 +30,24 @@ app.engine('hbs', engine({
         },
         format_date(val){
             return val.toLocaleString("en-GB");
+        },
+        format_duration(val){
+            //Format time
+            const date1 = new Date();
+            const date2 = val;
+            const diffTime = Math.abs(date2 - date1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            let duration = null;
+            if (date2 < date1){
+                duration = 'Đã hết hạn'
+            }
+            else if (diffDays <= 3) {
+                duration = `Còn ${diffDays} ngày`;
+            }
+            else {
+                duration = val.toLocaleString("en-GB");
+            }
+            return duration;
         },
         section: express_section()
     }

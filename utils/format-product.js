@@ -6,7 +6,7 @@ export default {
         const goodData = {};
         goodData.proName = dataProduct.proName;
         goodData.proType = new ObjectID(dataProduct.catParent);
-        goodData.catChildType = dataProduct.catChild;
+        goodData.catChildType = +dataProduct.catChild;
         goodData.autoExtend = (dataProduct.autoExtend === 'true');
         goodData.bidderType = (dataProduct.bidderRange === 'true');
         goodData.proDescription = dataProduct.proDescription;
@@ -36,8 +36,6 @@ export default {
         else {
             dataProduct.duration = dataProduct.proEndDate.toLocaleString("en-GB");
         }
-
-
     },
 
     async formatCategory(dataProduct){
