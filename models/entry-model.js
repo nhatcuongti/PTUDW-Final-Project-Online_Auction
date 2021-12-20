@@ -17,10 +17,16 @@ async function verifyAccountFunc(collection, id) {
 
 async function loginAccountFunc(collection, user, pass) {
     const result = await collection.find(user).toArray();
-    if (await bcrypt.compare(pass, result[0].pass))
-        return result;
+    if (result.length != 0)
+        if (await bcrypt.compare(pass, result[0].pass))
+            return result;
     return [];
 }
+
+async function changePasswordFunc(collection, id, pass) {
+    await collection.updateOne({_id: new ObjectId(id)}, {$set: {pass: pass}});
+}
+
 
 export default {
     async checkAccount(email) {
@@ -70,5 +76,17 @@ export default {
         } finally {
             await mongoClient.close()
         }
-    }
+    },
+    async changePassword(id, pass) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            await changePasswordFunc(collection, id, pass);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
 };

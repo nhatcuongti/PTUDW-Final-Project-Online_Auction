@@ -96,7 +96,7 @@ router.post('/signup', async function (req, res) {
         verified: false
     };
     const id = await entryModel.addAccount(account);
-    await mailing.sendEmail(account.email, 'Account verification', `You have to visit this link below to finish verification:\nhttp://localhost:3000/verify/${randomstring.generate(50)}/${id.toString()}`);
+    await mailing.sendEmail(account.email, 'Account verification', `You have to visit this link below to finish verification:\nhttp://localhost:3000/verify/${randomstring.generate(100)}/${id.toString()}`);
     res.redirect('/login');
 });
 
@@ -129,7 +129,7 @@ router.post('/login', async function (req, res) {
         });
     }
 });
-// Tam thoi de day nhe :((
+
 router.post('/account/logout',  async function (req, res) {
     req.session.auth = false;
     req.session.user = null;
@@ -141,6 +141,32 @@ router.get('/account', async function (req, res) {
     if (account.length === 0)
         return res.json(true);
     return res.json(false);
+});
+
+router.get('/forget-password', async function (req, res) {
+    res.render('forget-password-1', {
+        layout: 'navbar.hbs',
+    });
+});
+
+router.post('/forget-password', async function (req, res) {
+    const result = await entryModel.checkAccount(req.body.email);
+    const id = result[0]._id;
+    await mailing.sendEmail(req.body.email, 'Forgot Password', `You have to visit this link below to choose a new password:\nhttp://localhost:3000/change/${randomstring.generate(100)}/${id.toString()}`);
+    res.redirect('/');
+});
+
+router.get('/change/:random/:id', async function (req, res) {
+    res.render('forget-password-2', {
+        id: req.params.id,
+        layout: 'navbar.hbs',
+    });
+});
+
+router.post('/change', async function (req, res) {
+    const salt = bcrypt.genSaltSync(10);
+    await entryModel.changePassword(req.body.id, bcrypt.hashSync(req.body.pass, salt));
+    res.redirect('/login');
 });
 
 export default router;
