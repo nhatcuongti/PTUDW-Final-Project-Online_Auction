@@ -96,7 +96,7 @@ router.post('/signup', async function (req, res) {
         verified: false
     };
     const id = await entryModel.addAccount(account);
-    await mailing.sendEmail(account.email, 'Account verification', `You have to visit this link below to finish verification:\nhttp://localhost:3000/verify/${randomstring.generate(100)}/${id.toString()}`);
+    await mailing.sendEmail(account.email, 'Account verification', `You have to visit this link below to finish verification:\nhttp://localhost:3000/verify/${randomstring.generate(70)}/${id.toString()}`);
     res.redirect('/login');
 });
 
@@ -152,7 +152,7 @@ router.get('/forget-password', async function (req, res) {
 router.post('/forget-password', async function (req, res) {
     const result = await entryModel.checkAccount(req.body.email);
     const id = result[0]._id;
-    await mailing.sendEmail(req.body.email, 'Forgot Password', `You have to visit this link below to choose a new password:\nhttp://localhost:3000/change/${randomstring.generate(100)}/${id.toString()}`);
+    await mailing.sendEmail(req.body.email, 'Forgot Password', `You have to visit this link below to choose a new password:\nhttp://localhost:3000/change/${randomstring.generate(70)}/${id.toString()}`);
     res.redirect('/');
 });
 

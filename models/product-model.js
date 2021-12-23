@@ -62,7 +62,6 @@ async function countTotalSearchProductFunc(collection, keyword, type) {
         $count: 'total'
       }]).toArray();
   }
-
 }
 
 async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) {
@@ -122,6 +121,14 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) 
   }
 }
 
+async function countTotalProductFunc(collection){
+  return await collection.find().count();
+}
+
+async function getLimitProductFunc(collection, limit, offset){
+  return await collection.find().skip(offset).limit(limit).toArray()
+}
+
 async function getAllFunc(collection){
   return await collection.find().toArray();
 }
@@ -136,7 +143,9 @@ async function updateDescriptionFunc(collection, ProID, description){
   return await collection.updateMany({_id : ProID}, {$set: {proDescription: description}});
 }
 
-
+async function deleteProductFunc(collection, id) {
+  return await collection.deleteOne({ _id: id });
+}
 
 export default {
   async findTopExpiration(now) {
@@ -224,7 +233,6 @@ export default {
       await mongoClient.close()
     }
   },
-
   async searchByType(keyword, type, limit, offset, sort) {
     try {
       await mongoClient.connect();
@@ -238,7 +246,45 @@ export default {
       await mongoClient.close()
     }
   },
-
+  async countTotalProduct() {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      const result = await countTotalProductFunc(collection);
+      return result;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async getLimitProduct(limit, offset) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      const result = await getLimitProductFunc(collection, limit, offset);
+      return result;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async deleteProduct(proId) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      const id = new ObjectId(proId);
+      return await deleteProductFunc(collection, id);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
   async getAll() {
     try {
       await mongoClient.connect();

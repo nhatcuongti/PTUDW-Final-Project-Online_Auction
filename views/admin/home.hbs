@@ -1,0 +1,102 @@
+{{#section 'js'}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctxL = document.getElementById("lineChart").getContext('2d');
+        var myLineChart = new Chart(ctxL, {
+            type: 'line',
+            data: {
+                labels: ["0", "4", "8", "12", "16", "20", "24"],
+                datasets: [{
+                    label: "User đang online",
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    backgroundColor: [
+                        'rgba(105, 0, 132, .2)',
+                    ],
+                    borderColor: [
+                        'rgba(200, 99, 132, .7)',
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+{{/section}}
+
+<div class="col-md-9">
+    <div class="row p-4">
+        <div class="col-lg-4 p-2">
+            <div class="card text-white h-100" style="background-color : #3498DB">
+                <div class="row card-body">
+                    <div class="col-8">
+                        <p>
+                            User đang online
+                        </p>
+                        <b class="h1">
+                            30
+                        </b>
+                    </div>
+                    <div class="col-4">
+                        <i class="fa fa-user fa-4x" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <a class="m-auto h4" style="color:#3498DB">
+                        Chi tiết
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 p-2" style="height:250px">
+            <div class="card text-white h-100" style="background-color : #8E44AD">
+                <div class="row card-body">
+                    <div class="col-8">
+                        <p>
+                            Số lượng sản phẩm đang đấu giá
+                        </p>
+                        <b class="h1">
+                            245
+                        </b>
+                    </div>
+                    <div class="col-4">
+                        <i class="fa fa-gavel fa-4x" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <a class="m-auto h4" style="color:#8E44AD">
+                        Chi tiết
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 p-2">
+            <div class="card text-white h-100" style="background-color : #2ECC71">
+                <div class="row card-body">
+                    <div class="col-8">
+                        <p>
+                           User cần update
+                        </p>
+                        <b class="h1">
+                            50
+                        </b>
+                    </div>
+                    <div class="col-4">
+                        <i class="fa fa-arrow-up fa-4x" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <a class="m-auto h4" style="color:#2ECC71">
+                        Chi tiết
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row p-4">
+        <div class="col">
+            <canvas id="lineChart"></canvas>
+        </div>
+    </div>
+</div>

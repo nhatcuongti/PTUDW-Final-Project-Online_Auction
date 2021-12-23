@@ -1,0 +1,120 @@
+{{#section 'css'}}
+    <style>
+        .card-footer{
+            background-color: #fff;
+            border-radius: 50px !important;
+            margin: 5px;
+        }
+    </style>
+{{/section}}
+
+<div class="col-sm-9">
+    <div class="container">
+        <div class="row justify-content-between mb-3">
+            <b class="h3">Danh mục</b>
+            <a class="btn btn-outline-primary m-0" href="#" role="button">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                Quay lại
+            </a>
+        </div>
+        <div class="row">
+            <div class="card w-100">
+                <div class="card-header row m-0">
+                    <div class="col-md-6 mt-2">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                              <div class="input-group-text" id="btnGroupAddon">Hiển thị theo</div>
+                            </div>
+                            <div class="dropdow">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                  Danh mục
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="#">Thể Thao</a>
+                                  <a class="dropdown-item" href="#">Thời trang</a>
+                                  <a class="dropdown-item" href="#">Điện thoại</a>
+                                  <a class="dropdown-item" href="#">Máy tính</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <form action="/admin/product/search" method="get">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Nhập tên sản phẩm" aria-label="Recipient's username" aria-describedby="button-addon2" name="keyword">
+                                <div class="input-group-append">
+                                  <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+                                      Search
+                                      <i class="fa fa-search" aria-hidden="true"></i>
+                                  </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {{#if this.keyword}}
+                    <p class="has-text-centered h3">
+                        Kết quả tìm kiếm: {{this.keyword}}
+                    </p>
+                {{/if}}
+                {{#if this.curPage.check}}
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th scope="col" width="40%">Sản phẩm</th>
+                            <th scope="col" width="15%">Danh mục</th>
+                            <th scope="col" width="20%">Người đăng</th>
+                            <th scope="col" width="25%"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {{#each listResult}}
+                          <tr>
+                            <td>{{proName}}</td>
+                            <td>{{proType}}</td>
+                            <td>{{sellerInfo}}</td>
+                            <td class="text-right">
+                                <form action="/admin/product/delete" method="post">
+                                    <input type="hidden" name="id" value="{{_id}}">
+                                    <button class="btn btn-outline-danger" type="submit">
+                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                        Xóa
+                                    </button>
+                                    <a class="btn btn-outline-primary " href="/product/{{_id}}" role="button">
+                                        <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                                        Xem chi tiết
+                                    </a>
+                                </form>
+                            </td>
+                          </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                    <nav class="pagination is-right is-medium" role="navigation" aria-label="pagination">
+                        {{#if this.prevPage.check}}
+                            <a class="pagination-previous page-link" style="text-decoration:none" href="product?page={{this.prevPage.value}}">Previous page</a>
+                        {{/if}}
+                        {{#if this.nexPage.check}}
+                            <a class="pagination-next page-link" style="text-decoration:none" href="product?page={{this.nexPage.value}}">Next page</a>
+                        {{/if}}
+                        <ul class="pagination-list">
+                            {{#if this.prevPage.check}}
+                                <li><a class="pagination-link page-link" style="text-decoration:none" href="product?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                            {{/if}}
+                            <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+                            {{#if this.nexPage.check}}
+                                <li><a class="pagination-link page-link" style="text-decoration:none" href="product?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                            {{/if}}
+                        </ul>
+                    </nav>
+                {{else}}
+                    <p class="h2">
+                        Không tìm thấy kết quả sản phẩm
+                    </p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
