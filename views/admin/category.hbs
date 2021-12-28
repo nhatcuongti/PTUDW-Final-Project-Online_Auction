@@ -1,0 +1,131 @@
+{{#section 'css'}}
+    <style>
+        .card-footer{
+            background-color: #fff;
+            border-radius: 50px !important;
+            margin: 5px;
+        }
+    </style>
+{{/section}}
+
+<div class="col-sm-9">
+    <div class="container">
+
+        {{!--
+        <div class="row justify-content-between mb-3">
+            <b class="h3">Danh mục</b>
+            <a class="btn btn-outline-primary m-0" href="#" role="button">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                Quay lại
+            </a>
+        </div>
+        --}}
+
+        <div class="row">
+            <div class="card w-100">
+                <div class="card-header row justify-content-between m-0">
+                    <div class="col-lg-3 mb-2">
+
+                        {{!--
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                Danh mục
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">Thể Thao</a>
+                                <a class="dropdown-item" href="#">Âm Nhạc</a>
+                                <a class="dropdown-item" href="#">Điện Thoại</a>
+                            </div>
+                        </div>
+                        --}}
+
+                    </div>
+                    <div class="col-lg-6 mb-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
+                            <div class="input-group-append" >
+                                <button class="btn btn-outline-secondary"  type="button" id="button-addon2">
+                                  Search
+                                  <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 mb-2">
+                        <a class="btn btn-outline-success" href="/admin/category/add" role="button">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Thêm danh mục
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th scope="col">Danh mục</th>
+                            <th scope="col">Số lượng sản phẩm</th>
+                            <th scope="col"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {{#each this.listCategory}}
+                          <tr>
+                            <td>{{catParent}}</td>
+                            <td>{{quantity}}</td>
+                            <td class="text-right">
+                                <form action="/admin/category/delete" method="post">
+                                    <input type="hidden" value="{{_id}}" name="id">
+                                    <button class="btn btn-outline-danger " type="submit">
+                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                        Xóa
+                                    </button>
+                                    <a class="btn btn-outline-primary " href="/admin/category/{{_id}}" role="button">
+                                        <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                                        Chỉnh sửa
+                                    </a>
+                                </form>
+                            </td>
+                            {{#each catChild}}
+                                <tr>
+                                  <td>- {{name}}</td>
+                                  <td>{{quantity}}</td>
+                                  <td class="text-right">
+                                      <form action="/admin/category/child/delete" method="post">
+                                          <input type="hidden" value="{{_id}}" name="childId">
+                                          <input type="hidden" value="{{../_id}}" name="parentId">
+                                          <button class="btn btn-outline-danger " type="submit">
+                                              <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                              Xóa
+                                          </button>
+                                          <a class="btn btn-outline-primary " href="/admin/category/{{../_id}}/{{_id}}/{{name}}" role="button">
+                                              <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                                              Chỉnh sửa
+                                          </a>
+                                      </form>
+                                  </td>
+                                </tr>
+                            {{/each}}
+                          </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-muted">
+                    <nav class="pagination is-centered mt-5 mb-5 w-100" role="navigation" aria-label="pagination">
+                        <a class="pagination-previous">Previous</a>
+                        <a class="pagination-next">Next page</a>
+                        <ul class="pagination-list">
+                            <li><a class="pagination-link" aria-label="Goto page 1">1</a></li>
+                            <li><span class="pagination-ellipsis">&hellip;</span></li>
+                            <li><a class="pagination-link" aria-label="Goto page 45">45</a></li>
+                            <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
+                            <li><a class="pagination-link" aria-label="Goto page 47">47</a></li>
+                            <li><span class="pagination-ellipsis">&hellip;</span></li>
+                            <li><a class="pagination-link" aria-label="Goto page 86">86</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

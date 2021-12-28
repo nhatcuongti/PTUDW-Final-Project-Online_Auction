@@ -1,9 +1,6 @@
 import mongoClient from '../utils/db.js'
 import { ObjectId } from "mongodb";
 
-
-
-
 async function findByIDFunc(collection, id) {
   return await collection.find({ _id: id }).toArray();
 }
@@ -22,13 +19,97 @@ async function getCatParentFunc(collection){
 
 async function getCatChildFunc(collection, id){
   return await collection.find({_id : new ObjectId(id)}).toArray();
+  /*
+  return await collection.aggregate([
+    {$unwind: 'catChild'},
+    {$match: {'catChild._id': new ObjectId(id)}}
+  ]);
+   */
 }
 
 
 async function insertDataFunc(collection, data){
-   await collection.insertOne(data);
+  await collection.insertOne(data);
 }
 
+async function insertCatParentFunc(collection, name) {
+  const result = await collection.find({catParent:{$regex: new RegExp(`^${name}$`),$options: 'i'}}).toArray();
+  if (result.length === 0)
+    return await collection.insertOne({
+      catParent: name,
+      quantity: 0,
+      catChild: []
+    });
+  return {};
+}
+
+async function insertCatChildFunc(collection, catParentId, name) {
+  const result = await collection.find({
+    _id:new ObjectId(catParentId),
+    catChild:{$elemMatch:{
+        name:{$regex: new RegExp(`^${name}$`),$options: 'i'}
+    }}}).toArray();
+  if (result.length === 0)
+      return await collection.updateOne(
+          {_id :new ObjectId(catParentId)},
+          {$push:{catChild: {
+              _id: new ObjectId(),
+              name,
+              quantity: 0
+          }}}
+      );
+  return {};
+}
+
+async function deleteCatChildFunc(collection, catParentId, catChildId) {
+  const result = await collection.find({
+    _id:new ObjectId(catParentId),
+    catChild:{$elemMatch:{
+        _id: new ObjectId(catChildId),
+        quantity: 0
+      }}}).toArray();
+  if (result.length !== 0)
+    return await collection.updateOne(
+        { _id : new ObjectId(catParentId)},
+        { $pull: {catChild: {_id:new ObjectId(catChildId)}}}
+    );
+  return {};
+}
+
+async function editCatChildFunc(collection, catParentId, catChildId, name) {
+  const result = await collection.find({
+    _id:new ObjectId(catParentId),
+    catChild:{$elemMatch:{
+        name:{$regex: new RegExp(`^${name}$`),$options: 'i'}
+      }}}).toArray();
+  if (result.length === 0)
+    return await collection.findOneAndUpdate({
+          _id: new ObjectId(catParentId),
+          'catChild._id': new ObjectId(catChildId)},
+        {$set: {'catChild.$.name': name}}
+    );
+  return {};
+}
+
+async function editCatParentFunc(collection, catParentId, name) {
+  const result = await collection.find({catParent:{$regex: new RegExp(`^${name}$`),$options: 'i'}}).toArray();
+  if (result.length === 0)
+    return await collection.findOneAndUpdate({
+          _id: new ObjectId(catParentId)},
+        {$set: {catParent: name}}
+    );
+  return {};
+}
+
+async function deleteCatParentFunc(collection, catParentId) {
+  const result = await collection.findOneAndDelete({
+    _id: new ObjectId(catParentId),
+    quantity: 0
+  });
+  if (result.value === null)
+    return {};
+  return result;
+}
 
 export default {
   async findByID(id) {
@@ -115,5 +196,77 @@ export default {
     } finally {
       await mongoClient.close()
     }
-  }
+  },
+  async insertCatParent(name){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await insertCatParentFunc(collection, name);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async insertCatChild(catParentId, name){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await insertCatChildFunc(collection, catParentId, name);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async deleteCatChild(catParentId, catChildId){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await deleteCatChildFunc(collection, catParentId, catChildId);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async editCatChild(catParentId, catChildId, name){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await editCatChildFunc(collection, catParentId, catChildId, name);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async editCatParent(catParentId, name){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await editCatParentFunc(collection, catParentId, name);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async deleteCatParent(catParentId){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await deleteCatParentFunc(collection, catParentId);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
 };

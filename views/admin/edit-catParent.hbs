@@ -1,0 +1,61 @@
+<div class="col-sm-9">
+    <div class="containe">
+        <div class="row justify-content-between mb-3 border-bottom p-4">
+            <b class="h3">Chỉnh sửa danh mục cha</b>
+
+            {{!--
+            <a class="btn btn-outline-primary m-0" href="#" role="button">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                Quay lại
+            </a>
+            --}}
+
+        </div>
+        <div class="row justify-content-lg-center">
+            <div class="col-lg-6 col-sm-12 ">
+                <div class="card ">
+                    <form action="/admin/category/edit" method="post">
+                        <div class="card-body">
+
+                            {{!--
+                            <div class="field">
+                                <label class="label">
+                                    <span class="h3">
+                                        Danh mục cha
+                                    </span>
+                                </label>
+                                <select class="custom-select" id="inputGroupSelect01" >
+                                    <option selected>Điện Thoại</option>
+                                    <option value="1">Thể Thao</option>
+                                    <option value="2">Thời Trang</option>
+                                </select>
+                            </div>
+                            --}}
+
+                            <input type="hidden" value="{{this.category._id}}" name="id">
+                            <div class="field">
+                                <label class="label">Danh mục cũ</label>
+                                <div class="control">
+                                    <input class="input" type="text" value="{{this.category.catParent}}" disabled>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Danh mục mới</label>
+                                <div class="control">
+                                    <input class="input is-focused" type="text" placeholder="Tên danh mục" name="name" autofocus required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="button is-success is-rounded " type="submit">
+                                <span>
+                                    Thay đổi danh mục
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="col-sm-9">
+    <div class="container">
+        <div class="row justify-content-between mb-3 border-bottom p-4">
+            <b class="h3">Thêm Danh mục</b>
+
+            {{!--
+            <a class="btn btn-outline-primary m-0" href="#" role="button">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                Quay lại
+            </a>
+            --}}
+
+        </div>
+        <div class="row justify-content-lg-center">
+            <div class="col-lg-6 col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/admin/category/add" method="post">
+                            <div class="field">
+                                <label class="label">
+                                    <span>
+                                        Danh mục cha
+                                    </span>
+                                </label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="radio" name="type" value="child" required>
+                                        </div>
+                                    </div>
+                                    <select class="custom-select" name="parentId">
+                                        {{#each this.listCategory}}
+                                            <option value="{{_id}}">{{catParent}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="radio" name="type" value="parent">
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Thêm danh mục cha" aria-label="Text input with radio button" readonly>
+                                </div>
+                            </div>
+                            <div class="field">
+                                {{!--
+                                <label class="label">
+                                    <span>
+                                        Danh mục con
+                                    </span>
+                                </label>
+                                --}}
+                                <div class="control">
+                                    <input class="input" type="text" placeholder="Nhập danh mục cha/con" name="name" required>
+                                </div>
+                            </div>
+                            <button class="button is-success is-rounded w-100" type="submit">
+                                <span>
+                                    Thêm Danh Mục
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
