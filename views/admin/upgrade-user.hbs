@@ -1,0 +1,122 @@
+<div class="col-sm-9">
+    <div class="container">
+        <div class="row justify-content-between mb-3 border-bottom p-4">
+            <b class="h3">Xem xét nâng cấp</b>
+
+            {{!--
+            <a class="btn btn-outline-primary m-0" href="#" role="button">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                Quay lại
+            </a>
+            --}}
+
+        </div>
+        <div class="row justify-content-lg-between" style="border-bottom: 3px solid #000;">
+            <div class="col-lg-5 p-2 mb-5">
+                <div class="card text-white h-100" style="background-color : #2ECC71">
+                    <div class="row card-body">
+                        <div class="col-8">
+                            <p>
+                                Sản phẩm đấu giá thành công
+                            </p>
+                            <b class="h1">
+                                80%
+                            </b>
+                        </div>
+                        <div class="col-4">
+                            <i class="fa fa-check-square fa-5x" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <a class="m-auto h4" style="color:#2ECC71">
+                            Chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 p-2 mb-5">
+                <div class="card text-white h-100" style="background-color : #8E44AD">
+                    <div class="row card-body">
+                        <div class="col-8">
+                            <p>
+                                Điểm đánh giá
+                            </p>
+                            <b class="h1">
+                                92%
+                            </b>
+                        </div>
+                        <div class="col-4">
+                            <i class="fa fa-exclamation-circle fa-5x" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <a class="m-auto h4" style="color:#8E44AD">
+                            Chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 p-2 mb-5">
+                <div class="card text-white h-100" style="background-color : #F1C40F">
+                    <div class="row card-body">
+                        <div class="col-8">
+                            <p>
+                                Thời gian sử dụng
+                            </p>
+                            <b class="h1">
+                                3 giờ / ngày
+                            </b>
+                        </div>
+                        <div class="col-4">
+                            <i class="fa fa-clock-o fa-5x" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <a class="m-auto h4" style="color:#F1C40F">
+                            Chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 p-2 mb-5">
+                <div class="card text-white h-100" style="background-color : #2980b9">
+                    <div class="row card-body">
+                        <div class="col-8">
+                            <p>
+                                Số lượng sản phẩm tham gia
+                            </p>
+                            <b class="h1">
+                                52
+                            </b>
+                        </div>
+                        <div class="col-4">
+                            <i class="fa fa-money fa-5x" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <a class="m-auto h4" style="color:#2980b9">
+                            Chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-6 mb-3">
+                <form action="/admin/user/upgrade" method="post">
+                    <input type="hidden" name="id" value="{{this.id}}">
+                    <button type="submit" class="btn btn-primary w-100 btn-lg" style="border-radius: 50px;">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        <span>Chấp nhận nâng cấp</span>
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <a class="btn btn-success w-100 btn-lg" style="border-radius: 50px;" href="javascript:history.back()" role="button">
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    <span>Xem xét sau</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

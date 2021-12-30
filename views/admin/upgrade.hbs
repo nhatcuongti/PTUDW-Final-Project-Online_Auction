@@ -1,0 +1,92 @@
+<div class="col-sm-9">
+    <div class="container">
+
+        {{!--
+        <div class="row justify-content-between mb-3">
+            <b class="h3">Danh mục</b>
+            <a class="btn btn-outline-primary m-0" href="#" role="button">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                Quay lại
+            </a>
+        </div>
+        --}}
+
+        <div class="row">
+            <div class="card w-100">
+
+                {{!--
+                <div class="card-header row m-0 justify-content-lg-center">
+                    <div class="col-lg-6 mt-2">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Search..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                              <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+                                  Search
+                                  <i class="fa fa-search" aria-hidden="true"></i>
+                              </button>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+                --}}
+
+                <div class="card-body">
+                    {{#if this.curPage.check}}
+                        <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">Email</th>
+                                <th scope="col">Họ tên</th>
+                                <th scope="col">Ngày yêu cầu</th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {{#each this.listResult}}
+                              <tr>
+                                {{#each info}}
+                                    <td>{{email}}</td>
+                                    <td>{{name}}</td>
+                                    <td>{{../dateRequest}}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-end">
+                                            <a class="btn btn-outline-primary" href="/admin/user/upgrade/{{_id}}" role="button">
+                                                <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                                                Xem xét nâng cấp
+                                            </a>
+                                        </div>
+                                    </td>
+                                {{/each}}
+                              </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <nav class="pagination is-right is-medium" role="navigation" aria-label="pagination">
+                            {{#if this.prevPage.check}}
+                                <a class="pagination-previous page-link" style="text-decoration:none" href="upgrade?page={{this.prevPage.value}}">Previous page</a>
+                            {{/if}}
+                            {{#if this.nexPage.check}}
+                                <a class="pagination-next page-link" style="text-decoration:none" href="upgrade?page={{this.nexPage.value}}">Next page</a>
+                            {{/if}}
+                            <ul class="pagination-list">
+                                {{#if this.prevPage.check}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="upgrade?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                {{/if}}
+                                <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+                                {{#if this.nexPage.check}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="upgrade?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                {{/if}}
+                            </ul>
+                        </nav>
+                    </div>
+                {{else}}
+                    <p class="h2">
+                        Không tìm thấy kết quả
+                    </p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

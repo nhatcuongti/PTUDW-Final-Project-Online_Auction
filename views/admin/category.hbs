@@ -41,6 +41,8 @@
 
                     </div>
                     <div class="col-lg-6 mb-2">
+
+                        {{!--
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
                             <div class="input-group-append" >
@@ -50,8 +52,10 @@
                                 </button>
                             </div>
                         </div>
+                        --}}
+
                     </div>
-                    <div class="col-lg-3 mb-2">
+                    <div class="col-lg-3 mb-2 d-flex justify-content-end">
                         <a class="btn btn-outline-success" href="/admin/category/add" role="button">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             Thêm danh mục
@@ -59,14 +63,17 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    {{!--
                     <table class="table table-hover">
                         <thead>
                           <tr>
+                            <th scope="col"></th>
                             <th scope="col">Danh mục</th>
                             <th scope="col">Số lượng sản phẩm</th>
                             <th scope="col"></th>
                           </tr>
                         </thead>
+                        {{!--
                         <tbody>
                         {{#each this.listCategory}}
                           <tr>
@@ -109,21 +116,94 @@
                         {{/each}}
                         </tbody>
                     </table>
-                </div>
-                <div class="card-footer text-muted">
-                    <nav class="pagination is-centered mt-5 mb-5 w-100" role="navigation" aria-label="pagination">
-                        <a class="pagination-previous">Previous</a>
-                        <a class="pagination-next">Next page</a>
-                        <ul class="pagination-list">
-                            <li><a class="pagination-link" aria-label="Goto page 1">1</a></li>
-                            <li><span class="pagination-ellipsis">&hellip;</span></li>
-                            <li><a class="pagination-link" aria-label="Goto page 45">45</a></li>
-                            <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
-                            <li><a class="pagination-link" aria-label="Goto page 47">47</a></li>
-                            <li><span class="pagination-ellipsis">&hellip;</span></li>
-                            <li><a class="pagination-link" aria-label="Goto page 86">86</a></li>
-                        </ul>
-                    </nav>
+                    --}}
+                    {{#if this.curPage.check}}
+                        {{#each this.listResult}}
+                            <div class="panel-group mb-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-lg-5">
+                                                <h4 class="panel-title">
+                                                    <a class="text-decoration-none" data-toggle="collapse" href="#collapse{{_id}}">{{catParent}}</a>
+                                                </h4>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <strong>Số lượng: {{quantity}}</strong>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <form action="/admin/category/delete" method="post">
+                                                    <input type="hidden" value="{{_id}}" name="id">
+                                                    <button class="btn btn-outline-danger " type="submit">
+                                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                                        Xóa
+                                                    </button>
+                                                    <a class="btn btn-outline-primary " href="/admin/category/{{_id}}" role="button">
+                                                        <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                                                        Chỉnh sửa
+                                                    </a>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="collapse{{_id}}" class="panel-collapse collapse">
+                                        <ul class="list-group">
+                                            {{#each catChild}}
+                                                <li class="list-group-item">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <strong class="has-text-primary-dark">{{name}}</strong>
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <strong>Số lượng: {{quantity}}</strong>
+                                                        </div>
+                                                        <div class="col-lg-3 d-flex justify-content-end">
+                                                            <form action="/admin/category/child/delete" method="post">
+                                                                <input type="hidden" value="{{_id}}" name="childId">
+                                                                <input type="hidden" value="{{../_id}}" name="parentId">
+                                                                <button class="btn btn-outline-danger " type="submit">
+                                                                    <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                                                    Xóa
+                                                                </button>
+                                                                <a class="btn btn-outline-primary " href="/admin/category/{{../_id}}/{{_id}}/{{name}}" role="button">
+                                                                    <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                                                                    Chỉnh sửa
+                                                                </a>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {{/each}}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                    <div>
+                        <nav class="pagination is-right is-medium" role="navigation" aria-label="pagination">
+                            {{#if this.prevPage.check}}
+                                <a class="pagination-previous page-link" style="text-decoration:none" href="category?page={{this.prevPage.value}}">Previous page</a>
+                            {{/if}}
+                            {{#if this.nexPage.check}}
+                                <a class="pagination-next page-link" style="text-decoration:none" href="category?page={{this.nexPage.value}}">Next page</a>
+                            {{/if}}
+                            <ul class="pagination-list">
+                                {{#if this.prevPage.check}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="category?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                {{/if}}
+                                <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+                                {{#if this.nexPage.check}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="category?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                {{/if}}
+                            </ul>
+                        </nav>
+                    </div>
+                    {{else}}
+                        <p class="h2">
+                            Không tìm thấy kết quả
+                        </p>
+                    {{/if}}
                 </div>
             </div>
         </div>

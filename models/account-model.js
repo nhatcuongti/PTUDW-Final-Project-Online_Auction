@@ -92,6 +92,54 @@ async function bidderCommentFunc(dbo,collection, userID, proID, productDetail,ra
     }
 }
 
+async function countTotalAccountFunc(collection) {
+    return await collection.find().count();
+}
+
+async function getLimitAccountFunc(collection, limit, offset) {
+    return await collection.find().skip(offset).limit(limit).toArray()
+}
+
+async function lockAccountFunc(collection, id) {
+    await collection.updateOne({_id: new ObjectId(id)}, {$set: {verified: false}});
+}
+
+async function downgradeAccountFunc(collection, id) {
+    await collection.updateOne({_id: new ObjectId(id)}, {$set: {role: 'bidder'}});
+}
+
+async function unlockAccountFunc(collection, id) {
+    await collection.updateOne({_id: new ObjectId(id)}, {$set: {verified: true}});
+}
+
+async function getLimitUpgradeListFunc(collection, limit, offset) {
+    return await collection.aggregate([
+        {
+            $lookup: {
+                from: 'account',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'info'
+            }
+        }
+    ]).toArray();
+}
+
+async function countTotalUpgradeListFunc(collection) {
+    return await collection.find().count();
+}
+
+async function upgradeAccountFunc(collection, id) {
+    await collection.updateOne({_id: new ObjectId(id)}, {$set: {role: 'seller'}});
+}
+
+async function deleteUpgradeRequestFunc(collection, id) {
+    return await collection.findOneAndDelete({userId: new ObjectId(id)});
+}
+
+
+
+
 export default {
     async showFavoriteList(id) {
         try {
@@ -204,9 +252,115 @@ export default {
                 countGoodComment++
         })
         return countGoodComment;
-    }
-
-
+    },
+    async countTotalAccount() {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await countTotalAccountFunc(collection);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async getLimitAccount(limit, offset) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await getLimitAccountFunc(collection, limit, offset);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async lockAccount(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await lockAccountFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async downgradeAccount(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await downgradeAccountFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async unlockAccount(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await unlockAccountFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async getLimitUpgradeList(limit, offset) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('updateList');
+            return await getLimitUpgradeListFunc(collection, limit, offset);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async countTotalUpgradeList() {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('updateList');
+            return await countTotalUpgradeListFunc(collection);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async upgradeAccount(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await upgradeAccountFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async deleteUpgradeRequest(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('updateList');
+            return await deleteUpgradeRequestFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
 }
 
 

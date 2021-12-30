@@ -19,12 +19,6 @@ async function getCatParentFunc(collection){
 
 async function getCatChildFunc(collection, id){
   return await collection.find({_id : new ObjectId(id)}).toArray();
-  /*
-  return await collection.aggregate([
-    {$unwind: 'catChild'},
-    {$match: {'catChild._id': new ObjectId(id)}}
-  ]);
-   */
 }
 
 
@@ -110,6 +104,24 @@ async function deleteCatParentFunc(collection, catParentId) {
     return {};
   return result;
 }
+
+async function countTotalCategoryFunc(collection) {
+  return await collection.find().count();
+}
+
+async function getLimitCategoryFunc(collection, limit, offset) {
+  return await collection.find().skip(offset).limit(limit).toArray()
+}
+
+async function removeProductFromCatFunc(collection, catParent, catChild) {
+  return await collection.findOneAndUpdate({
+        catParent: catParent,
+        'catChild.name': catChild},
+      {$inc: {quantity: -1, 'catChild.$.quantity': -1}}
+      //{$set: {'catChild.$.quantity': 10}}
+  );
+}
+
 
 export default {
   async findByID(id) {
@@ -263,6 +275,42 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('category');
       return await deleteCatParentFunc(collection, catParentId);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async countTotalCategory(){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await countTotalCategoryFunc(collection);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async getLimitCategory(limit, offset){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await getLimitCategoryFunc(collection, limit, offset);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async removeProductFromCat(catParent, catChild){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      return await removeProductFromCatFunc(collection, catParent, catChild);
     } catch (e) {
       console.error(e);
     } finally {

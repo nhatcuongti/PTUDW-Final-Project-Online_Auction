@@ -1,0 +1,141 @@
+<div class="col-sm-9">
+    <div class="container">
+        {{!--
+        <div class="row justify-content-between mb-3">
+            <b class="h3">Danh mục</b>
+            <a class="btn btn-outline-primary m-0" href="#" role="button">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                Quay lại
+            </a>
+        </div>
+        --}}
+        <div class="row">
+            <div class="card w-100">
+                <div class="card-header row justify-content-between m-0">
+                    <div class="col-lg-4 mb-2">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                Loai người dùng
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item is-selected" href="#">Admin</a>
+                                <a class="dropdown-item" href="#">Bidder</a>
+                                <a class="dropdown-item" href="#">người bán</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 mb-2">
+
+                        {{!--
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
+                            <div class="input-group-append" >
+                                <button class="btn btn-outline-secondary"  type="button" id="button-addon2">
+                                  Search
+                                  <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        --}}
+
+                    </div>
+                    <div class="col-lg-3 mb-2 d-flex justify-content-end">
+                        <a class="btn btn-outline-success" href="#" role="button">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Thêm người dùng
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{#if this.curPage.check}}
+                        <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">Email</th>
+                                <th scope="col">Họ tên</th>
+                                <th scope="col">Loại người dùng</th>
+                                <th scope="col">Tình trạng</th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {{#each listResult}}
+                              <tr>
+                                <td>{{email}}</td>
+                                <td>{{name}}</td>
+                                <td>{{role}}</td>
+                                {{#if verified}}
+                                    <td>Hoạt động</td>
+                                {{else}}
+                                    <td>Chưa kích hoạt</td>
+                                {{/if}}
+                                <td class="row d-flex justify-content-center">
+                                    <form action="/admin/user/lock" method="post">
+                                        <input type="hidden" name="id" value="{{_id}}">
+                                        {{#if verified}}
+                                            <button class="btn btn-outline-danger" type="submit">
+                                        {{else}}
+                                            <button class="btn btn-outline-secondary" type="submit" disabled>
+                                        {{/if}}
+                                            <i class="fa fa-lock mr-2" aria-hidden="true"></i>
+                                            Khóa
+                                        </button>
+                                    </form>
+                                    <span>&nbsp;</span>
+                                    <form action="/admin/user/unlock" method="post">
+                                        <input type="hidden" name="id" value="{{_id}}">
+                                        {{#if verified}}
+                                            <button class="btn btn-outline-secondary" type="submit" disabled>
+                                        {{else}}
+                                            <button class="btn btn-outline-info" type="submit">
+                                        {{/if}}
+                                            <i class="fa fa-unlock mr-2" aria-hidden="true"></i>
+                                            Kích hoạt
+                                        </button>
+                                    </form>
+                                    <span>&nbsp;</span>
+                                    <form action="/admin/user/downgrade" method="post">
+                                        <input type="hidden" name="id" value="{{_id}}">
+                                        {{#if check}}
+                                            <button class="btn btn-outline-primary" type="submit">
+                                        {{else}}
+                                            <button class="btn btn-outline-secondary" type="submit" disabled>
+                                        {{/if}}
+                                            <i class="fa fa-arrow-circle-down mr-2" aria-hidden="true"></i>
+                                            Hạ cấp
+                                        </button>
+                                    </form>
+                                </td>
+                              </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <nav class="pagination is-right is-medium" role="navigation" aria-label="pagination">
+                            {{#if this.prevPage.check}}
+                                <a class="pagination-previous page-link" style="text-decoration:none" href="user?page={{this.prevPage.value}}">Previous page</a>
+                            {{/if}}
+                            {{#if this.nexPage.check}}
+                                <a class="pagination-next page-link" style="text-decoration:none" href="user?page={{this.nexPage.value}}">Next page</a>
+                            {{/if}}
+                            <ul class="pagination-list">
+                                {{#if this.prevPage.check}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="user?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                {{/if}}
+                                <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+                                {{#if this.nexPage.check}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="user?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                {{/if}}
+                            </ul>
+                        </nav>
+                {{else}}
+                    <p class="h2">
+                        Không tìm thấy kết quả
+                    </p>
+                {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

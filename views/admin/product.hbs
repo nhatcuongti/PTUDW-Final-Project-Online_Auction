@@ -104,18 +104,34 @@
                 </div>
                     <nav class="pagination is-right is-medium" role="navigation" aria-label="pagination">
                         {{#if this.prevPage.check}}
-                            <a class="pagination-previous page-link" style="text-decoration:none" href="product?page={{this.prevPage.value}}">Previous page</a>
+                            {{#if this.keyword}}
+                                <a class="pagination-previous page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&page={{this.prevPage.value}}">Previous page</a>
+                            {{else}}
+                                <a class="pagination-previous page-link" style="text-decoration:none" href="product?page={{this.prevPage.value}}">Previous page</a>
+                            {{/if}}
                         {{/if}}
                         {{#if this.nexPage.check}}
-                            <a class="pagination-next page-link" style="text-decoration:none" href="product?page={{this.nexPage.value}}">Next page</a>
+                            {{#if this.keyword}}
+                                <a class="pagination-next page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&page={{this.nexPage.value}}">Next page</a>
+                            {{else}}
+                                <a class="pagination-next page-link" style="text-decoration:none" href="product?page={{this.nexPage.value}}">Next page</a>
+                            {{/if}}
                         {{/if}}
                         <ul class="pagination-list">
                             {{#if this.prevPage.check}}
-                                <li><a class="pagination-link page-link" style="text-decoration:none" href="product?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                {{#if this.keyword}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                {{else}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="product?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                {{/if}}
                             {{/if}}
                             <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
                             {{#if this.nexPage.check}}
-                                <li><a class="pagination-link page-link" style="text-decoration:none" href="product?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                {{#if this.keyword}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                {{else}}
+                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="product?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                {{/if}}
                             {{/if}}
                         </ul>
                     </nav>

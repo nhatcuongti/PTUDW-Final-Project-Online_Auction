@@ -25,19 +25,26 @@
             <a href="/admin" class="navbar-item text-decoration-none">
                 <strong> Kênh quản trị </strong>
             </a>
-            <p class="navbar-item">
-                <strong> > </strong>
-            </p>
-            <a class="navbar-item text-decoration-none">
-                <strong>
-            {{#if this.productTab}}
-                Quản lý sản phẩm
-            {{/if}}
             {{#if this.homeTab}}
-                Thông tin chung
+            {{else}}
+                <p class="navbar-item">
+                    <strong> > </strong>
+                </p>
+            {{/if}}
+            {{#if this.productTab}}
+                <a class="navbar-item text-decoration-none" href="/admin/product">
+                <strong>
+                    Quản lý sản phẩm
             {{/if}}
             {{#if this.categoryTab}}
-                Quản lý danh mục
+                <a class="navbar-item text-decoration-none" href="/admin/category">
+                <strong>
+                    Quản lý danh mục
+            {{/if}}
+            {{#if this.userTab}}
+                <a class="navbar-item text-decoration-none" href="/admin/user">
+                <strong>
+                    Quản lý người dùng
             {{/if}}
                 </strong>
             </a>
@@ -48,6 +55,26 @@
                 <a class="navbar-item text-decoration-none">
                     <strong>
                         Chỉnh sửa danh mục
+                    </strong>
+                </a>
+            {{/if}}
+            {{#if this.upgrade}}
+                <p class="navbar-item">
+                    <strong> > </strong>
+                </p>
+                <a class="navbar-item text-decoration-none" href="/admin/user/upgrade">
+                    <strong>
+                        Danh sách nâng cấp
+                    </strong>
+                </a>
+            {{/if}}
+            {{#if this.detail}}
+                <p class="navbar-item">
+                    <strong> > </strong>
+                </p>
+                <a class="navbar-item text-decoration-none">
+                    <strong>
+                        Nâng cấp người dùng
                     </strong>
                 </a>
             {{/if}}
@@ -113,13 +140,26 @@
                 </ul>
                 <ul class="menu-list h4 mb-5">
                     <li>
-                        <a style="text-decoration:none" class="menu-label">
-                            <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                        {{#if this.userTab}}
+                            {{#if this.upgrade}}
+                                <a style="text-decoration:none" class="menu-label" href="/admin/user">
+                            {{else}}
+                                <a style="text-decoration:none" class="menu-label is-active" href="/admin/user">
+                            {{/if}}
+                        {{else}}
+                            <a style="text-decoration:none" class="menu-label" href="/admin/user">
+                        {{/if}}
+                                <i class="fa fa-users fa-2x" aria-hidden="true"></i>
                             Quản lý người dùng
                         </a>
                         <ul>
-                            <li><a>Thông tin chung</a></li>
-                            <li><a>Danh sách nâng cấp</a></li>
+                            <li>
+                                {{#if this.upgrade}}
+                                    <a style="text-decoration:none" class="is-active" href="/admin/user/upgrade">Danh sách nâng cấp</a>
+                                {{else}}
+                                    <a style="text-decoration:none" href="/admin/user/upgrade">Danh sách nâng cấp</a>
+                                {{/if}}
+                            </li>
                         </ul>
                     </li>
                 </ul>
