@@ -105,12 +105,46 @@ async function deleteCatParentFunc(collection, catParentId) {
   return result;
 }
 
-async function countTotalCategoryFunc(collection) {
-  return await collection.find().count();
+async function countTotalCategoryFunc(collection, keyword) {
+  if(keyword) {
+    const result = await collection.aggregate([
+      {
+        '$search':{
+          'index': 'custom2',
+          'text': {
+            'query': keyword,
+            'path': ['catParent', 'catChild.name'],
+            'fuzzy': {}
+          }
+        }
+      },
+      {
+        $count: 'total'
+      }]).toArray();
+    if(result.length === 0)
+      return 0;
+    return result[0].total;
+  }
+  else
+    return await collection.find().count();
 }
 
-async function getLimitCategoryFunc(collection, limit, offset) {
-  return await collection.find().skip(offset).limit(limit).toArray()
+async function getLimitCategoryFunc(collection, limit, offset, keyword) {
+  if(keyword) {
+    return await collection.aggregate([
+      {
+        '$search':{
+          'index': 'custom2',
+          'text': {
+            'query': keyword,
+            'path': ['catParent', 'catChild.name'],
+            'fuzzy': {}
+          }
+        }
+      }]).skip(offset).limit(limit).toArray();
+  }
+  else
+    return await collection.find().skip(offset).limit(limit).toArray()
 }
 
 async function removeProductFromCatFunc(collection, catParent, catChild) {
@@ -281,24 +315,24 @@ export default {
       await mongoClient.close()
     }
   },
-  async countTotalCategory(){
+  async countTotalCategory(keyword){
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('category');
-      return await countTotalCategoryFunc(collection);
+      return await countTotalCategoryFunc(collection, keyword);
     } catch (e) {
       console.error(e);
     } finally {
       await mongoClient.close()
     }
   },
-  async getLimitCategory(limit, offset){
+  async getLimitCategory(limit, offset, keyword){
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('category');
-      return await getLimitCategoryFunc(collection, limit, offset);
+      return await getLimitCategoryFunc(collection, limit, offset, keyword);
     } catch (e) {
       console.error(e);
     } finally {

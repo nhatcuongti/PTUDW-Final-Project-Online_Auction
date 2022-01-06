@@ -49,12 +49,12 @@
 
                     </div>
                     <div class="col-md-6 mt-2">
-                        <form action="/admin/product/search" method="get">
+                        <form action="/admin/product" method="get">
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="Nhập tên sản phẩm" aria-label="Recipient's username" aria-describedby="button-addon2" name="keyword">
                                 <div class="input-group-append">
-                                  <button class="btn btn-outline-secondary" type="button" id="button-addon2">
-                                      Search
+                                  <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+                                      Tìm kiếm
                                       <i class="fa fa-search" aria-hidden="true"></i>
                                   </button>
                                 </div>
@@ -62,18 +62,20 @@
                         </form>
                     </div>
                 </div>
+                {{!--
                 {{#if this.keyword}}
                     <p class="has-text-centered h3">
                         Kết quả tìm kiếm: {{this.keyword}}
                     </p>
                 {{/if}}
+                --}}
                 {{#if this.curPage.check}}
                 <div class="card-body">
                     <table class="table table-hover">
                         <thead>
                           <tr>
-                            <th scope="col" width="40%">Sản phẩm</th>
-                            <th scope="col" width="15%">Danh mục</th>
+                            <th scope="col" width="35%">Sản phẩm</th>
+                            <th scope="col" width="20%">Danh mục</th>
                             <th scope="col" width="20%">Người đăng</th>
                             <th scope="col" width="25%"></th>
                           </tr>
@@ -82,8 +84,10 @@
                         {{#each listResult}}
                           <tr>
                             <td>{{proName}}</td>
-                            <td>{{proType}}</td>
-                            <td>{{sellerInfo}}</td>
+                            <td>{{catParent}} > {{catChild}}</td>
+                            {{#each sellerInfo}}
+                                <td>{{email}}</td>
+                            {{/each}}
                             <td class="text-right">
                                 <form action="/admin/product/delete" method="post">
                                     <input type="hidden" name="id" value="{{_id}}">

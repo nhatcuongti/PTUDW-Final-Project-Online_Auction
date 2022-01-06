@@ -1,3 +1,5 @@
+import categoryModel from '../models/category-model.js'
+
 export default function (app) {
     app.use(async function (req, res, next) {
         // res.locals.lcCategories[1].isActive = 1;
@@ -8,24 +10,28 @@ export default function (app) {
         next();
     });
     app.use(async function (req, res, next) {
+        res.locals.bidderRole = false;
+        res.locals.sellerRole = false;
+        res.locals.adminRole = false;
         if (typeof (req.session.auth) === 'undefined')
             req.session.auth = false;
         res.locals.auth = req.session.auth;
         if(typeof (req.session.user) !== 'undefined' && req.session.user !== null ){
-            let temp = req.session.user;
-            res.locals.user = temp[0];
-            res.locals.bidderRole = false;
-            res.locals.sellerRole = false;
-            res.locals.adminRole = false;
-            if(temp[0].role === 'bidder')
+            const user = req.session.user[0];
+            res.locals.user = user;
+            if(user.role === 'bidder')
                 res.locals.bidderRole = true;
-            else if(temp[0].role === 'seller')
+            else if(user.role === 'seller')
                 res.locals.sellerRole = true;
             else
                 res.locals.adminRole = true;
-        }else {
-            res.locals.user = req.session.user;
         }
+        else
+            res.locals.user = req.session.user;
+        next();
+    });
+    app.use(async function (req, res, next) {
+        res.locals.categories = await categoryModel.getAll();
         next();
     });
 }

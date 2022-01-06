@@ -53,70 +53,59 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 {{#if auth}}
-                    {{#if bidderRole}}
-                        <div class="navbar-item has-dropdown is-hoverable">
-                            <div href="#" class="navbar-link">
-                                <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>
-                                <p class="ml-3">{{user.name}}</p>
-                            </div>
-                            <div class="navbar-dropdown">
-                                <a class="navbar-item text-decoration-none">
-                                    <i class="fa fa-user fa-2x mr-4" aria-hidden="true"></i>
-                                    Thông tin cá nhân
-                                </a>
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <div href="#" class="navbar-link">
+                            <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>
+                            <p class="ml-3">{{user.name}}</p>
+                        </div>
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item text-decoration-none">
+                                <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
+                                Thông tin cá nhân
+                            </a>
+                            {{#if bidderRole}}
                                 <a class="navbar-item text-decoration-none" href="../user/favorite">
                                     <i class="fa fa-heart-o fa-2x mr-2" aria-hidden="true"></i>
                                     Danh sách yêu thích
                                 </a>
                                 <a class="navbar-item text-decoration-none" href="../user/auction-history">
-                                    <i class="fa fa-history fa-2x mr-3" aria-hidden="true"></i>
+                                    <i class="fa fa-history fa-2x mr-2" aria-hidden="true"></i>
                                     Lịch sử đấu giá
                                 </a>
                                 <a class="navbar-item text-decoration-none" href="../user/comment-from-seller">
                                     <i class="fa fa-comment fa-2x mr-2" aria-hidden="true"></i>
                                     Đánh giá từ người bán
                                 </a>
-                                <hr class="navbar-divider">
-                                <form id="formLogout" action="/account/logout" method="post"></form>
-                                <a class="navbar-item text-decoration-none" href="javascript: $('#formLogout').submit();">
-                                    <i class="fa fa-sign-out fa-2x mr-2" aria-hidden="true"></i>
-                                    Đăng xuất
-                                </a>
-
-                            </div>
+                            {{else}}
+                                {{#if adminRole}}
+                                    <a class="navbar-item text-decoration-none" href="/admin">
+                                        <i class="fa fa-cube fa-2x mr-2" aria-hidden="true"></i>
+                                        Kênh quản trị
+                                    </a>
+                                {{else}}
+                                    <a class="navbar-item text-decoration-none">
+                                        <i class="fa fa-cube fa-2x mr-2" aria-hidden="true"></i>
+                                        Kênh người bán
+                                    </a>
+                                {{/if}}
+                            {{/if}}
+                            <hr class="navbar-divider">
+                            <form id="formLogout" action="/account/logout" method="post"></form>
+                            <a class="navbar-item text-decoration-none" href="javascript: $('#formLogout').submit();">
+                                <i class="fa fa-sign-out fa-2x mr-2" aria-hidden="true"></i>
+                                Đăng xuất
+                            </a>
                         </div>
-                    {{else}}
-                        <div class="navbar-item has-dropdown is-hoverable">
-                            <div href="#" class="navbar-link">
-                                <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>
-                                <p class="ml-3">Hao</p>
-                            </div>
-                            <div class="navbar-dropdown">
-                                <a class="navbar-item text-decoration-none">
-                                    <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
-                                    Thông tin cá nhân
-                                </a>
-                                <a class="navbar-item text-decoration-none">
-                                    <i class="fa fa-cube fa-2x mr-1" aria-hidden="true"></i>
-                                    Kênh Người bán
-                                </a>
-                                <hr class="navbar-divider">
-                                <a class="navbar-item text-decoration-none">
-                                    <i class="fa fa-sign-out fa-2x mr-2" aria-hidden="true"></i>
-                                    Đăng xuất
-                                </a>
-                            </div>
-                        </div>
-                    {{/if}}
+                    </div>
                 {{else}}
-                <div class="buttons">
-                    <a style="text-decoration:none" class="button is-primary" href="/login">
-                        <strong>Đăng nhập</strong>
-                    </a>
-                    <a style="text-decoration:none" class="button is-light" href="/signup">
-                        Đăng ký
-                    </a>
-                </div>
+                    <div class="buttons">
+                        <a style="text-decoration:none" class="button is-primary" href="/login">
+                            <strong>Đăng nhập</strong>
+                        </a>
+                        <a style="text-decoration:none" class="button is-light" href="/signup">
+                            Đăng ký
+                        </a>
+                    </div>
                 {{/if}}
             </div>
         </div>
@@ -124,32 +113,20 @@
 </nav>
 <div class="row">
     <nav class="navbar" id="homePageNavbar" role="navigation" aria-label="dropdown navigation">
-        <div class="navbar-item has-dropdown is-hoverable">
-            <a style="text-decoration:none" class="navbar-link" >
-                <strong> Thời trang </strong>
-            </a>
-            <div class="navbar-dropdown">
-                <a class="navbar-item">
-                    Quần áo
+        {{#each this.categories}}
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link" href="/product?category={{catParent}}">
+                    <strong>{{catParent}}</strong>
                 </a>
-                <a class="navbar-item">
-                    Giày dép
-                </a>
+                <div class="navbar-dropdown">
+                    {{#each catChild}}
+                        <a class="navbar-item" href="/product?category={{name}}">
+                            {{name}}
+                        </a>
+                    {{/each}}
+                </div>
             </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-            <a style="text-decoration:none" class="navbar-link">
-                <strong> Điện tử </strong>
-            </a>
-            <div class="navbar-dropdown">
-                <a class="navbar-item">
-                    Phần cứng
-                </a>
-                <a class="navbar-item">
-                    Laptop
-                </a>
-            </div>
-        </div>
+        {{/each}}
     </nav>
 </div>
 {{{body}}}

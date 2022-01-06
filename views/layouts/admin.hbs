@@ -78,24 +78,45 @@
                     </strong>
                 </a>
             {{/if}}
+            {{#if this.add}}
+                <p class="navbar-item">
+                    <strong> > </strong>
+                </p>
+                <a class="navbar-item text-decoration-none" href="/admin/user/add">
+                    <strong>
+                        Thêm người dùng
+                    </strong>
+                </a>
+            {{/if}}
+            {{#if this.addCat}}
+                <p class="navbar-item">
+                    <strong> > </strong>
+                </p>
+                <a class="navbar-item text-decoration-none" href="/admin/category/add">
+                    <strong>
+                        Thêm danh mục
+                    </strong>
+                </a>
+            {{/if}}
         </div>
         <div class="navbar-end">
             <div class="navbar-item has-dropdown is-hoverable">
                 <div class="navbar-link">
                     <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>
-                    <p class="ml-3">nhatcuongti</p>
+                    <p class="ml-3">{{user.name}}</p>
                 </div>
                 <div class="navbar-dropdown">
                     <a class="navbar-item text-decoration-none">
                         <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
                         Thông tin cá nhân
                     </a>
-                    <a class="navbar-item text-decoration-none">
+                    <a class="navbar-item text-decoration-none" href="/admin">
                         <i class="fa fa-cog fa-2x mr-2" aria-hidden="true"></i>
                         Kênh quản trị
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item text-decoration-none">
+                    <form id="formLogout" action="/account/logout" method="post"></form>
+                    <a class="navbar-item text-decoration-none" href="javascript: $('#formLogout').submit();">
                         <i class="fa fa-sign-out fa-2x mr-2" aria-hidden="true"></i>
                         Đăng xuất
                     </a>

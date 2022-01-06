@@ -4,49 +4,43 @@ import categoryModel from '../models/category-model.js'
 import accountModel from '../models/account-model.js'
 import {ObjectId} from "mongodb";
 import moment from "moment";
+import bcrypt from "bcryptjs";
+import entryModel from "../models/entry-model.js";
 
 const router = express.Router();
 
 router.get('/', async function (req, res) {
+    const totalUser = await accountModel.countTotalAccount();
+    const totalProduct = await productModel.countTotalProduct();
+    const totalUpgrade = await accountModel.countTotalUpgradeList();
     res.render('admin/home', {
         layout: 'admin.hbs',
         homeTab: true,
+        totalUser,
+        totalProduct,
+        totalUpgrade
     });
 });
 router.get('/product', async function (req, res) {
-    const limit = 6;
-    const page = req.query.page || 1;
-    const offset = (page - 1) * limit;
-    const total = await productModel.countTotalProduct();
-    let nPage = Math.floor(total / limit);
-    if (total % limit > 0) nPage++;
-    const listResult = await productModel.getLimitProduct(limit, offset);
-    let nexPage = {check: true, value: (+page + 1)};
-    let curPage = {check: (+page > 0 && +page <= nPage && listResult.length != 0 ), value: +page};
-    let prevPage = {check: true, value: (+page - 1)};
-    if (nexPage.value === nPage + 1) nexPage.check = false;
-    if (prevPage.value === 0) prevPage.check = false;
-    if (total === 0) curPage.check = false;
-    res.render('admin/product', {
-        layout: 'admin.hbs',
-        productTab: true,
-        nexPage,
-        curPage,
-        prevPage,
-        listResult
-    });
-});
-
-router.get('/product/search', async function (req, res) {
     const keyword = req.query.keyword;
     const limit = 6;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
-    const temp = await productModel.countTotalSearchProduct(keyword, 'name');
-    const total = temp[0].total;
+    let total = 0;
+    let listResult;
+    if(keyword) {
+        const result = await productModel.countTotalSearchProduct(keyword, 'name');
+        if(result.length !== 0)
+            total = result[0].total;
+    }
+    else
+        total = await productModel.countTotalProduct();
     let nPage = Math.floor(total / limit);
     if (total % limit > 0) nPage++;
-    const listResult = await productModel.searchByType(keyword, 'name', limit, offset, 'time-descending');
+    if (keyword)
+        listResult = await productModel.searchByType(keyword, 'name', limit, offset, 'time-descending');
+    else
+        listResult = await productModel.getLimitProduct(limit, offset);
     let nexPage = {check: true, value: (+page + 1)};
     let curPage = {check: (+page > 0 && +page <= nPage && listResult.length != 0 ), value: +page};
     let prevPage = {check: true, value: (+page - 1)};
@@ -60,7 +54,7 @@ router.get('/product/search', async function (req, res) {
         curPage,
         prevPage,
         listResult,
-        keyword,
+        keyword
     });
 });
 
@@ -72,13 +66,14 @@ router.post('/product/delete', async function (req, res) {
 });
 
 router.get('/category', async function (req, res) {
+    const keyword = req.query.keyword;
     const limit = 6;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
-    const total = await categoryModel.countTotalCategory();
+    const total = await categoryModel.countTotalCategory(keyword);
     let nPage = Math.floor(total / limit);
     if (total % limit > 0) nPage++;
-    const listResult = await categoryModel.getLimitCategory(limit, offset);
+    const listResult = await categoryModel.getLimitCategory(limit, offset, keyword);
     let nexPage = {check: true, value: (+page + 1)};
     let curPage = {check: (+page > 0 && +page <= nPage && listResult.length != 0 ), value: +page};
     let prevPage = {check: true, value: (+page - 1)};
@@ -99,6 +94,7 @@ router.get('/category/add', async function (req, res) {
     const listCategory = await categoryModel.getAll();
     res.render('admin/add-category', {
         layout: 'admin.hbs',
+        addCat: true,
         categoryTab: true,
         listCategory
     });
@@ -156,13 +152,15 @@ router.post('/category/child/delete', async function (req, res) {
 });
 
 router.get('/user', async function (req, res) {
+    const role = req.query.role;
+    const keyword = req.query.keyword;
     const limit = 6;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
-    const total = await accountModel.countTotalAccount();
+    const total = await accountModel.countTotalAccount(role, keyword);
     let nPage = Math.floor(total / limit);
     if (total % limit > 0) nPage++;
-    const listResult = await accountModel.getLimitAccount(limit, offset);
+    const listResult = await accountModel.getLimitAccount(limit, offset, role, keyword);
     let nexPage = {check: true, value: (+page + 1)};
     let curPage = {check: (+page > 0 && +page <= nPage && listResult.length != 0 ), value: +page};
     let prevPage = {check: true, value: (+page - 1)};
@@ -179,7 +177,9 @@ router.get('/user', async function (req, res) {
         listResult,
         nexPage,
         curPage,
-        prevPage
+        prevPage,
+        role,
+        keyword,
     });
 });
 
@@ -226,7 +226,6 @@ router.get('/user/upgrade', async function (req, res) {
 });
 
 router.get('/user/upgrade/:id', async function (req, res) {
-
     res.render('admin/upgrade-user', {
         layout: 'admin.hbs',
         userTab: true,
@@ -241,5 +240,30 @@ router.post('/user/upgrade', async function (req, res) {
     await accountModel.deleteUpgradeRequest(req.body.id);
     res.redirect('/admin/user/upgrade');
 });
+
+router.get('/user/add', async function (req, res) {
+    res.render('admin/add-user', {
+        layout: 'admin.hbs',
+        userTab: true,
+        add: true,
+    });
+});
+
+router.post('/user/add', async function (req, res) {
+    const salt = bcrypt.genSaltSync(10);
+    let account = {
+        email: req.body.email,
+        name: req.body.name,
+        address: req.body.address,
+        pass: bcrypt.hashSync(req.body.pass, salt),
+        role: req.body.type,
+        badScore: 0,
+        goodScore: 0,
+        verified: true
+    };
+    await entryModel.addAccount(account);
+    res.redirect('/admin/user');
+});
+
 
 export default router;

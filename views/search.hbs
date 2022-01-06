@@ -1,22 +1,33 @@
-<p class="has-text-centered h2">
-    Kết quả tìm kiếm: {{this.keyword}}
-</p>
-<div class="d-flex justify-content-end">
-    <div>
-        <span>Sắp xếp theo:</span>
-        <select class="bootstrap-select" onchange="location = this.value;">
-            {{#if this.sortType}}
-                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}" selected>Giá tăng dần</option>
-                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending">Thời gian kết thúc giảm dần</option>
-            {{else}}
-                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}">Giá tăng dần</option>
-                <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending" selected>Thời gian kết thúc giảm dần</option>
-            {{/if}}
-        </select>
-    </div>
-</div>
-<p>&nbsp;</p>
+{{#if this.product}}
+{{else}}
+    {{#if this.type}}
+        <p class="has-text-centered h2">
+            Danh mục: {{this.category}}
+        </p>
+    {{else}}
+        <p class="has-text-centered h2">
+            Kết quả tìm kiếm: {{this.keyword}}
+        </p>
+        <div class="d-flex justify-content-end">
+            <div>
+                <span>Sắp xếp theo:</span>
+                <select class="bootstrap-select" onchange="location = this.value;">
+                    {{#if this.sortType}}
+                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}" selected>Giá tăng dần</option>
+                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending">Thời gian kết thúc giảm dần</option>
+                    {{else}}
+                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}">Giá tăng dần</option>
+                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending" selected>Thời gian kết thúc giảm dần</option>
+                    {{/if}}
+                </select>
+            </div>
+        </div>
+    {{/if}}
+{{/if}}
+
 {{#if this.curPage.check}}
+
+    {{!--
     <div class="row">
         {{#each this.listResult}}
             <div class="col-3 d-flex justify-content-center">
@@ -54,19 +65,73 @@
         {{/each}}
     </div>
     <p>&nbsp;</p>
+    --}}
+    <div class="container">
+        <div class="row mt-3 d-flex justify-content-center">
+            {{#each this.listResult}}
+                <a class="col-lg-4 p-3" style="text-decoration:none" href="/product/{{_id}}">
+                    <div class="card h-100">
+                        <img src="">
+                        <div class="card-body">
+                            <p class="h4 font-weight-bold">{{proName}}</p>
+                            {{#if check}}
+                                <p class="has-text-primary font-italic">Sản phẩm mới</p>
+                            {{/if}}
+                            <div class="has-text-info font-weight-bold">
+                                {{#each curBidderInfo}}
+                                    <p>Người đặt hiện tại: {{email}}</p>
+                                {{/each}}
+                                <p>Ngày đăng sản phẩm: {{proStartDate}}</p>
+                                <p>Thời gian còn lại: {{format_number time}} giờ</p>
+                                <p>Số lượt ra giá: {{proBidQuantity}} lượt</p>
+                            </div>
+                        </div>
+                        <div class="has-background-grey-lighter">
+                            <div class="card-footer justify-content-between">
+                                <p class="h4 has-text-danger">
+                                    Giá đặt hiện tại: {{format_number proCurBidPrice}} VNĐ
+                                </p>
+                            </div>
+                            <div class="card-footer justify-content-between">
+                                <p class="h4 has-text-danger">
+                                    Giá mua ngay: {{format_number proBuyNowPrice}} VNĐ
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {{/each}}
+        </div>
+    </div>
     <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
         {{#if this.prevPage.check}}
             {{#if this.sortType}}
                 <a class="pagination-previous page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}">Previous page</a>
             {{else}}
-                <a class="pagination-previous page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}&sort=time-descending">Previous page</a>
+                {{#if this.product}}
+                    <a class="pagination-previous page-link" style="text-decoration:none" href="/product?page={{this.prevPage.value}}">Previous page</a>
+                {{else}}
+                    {{#if this.type}}
+                        <a class="pagination-previous page-link" style="text-decoration:none" href="/product?category={{this.category}}&page={{this.prevPage.value}}">Previous page</a>
+                    {{else}}
+                        <a class="pagination-previous page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}&sort=time-descending">Previous page</a>
+                    {{/if}}
+                {{/if}}
             {{/if}}
         {{/if}}
         {{#if this.nexPage.check}}
             {{#if this.sortType}}
                 <a class="pagination-next page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}">Next page</a>
             {{else}}
-                <a class="pagination-next page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}&sort=time-descending">Next page</a>
+                {{#if this.product}}
+                    <a class="pagination-next page-link" style="text-decoration:none" href="/product?page={{this.nexPage.value}}">Next page</a>
+                {{else}}
+                    {{#if this.type}}
+                        <a class="pagination-next page-link" style="text-decoration:none" href="/product?category={{this.category}}&page={{this.nexPage.value}}">Next page</a>
+                    {{else}}
+                        <a class="pagination-next page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}&sort=time-descending">Next page</a>
+                    {{/if}}
+                {{/if}}
             {{/if}}
         {{/if}}
         <ul class="pagination-list">
@@ -74,7 +139,15 @@
                 {{#if this.sortType}}
                     <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
                 {{else}}
-                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}&sort=time-descending">{{this.prevPage.value}}</a></li>
+                    {{#if this.product}}
+                        <li><a class="pagination-link page-link" style="text-decoration:none" href="/product?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                    {{else}}
+                        {{#if this.type}}
+                            <li><a class="pagination-link page-link" style="text-decoration:none" href="/product?category={{this.category}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                        {{else}}
+                            <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}&sort=time-descending">{{this.prevPage.value}}</a></li>
+                        {{/if}}
+                    {{/if}}
                 {{/if}}
             {{/if}}
                 <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
@@ -82,7 +155,15 @@
                 {{#if this.sortType}}
                     <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
                 {{else}}
-                    <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}&sort=time-descending">{{this.nexPage.value}}</a></li>
+                    {{#if this.product}}
+                        <li><a class="pagination-link page-link" style="text-decoration:none" href="/product?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                    {{else}}
+                        {{#if this.type}}
+                            <li><a class="pagination-link page-link" style="text-decoration:none" href="/product?category={{this.category}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                        {{else}}
+                            <li><a class="pagination-link page-link" style="text-decoration:none" href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}&sort=time-descending">{{this.nexPage.value}}</a></li>
+                        {{/if}}
+                    {{/if}}
                 {{/if}}
             {{/if}}
         </ul>

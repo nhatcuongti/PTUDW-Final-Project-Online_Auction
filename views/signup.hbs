@@ -8,21 +8,21 @@
                const pass = $('#password').val();
                const pass2 = $('#rePassword').val();
                if (pass != pass2) {
-                   document.getElementById('text').textContent = 'Re-enter password is wrong.';
+                   document.getElementById('text').innerHTML = '<strong class="has-text-danger">Re-enter password is wrong.</strong>';
                    return;
                }
                $.getJSON(`/account?email=${email}`, function (data) {
                    if (data === false) {
-                       document.getElementById('text').textContent = 'This email address is already being used.'
+                       document.getElementById('text').innerHTML = '<strong class="has-text-danger">This email address is already being used.</strong>'
                    }
                    else {
-                       document.getElementById('text').textContent = 'Successfully! Check your email to verify account.';
+                       document.getElementById('text').innerHTML = '<strong class="has-text-success">Successfully! Check your email to verify account.</strong>';
                        $('#frmRegister').off('submit').submit();
                    }
                });
            }
            else
-               document.getElementById('text').textContent = 'Please enter the correct captcha.';
+               document.getElementById('text').innerHTML = '<strong class="has-text-danger">Please enter the correct captcha.</strong>';
         });
     </script>
 {{/section}}
@@ -78,7 +78,7 @@
           </div>
         </div>
           <div class="g-recaptcha" data-sitekey="6Lek3qMdAAAAALlUpGK687SRmp9-ktCr4DWjuO3Z"></div>
-          <p><strong class="has-text-danger" id="text"></strong></p>
+          <p id="text"></p>
           <div class="d-flex justify-content-end">
             <button class="button is-success is-rounded" type="submit">Đăng ký</button>
           </div>

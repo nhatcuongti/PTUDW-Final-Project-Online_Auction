@@ -1,30 +1,3 @@
-{{#section 'js'}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        var ctxL = document.getElementById("lineChart").getContext('2d');
-        var myLineChart = new Chart(ctxL, {
-            type: 'line',
-            data: {
-                labels: ["0", "4", "8", "12", "16", "20", "24"],
-                datasets: [{
-                    label: "User đang online",
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    backgroundColor: [
-                        'rgba(105, 0, 132, .2)',
-                    ],
-                    borderColor: [
-                        'rgba(200, 99, 132, .7)',
-                    ],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
-    </script>
-{{/section}}
-
 <div class="col-md-9">
     <div class="row p-4">
         <div class="col-lg-4 p-2">
@@ -32,10 +5,10 @@
                 <div class="row card-body">
                     <div class="col-8">
                         <p>
-                            User đang online
+                            Số người dùng
                         </p>
                         <b class="h1">
-                            30
+                            {{this.totalUser}}
                         </b>
                     </div>
                     <div class="col-4">
@@ -43,7 +16,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-muted">
-                    <a class="m-auto h4" style="color:#3498DB">
+                    <a class="m-auto h4 has-text-light" href="/admin/user">
                         Chi tiết
                     </a>
                 </div>
@@ -54,10 +27,10 @@
                 <div class="row card-body">
                     <div class="col-8">
                         <p>
-                            Số lượng sản phẩm đang đấu giá
+                            Số lượng sản phẩm
                         </p>
                         <b class="h1">
-                            245
+                            {{this.totalProduct}}
                         </b>
                     </div>
                     <div class="col-4">
@@ -65,7 +38,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-muted">
-                    <a class="m-auto h4" style="color:#8E44AD">
+                    <a class="m-auto h4 has-text-light" href="/admin/product">
                         Chi tiết
                     </a>
                 </div>
@@ -76,10 +49,10 @@
                 <div class="row card-body">
                     <div class="col-8">
                         <p>
-                           User cần update
+                           Người dùng cần nâng cấp
                         </p>
                         <b class="h1">
-                            50
+                            {{this.totalUpgrade}}
                         </b>
                     </div>
                     <div class="col-4">
@@ -87,7 +60,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-muted">
-                    <a class="m-auto h4" style="color:#2ECC71">
+                    <a class="m-auto h4 has-text-light" href="/admin/user/upgrade">
                         Chi tiết
                     </a>
                 </div>

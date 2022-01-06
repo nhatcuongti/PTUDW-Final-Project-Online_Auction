@@ -14,13 +14,59 @@ router.get('/product/:id', async function (req, res) {
     if(typeof (proInfo) === 'undefined')
         res.redirect('/');
     else {
-        const listSimilarity = await productModel.findByCategoryParent(proInfo[0].proType, 5);
+        const listSimilarity = await productModel.findByCategoryParent(proInfo[0].catParent, 5);
         res.render('detail', {
             proInfo,
             listSimilarity
         });
     }
 });
+
+router.get('/product', async function (req, res) {
+    const category = req.query.category;
+    let product = false;
+    let type = false;
+    const limit = 9;
+    const page = req.query.page || 1;
+    const offset = (page - 1) * limit;
+    let total = 0;
+    if (category)
+        total = await productModel.countTotalCategoryProduct(category);
+    else
+        total = await productModel.countTotalProduct();
+    let nPage = Math.floor(total / limit);
+    if (total % limit > 0) nPage++;
+    let listResult;
+    if (category) {
+        listResult = await productModel.getLimitCategoryProduct(limit, offset, category);
+        type = true;
+    }
+    else {
+        listResult = await productModel.getLimitProduct(limit, offset);
+        product = true
+    }
+    let nexPage = {check: true, value: (+page + 1)};
+    let curPage = {check: (+page > 0 && +page <= nPage && listResult.length != 0 ), value: +page};
+    let prevPage = {check: true, value: (+page - 1)};
+    if (nexPage.value === nPage + 1) nexPage.check = false;
+    if (prevPage.value === 0) prevPage.check = false;
+    if (total === 0) curPage.check = false;
+    for (const item of listResult) {
+        item.time = Math.ceil(Math.abs(item.proEndDate - new Date()) / (1000 * 60 * 60));
+        item.check = Math.ceil(Math.abs(new Date() - item.proStartDate) / (1000 * 60)) <= 30;
+        item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY');
+    }
+    res.render('search', {
+        nexPage,
+        curPage,
+        prevPage,
+        listResult,
+        product,
+        type,
+        category
+    });
+});
+
 router.get('/', async function (req, res) {
     let now = new Date();
     const listExpiration = await productModel.findTopExpiration(now);
@@ -49,11 +95,13 @@ router.get('/search', async function (req, res) {
     if(sort === 'price-ascending') sortType = true;
     const keyword = req.query.keyword;
     const type = req.query.with;
+    let total = 0;
     const limit = 9;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
-    const temp = await productModel.countTotalSearchProduct(keyword, type);
-    const total = temp[0].total;
+    const result = await productModel.countTotalSearchProduct(keyword, type);
+    if(result.length !== 0)
+        total = result[0].total;
     let nPage = Math.floor(total / limit);
     if (total % limit > 0) nPage++;
     const listResult = await productModel.searchByType(keyword, type, limit, offset, sort);
@@ -133,7 +181,8 @@ router.post('/login', async function (req, res) {
 router.post('/account/logout',  async function (req, res) {
     req.session.auth = false;
     req.session.user = null;
-    res.redirect('/');
+    req.session.retUrl = '/';
+    res.redirect(req.headers.referer);
 });
 
 router.get('/account', async function (req, res) {

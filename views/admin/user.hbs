@@ -15,32 +15,31 @@
                     <div class="col-lg-4 mb-2">
                         <div class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                Loai người dùng
+                                Loại người dùng
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item is-selected" href="#">Admin</a>
-                                <a class="dropdown-item" href="#">Bidder</a>
-                                <a class="dropdown-item" href="#">người bán</a>
+                                <a class="dropdown-item is-selected" href="/admin/user?role=admin">Người quản trị</a>
+                                <a class="dropdown-item" href="/admin/user?role=bidder">Người đấu giá</a>
+                                <a class="dropdown-item" href="/admin/user?role=seller">Người bán</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-5 mb-2">
-
-                        {{!--
+                    <form action="/admin/user" method="get">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
+                            <input type="text" class="form-control" placeholder="Nhập tên người dùng" aria-label="Search" aria-describedby="button-addon2" name="keyword">
                             <div class="input-group-append" >
-                                <button class="btn btn-outline-secondary"  type="button" id="button-addon2">
-                                  Search
+                                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+                                  Tìm kiếm
                                   <i class="fa fa-search" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
-                        --}}
+                    </form>
 
                     </div>
                     <div class="col-lg-3 mb-2 d-flex justify-content-end">
-                        <a class="btn btn-outline-success" href="#" role="button">
+                        <a class="btn btn-outline-success" href="/admin/user/add" role="button">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             Thêm người dùng
                         </a>
@@ -114,18 +113,51 @@
                     <div>
                         <nav class="pagination is-right is-medium" role="navigation" aria-label="pagination">
                             {{#if this.prevPage.check}}
-                                <a class="pagination-previous page-link" style="text-decoration:none" href="user?page={{this.prevPage.value}}">Previous page</a>
+                                {{#if this.role}}
+                                    <a class="pagination-previous page-link" style="text-decoration:none" href="user?role={{this.role}}&page={{this.prevPage.value}}">Previous page</a>
+                                {{else}}
+                                    {{#if this.keyword}}
+                                        <a class="pagination-previous page-link" style="text-decoration:none" href="user?keyword={{this.keyword}}&page={{this.prevPage.value}}">Previous page</a>
+                                    {{else}}
+                                        <a class="pagination-previous page-link" style="text-decoration:none" href="user?page={{this.prevPage.value}}">Previous page</a>
+                                    {{/if}}
+                                {{/if}}
                             {{/if}}
                             {{#if this.nexPage.check}}
-                                <a class="pagination-next page-link" style="text-decoration:none" href="user?page={{this.nexPage.value}}">Next page</a>
+
+                                {{#if this.role}}
+                                    <a class="pagination-next page-link" style="text-decoration:none" href="user?role={{this.role}}&page={{this.nexPage.value}}">Next page</a>
+                                {{else}}
+                                    {{#if this.keyword}}
+                                        <a class="pagination-next page-link" style="text-decoration:none" href="user?keyword={{this.keyword}}&page={{this.nexPage.value}}">Next page</a>
+                                    {{else}}
+                                        <a class="pagination-next page-link" style="text-decoration:none" href="user?page={{this.nexPage.value}}">Next page</a>
+                                    {{/if}}
+                                {{/if}}
                             {{/if}}
                             <ul class="pagination-list">
                                 {{#if this.prevPage.check}}
-                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="user?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                    {{#if this.role}}
+                                        <li><a class="pagination-link page-link" style="text-decoration:none" href="user?role={{this.role}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                    {{else}}
+                                        {{#if this.keyword}}
+                                            <li><a class="pagination-link page-link" style="text-decoration:none" href="user?keyword={{this.keyword}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                        {{else}}
+                                            <li><a class="pagination-link page-link" style="text-decoration:none" href="user?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                        {{/if}}
+                                    {{/if}}
                                 {{/if}}
                                 <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
                                 {{#if this.nexPage.check}}
-                                    <li><a class="pagination-link page-link" style="text-decoration:none" href="user?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                    {{#if this.role}}
+                                        <li><a class="pagination-link page-link" style="text-decoration:none" href="user?role={{this.role}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                    {{else}}
+                                        {{#if this.keyword}}
+                                            <li><a class="pagination-link page-link" style="text-decoration:none" href="user?keyword={{this.keyword}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                        {{else}}
+                                            <li><a class="pagination-link page-link" style="text-decoration:none" href="user?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                        {{/if}}
+                                    {{/if}}
                                 {{/if}}
                             </ul>
                         </nav>

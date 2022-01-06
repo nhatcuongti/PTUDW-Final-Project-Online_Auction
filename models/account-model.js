@@ -92,12 +92,50 @@ async function bidderCommentFunc(dbo,collection, userID, proID, productDetail,ra
     }
 }
 
-async function countTotalAccountFunc(collection) {
-    return await collection.find().count();
+async function countTotalAccountFunc(collection, role, keyword) {
+    if(role)
+        return await collection.find({role: role}).count();
+    else if(keyword) {
+        const result = await collection.aggregate([
+            {
+                '$search':{
+                    'index': 'custom1',
+                    'text': {
+                        'query': keyword,
+                        'path': 'email',
+                        'fuzzy': {}
+                    }
+                }
+            },
+            {
+                $count: 'total'
+            }]).toArray();
+        if(result.length === 0)
+            return 0;
+        return result[0].total;
+    }
+    else
+        return await collection.find().count();
 }
 
-async function getLimitAccountFunc(collection, limit, offset) {
-    return await collection.find().skip(offset).limit(limit).toArray()
+async function getLimitAccountFunc(collection, limit, offset, role, keyword) {
+    if(role)
+        return await collection.find({role: role}).skip(offset).limit(limit).toArray()
+    else if(keyword) {
+        return await collection.aggregate([
+            {
+                '$search':{
+                    'index': 'custom1',
+                    'text': {
+                        'query': keyword,
+                        'path': 'email',
+                        'fuzzy': {}
+                    }
+                }
+            }]).skip(offset).limit(limit).toArray();
+    }
+    else
+        return await collection.find().skip(offset).limit(limit).toArray()
 }
 
 async function lockAccountFunc(collection, id) {
@@ -137,9 +175,6 @@ async function deleteUpgradeRequestFunc(collection, id) {
     return await collection.findOneAndDelete({userId: new ObjectId(id)});
 }
 
-
-
-
 export default {
     async showFavoriteList(id) {
         try {
@@ -169,8 +204,6 @@ export default {
         })
         return listTemp;
     },
-
-
     async deleteOneFavorite(userID, proID) {
         try {
             await mongoClient.connect();
@@ -183,7 +216,6 @@ export default {
             await mongoClient.close()
         }
     },
-
     async addOneFavorite(userID, proID) {
         try {
             await mongoClient.connect();
@@ -253,24 +285,24 @@ export default {
         })
         return countGoodComment;
     },
-    async countTotalAccount() {
+    async countTotalAccount(role, keyword) {
         try {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('account');
-            return await countTotalAccountFunc(collection);
+            return await countTotalAccountFunc(collection, role, keyword);
         } catch (e) {
             console.error(e);
         } finally {
             await mongoClient.close()
         }
     },
-    async getLimitAccount(limit, offset) {
+    async getLimitAccount(limit, offset, role, keyword) {
         try {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('account');
-            return await getLimitAccountFunc(collection, limit, offset);
+            return await getLimitAccountFunc(collection, limit, offset, role, keyword);
         } catch (e) {
             console.error(e);
         } finally {

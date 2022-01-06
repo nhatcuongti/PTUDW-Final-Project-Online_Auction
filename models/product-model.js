@@ -3,26 +3,106 @@ import { ObjectId } from "mongodb";
 
 
 async function findTopExpirationFunc(collection, now) {
-  return await collection.find({ proEndDate: {$gt: now} }).sort({proEndDate: -1}).limit(5).toArray();
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    },
+    {
+      $match: {proEndDate:{$gt: now}}
+    }
+  ]).sort({proEndDate: 1}).limit(5).toArray();
 }
 
 async function findTopBidFunc(collection, now) {
-  return await collection.find({ proEndDate: {$gt: now} }).sort({proBidQuantity: -1}).limit(5).toArray();
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    },
+    {
+      $match: {proEndDate:{$gt: now}}
+    }
+  ]).sort({proBidQuantity: -1}).limit(5).toArray();
 }
 
 async function findTopPriceFunc(collection, now) {
-  return await collection.find({ proEndDate: {$gt: now} }).sort({proCurBidPrice: -1}).limit(5).toArray();
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    },
+    {
+      $match: {proEndDate:{$gt: now}}
+    }
+  ]).sort({proCurBidPrice: -1}).limit(5).toArray();
 }
 
 async function findByIdFunc(collection, id) {
-  return await collection.find({ _id: new ObjectId(id) }).toArray();
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    },
+    {
+      $match: {_id: new ObjectId(id)}
+    }
+  ]).toArray();
 }
 
 async function findByCategoryParentFunc(collection, cat, numberProduct) {
   if (numberProduct === undefined)
-    return await collection.find({ proType: cat }).toArray();
+    return await collection.find({catParent: cat}).toArray();
   else
-    return await collection.find({ proType: cat }).limit(numberProduct).toArray();
+    return await collection.find({catParent: cat}).limit(numberProduct).toArray();
 }
 
 async function findByCategoryFunc(collection, catID, catChildType) {
@@ -53,7 +133,7 @@ async function countTotalSearchProductFunc(collection, keyword, type) {
           'index': 'custom',
           'text': {
             'query': keyword,
-            'path': 'proType',
+            'path': ['catParent','catChild'],
             'fuzzy': {}
           }
         }
@@ -77,6 +157,22 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) 
               'fuzzy': {}
             }
           }
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'sellerInfo',
+            foreignField: '_id',
+            as: 'sellerInfo'
+          },
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'curBidderInfo',
+            foreignField: '_id',
+            as: 'curBidderInfo'
+          }
         }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();
     else if(sort === 'time-descending')
       return await collection.aggregate([
@@ -89,11 +185,25 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) 
               'fuzzy': {}
             }
           }
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'sellerInfo',
+            foreignField: '_id',
+            as: 'sellerInfo'
+          },
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'curBidderInfo',
+            foreignField: '_id',
+            as: 'curBidderInfo'
+          }
         }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();
   }
   else if (type === 'category') {
-    //collection.createIndex({proType: 'text'});
-    //return await collection.find({$text: {$search: keyword}}).skip(offset).limit(limit).toArray();
     if(sort === 'price-ascending')
       return await collection.aggregate([
         {
@@ -101,9 +211,25 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) 
             'index': 'custom',
             'text': {
               'query': keyword,
-              'path': 'proType',
+              'path': ['catParent','catChild'],
               'fuzzy': {}
             }
+          }
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'sellerInfo',
+            foreignField: '_id',
+            as: 'sellerInfo'
+          },
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'curBidderInfo',
+            foreignField: '_id',
+            as: 'curBidderInfo'
           }
         }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();
     else if(sort === 'time-descending')
@@ -113,9 +239,25 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) 
             'index': 'custom',
             'text': {
               'query': keyword,
-              'path': 'proType',
+              'path': ['catParent','catChild'],
               'fuzzy': {}
             }
+          }
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'sellerInfo',
+            foreignField: '_id',
+            as: 'sellerInfo'
+          },
+        },
+        {
+          $lookup: {
+            from: 'account',
+            localField: 'curBidderInfo',
+            foreignField: '_id',
+            as: 'curBidderInfo'
           }
         }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();
   }
@@ -126,7 +268,24 @@ async function countTotalProductFunc(collection){
 }
 
 async function getLimitProductFunc(collection, limit, offset){
-  return await collection.find().skip(offset).limit(limit).toArray()
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    }
+  ]).skip(offset).limit(limit).toArray()
 }
 
 async function getAllFunc(collection){
@@ -145,6 +304,14 @@ async function updateDescriptionFunc(collection, ProID, description){
 
 async function deleteProductFunc(collection, id) {
   return await collection.deleteOne({ _id: id });
+}
+
+async function countTotalCategoryProductFunc(collection, category) {
+  return await collection.find({$or: [{catParent: category }, {catChild: category}]}).count();
+}
+
+async function getLimitCategoryProduct(collection, limit, offset, category) {
+  return await collection.find({$or: [{catParent: category }, {catChild: category}]}).skip(offset).limit(limit).toArray();
 }
 
 export default {
@@ -322,5 +489,29 @@ export default {
     } finally {
       await mongoClient.close()
     }
-  }
+  },
+  async countTotalCategoryProduct(category) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await countTotalCategoryProductFunc(collection, category);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async getLimitCategoryProduct(limit, offset, category) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await getLimitCategoryProduct(collection, limit, offset, category);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
 };

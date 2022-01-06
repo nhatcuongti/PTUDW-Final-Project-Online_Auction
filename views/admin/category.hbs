@@ -41,18 +41,17 @@
 
                     </div>
                     <div class="col-lg-6 mb-2">
-
-                        {{!--
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
-                            <div class="input-group-append" >
-                                <button class="btn btn-outline-secondary"  type="button" id="button-addon2">
-                                  Search
-                                  <i class="fa fa-search" aria-hidden="true"></i>
-                                </button>
+                        <form action="/admin/category" method="get">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Nhập tên danh mục" aria-label="Search" aria-describedby="button-addon2" name="keyword">
+                                <div class="input-group-append" >
+                                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+                                      Tìm kiếm
+                                      <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        --}}
+                        </form>
 
                     </div>
                     <div class="col-lg-3 mb-2 d-flex justify-content-end">
