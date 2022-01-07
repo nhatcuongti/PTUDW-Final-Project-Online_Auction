@@ -8,21 +8,21 @@
                const pass = $('#password').val();
                const pass2 = $('#rePassword').val();
                if (pass != pass2) {
-                   document.getElementById('text').innerHTML = '<strong class="has-text-danger">Re-enter password is wrong.</strong>';
+                   document.getElementById('text').innerHTML = '<strong class="has-text-danger">Mật khẩu nhập lại không đúng.</strong>';
                    return;
                }
                $.getJSON(`/account?email=${email}`, function (data) {
                    if (data === false) {
-                       document.getElementById('text').innerHTML = '<strong class="has-text-danger">This email address is already being used.</strong>'
+                       document.getElementById('text').innerHTML = '<strong class="has-text-danger">Email đã có người sử dụng.</strong>';
                    }
                    else {
-                       document.getElementById('text').innerHTML = '<strong class="has-text-success">Successfully! Check your email to verify account.</strong>';
+                       document.getElementById('text').innerHTML = '<strong class="has-text-success">Thành công. Vui lòng truy cập vào email để xác minh tài khoản.</strong>';
                        $('#frmRegister').off('submit').submit();
                    }
                });
            }
            else
-               document.getElementById('text').innerHTML = '<strong class="has-text-danger">Please enter the correct captcha.</strong>';
+               document.getElementById('text').innerHTML = '<strong class="has-text-danger">Xin vui lòng điền vào Captcha.</strong>';
         });
     </script>
 {{/section}}

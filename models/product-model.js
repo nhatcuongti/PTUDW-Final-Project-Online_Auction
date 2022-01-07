@@ -310,8 +310,32 @@ async function countTotalCategoryProductFunc(collection, category) {
   return await collection.find({$or: [{catParent: category }, {catChild: category}]}).count();
 }
 
-async function getLimitCategoryProduct(collection, limit, offset, category) {
+async function getLimitCategoryProductFunc(collection, limit, offset, category) {
   return await collection.find({$or: [{catParent: category }, {catChild: category}]}).skip(offset).limit(limit).toArray();
+}
+
+async function getExpiredProductFunc(collection, now) {
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    },
+    {
+      $match: {proEndDate:{$lte: now, $gt: new Date(now - 60000)}}
+    }
+  ]).toArray();
 }
 
 export default {
@@ -507,7 +531,19 @@ export default {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await getLimitCategoryProduct(collection, limit, offset, category);
+      return await getLimitCategoryProductFunc(collection, limit, offset, category);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async getExpiredProduct(now) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await getExpiredProductFunc(collection, now);
     } catch (e) {
       console.error(e);
     } finally {
