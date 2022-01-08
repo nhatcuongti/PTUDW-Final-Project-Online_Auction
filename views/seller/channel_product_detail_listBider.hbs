@@ -1,3 +1,21 @@
+{{#section 'js'}}
+    <script>
+        $('.denyUser').on("click", function (e) {
+            const userData = $(this).data('id');
+            alert(userData);
+            $('#userIDInput').val(userData);
+            $('form').submit();
+        })
+    </script>
+
+
+{{/section}}
+
+
+<form method="post" action="/seller/channel/product/detail/{{this.productID}}/list">
+    <input type="text" name="userID" id="userIDInput" hidden>
+</form>
+
 <div class="container">
     <div class="row justify-content-between mb-3">
         <b class="h3">Danh sách bidder đã đấu giá</b>
@@ -6,6 +24,7 @@
             Quay lại
         </a>
     </div>
+
 
     <div class="row">
         <div class="card w-100">
@@ -22,63 +41,51 @@
                     </thead>
 
                     <tbody>
+
+                    {{#each this.bidderHistory}}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>27/05/2020</td>
-                            <td>****cuongti</td>
-                            <td>6,000,000</td>
+                            <th scope="row">{{@index}}</th>
+                            <td>{{format_date dateBid}}</td>
+                            {{#each sellerInfo}}
+                                <td>{{ email}}</td>
 
-                            <td class="text-right">
-                                <a class="btn btn-outline-danger " href="#" role="button">
-                                    <i class="fa fa-trash mr-2" aria-hidden="true"></i>
-                                    Hủy
-                                </a>
-                            </td>
+                                <td>{{format_number ../price}}</td>
+
+
+                                <td class="text-right">
+                                    <a class="btn btn-outline-danger denyUser" role="button" data-id="{{_id}}">
+                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                        Hủy
+                                    </a>
+                                </td>
+                            {{/each}}
+
                         </tr>
-
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>30/05/2020</td>
-                            <td>****ks</td>
-                            <td>6,200,000</td>
-
-                            <td class="text-right">
-                                <a class="btn btn-outline-danger " href="#" role="button">
-                                    <i class="fa fa-trash mr-2" aria-hidden="true"></i>
-                                    Hủy
-                                </a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>01/06/2020</td>
-                            <td>****trong</td>
-                            <td>6,300,000</td>
-
-                            <td class="text-right">
-                                <a class="btn btn-outline-danger " href="#" role="button">
-                                    <i class="fa fa-trash mr-2" aria-hidden="true"></i>
-                                    Hủy
-                                </a>
-                            </td>
-                        </tr>
+                    {{/each}}
                     </tbody>
                 </table>
 
             </div>
             <div class="card-footer text-muted">
-                <nav class="pagination is-centered mt-5 mb-5 w-100" role="navigation" aria-label="pagination">
-                    <a class="pagination-previous">Previous</a>
-                    <a class="pagination-next">Next page</a>
+                <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
+                    {{#if this.prevPage.check}}
+                        <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">Previous page</a>
+                    {{/if}}
+
+                    {{#if this.nextPage.check}}
+                        <a class="pagination-next page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">Next page</a>
+                    {{/if}}
+
                     <ul class="pagination-list">
-                        <li><a class="pagination-link" aria-label="Goto page 1">1</a></li>
-                        <li><span class="pagination-ellipsis">&hellip;</span></li>
-                        <li><a class="pagination-link" aria-label="Goto page 45">45</a></li>
-                        <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
-                        <li><a class="pagination-link" aria-label="Goto page 47">47</a></li>
-                        <li><span class="pagination-ellipsis">&hellip;</span></li>
-                        <li><a class="pagination-link" aria-label="Goto page 86">86</a></li>
+                        {{#if this.prevPage.check}}
+                            <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                        {{/if}}
+
+                        <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+
+                        {{#if this.nextPage.check}}
+                            <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">{{this.nextPage.value}}</a></li>
+                        {{/if}}
                     </ul>
                 </nav>
             </div>

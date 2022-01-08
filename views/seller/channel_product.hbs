@@ -1,17 +1,24 @@
 {{#section 'js'}}
     <script>
-        $('.clickElement').on("click", (e) => {
-            alert($(this).data('time'));
-        })
+
     </script>
-
-
-
 
 {{/section}}
 
+{{#section 'css'}}
+    <style>
+        .front{
+            z-index: 90 !important;
+        }
+
+        .back{
+            z-index: -1 !important;
+        }
+    </style>
+{{/section}}
+
  <div class="container">
-    <div class="card-header row">
+    <div class="card-header row front">
         <div class="col-md-6 mt-2">
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -19,13 +26,14 @@
                 </div>
                 <div class="dropdow">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                      Tất cả
+                        {{status}}
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Đang đấu giá</a>
-                      <a class="dropdown-item" href="#">Sắp hết hạn</a>
-                      <a class="dropdown-item" href="#">Chưa được đấu giá</a>
-                      <a class="dropdown-item" href="#">Đã hết hạn</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 90 !important;">
+                        <a class="dropdown-item" href="/seller/channel/product">Tất cả</a>
+                        <a class="dropdown-item" href="/seller/channel/product/?status=1">Đấu giá thành công</a>
+                        <a class="dropdown-item" href="/seller/channel/product/?status=2">Đấu giá thất bại</a>
+                        <a class="dropdown-item" href="/seller/channel/product/?status=3">Đang được đấu giá</a>
+                        <a class="dropdown-item" href="/seller/channel/product/?status=4">Chưa được đấu giá</a>
                     </div>
                 </div>
             </div>
@@ -42,12 +50,10 @@
                 </div>
               </div>
         </div>
-
-
     </div>
 
 
-     <div class="row">
+     <div class="row back">
          <nav class="navbar" id="homePageNavbar" role="navigation" aria-label="dropdown navigation">
              <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product">
                  <strong> Tất cả</strong>
@@ -83,7 +89,7 @@
                         <div class="card-body">
                             <p class="h4 font-weight-bold">{{proName}}</p>
                             <p >
-                                {{format_duration proEndDate}}
+                                {{catParent}}-{{catChild}}
                             </p>
                         </div>
 
@@ -106,8 +112,7 @@
 
     </div>
 
-
-     <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
+    <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
          {{#if this.prevPage.check}}
                  <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.prevPage.value}}">Previous page</a>
          {{/if}}

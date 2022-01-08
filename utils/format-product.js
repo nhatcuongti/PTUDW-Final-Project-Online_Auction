@@ -1,5 +1,6 @@
 import {ObjectID} from "mongodb";
 import modelCategory from '../models/category-model.js'
+import productModel from "../models/product-model.js";
 
 export default {
     async formatForInsert(dataProduct, sellerID){
@@ -7,9 +8,9 @@ export default {
         goodData.proName = dataProduct.proName;
 
         goodData.proType = new ObjectID(dataProduct.catParent);
-        goodData.catChildType = +dataProduct.catChild;
+        goodData.catChildType = dataProduct.catChild;
         const catInformation = await modelCategory.findByID(goodData.proType);
-        goodData.carParent = catInformation[0].catParent;
+        goodData.catParent = catInformation[0].catParent;
         goodData.catChild = catInformation[0].catChild[goodData.catChildType].name;
 
         goodData.autoExtend = (dataProduct.autoExtend === 'true');
@@ -66,6 +67,80 @@ export default {
             }
         }
 
-    }
+    },
+
+    async findProductWithStatus(products, status){
+        // 1 : Đấu giá thành công ; => Có người mua và đã hết hạn
+        // 2 : Đấu giá thất bại ; => Không có người mua và đã hết hạn
+        // 3 : Đang được đấu giá ;  => Còn hạn và đã có người đặt
+        // 4 : Chưa được đấu giá  => Còn hạn và chưa có người đặt
+
+        // Kiểm tra những phần tử không phù hợp để loại
+        status = +status;
+        for (var i = products.length - 1; i >= 0; i--) {
+            const product = products[i];
+            // Kiểm tra đã hết hạn hay chưa
+            const endDate = new Date(product.proEndDate);
+            const currentDate = new Date();
+            if (endDate - currentDate > 0) { // Nếu còn hạn
+                if (status === 1 || status === 2) {
+                    const index = products.indexOf(product);
+                    products.splice(index, 1);
+                    continue;
+                }
+            } else { // Nếu hết hạn
+                if (status === 3 || status === 4) {
+                    const index = products.indexOf(product);
+                    products.splice(index, 1);
+                    continue;
+                }
+            }
+
+
+            //Kiểm tra có người mua hay không
+            const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
+
+            if (bidderHistory.length === 0) {// Nếu như không có người mua
+                if (status === 1 || status === 3) {
+                    const index = products.indexOf(product);
+                    products.splice(index, 1);
+                    continue;
+                }
+            } else { // Nếu như có người đặt
+                if (status === 2 || status === 4) {
+                    const index = products.indexOf(product);
+                    products.splice(index, 1);
+                    continue;
+                }
+            }
+        }
+    },
+
+    async getStatus(product){
+        // 1 : Đấu giá thành công ; => Có người mua và đã hết hạn
+        // 2 : Đấu giá thất bại ; => Không có người mua và đã hết hạn
+        // 3 : Đang được đấu giá ;  => Còn hạn và đã có người đặt
+        // 4 : Chưa được đấu giá  => Còn hạn và chưa có người đặt
+
+        // Kiểm tra những phần tử không phù hợp để loại
+
+        // Kiểm tra đã hết hạn hay chưa
+        const endDate = new Date(product.proEndDate);
+        const currentDate = new Date();
+        //Kiểm tra có người mua hay không
+        const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
+
+        if (endDate - currentDate <= 0) { // Nếu còn hạn
+            if (bidderHistory.length === 0)
+                return "Đấu giá thất bại"
+            else
+                return "Đấu giá thành công"
+        } else { // Nếu hết hạn
+            if (bidderHistory.length === 0)
+                return "Chưa được đấu giá"
+            else
+                return "Đang được đấu giá"
+        }
+    },
 
 }

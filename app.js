@@ -43,11 +43,14 @@ app.engine('hbs', engine({
                 duration = 'Đã hết hạn'
             }
             else if (diffDays <= 3) {
+                duration = `Còn ${diffDays * 24} giờ`;
+            }
+            else{
                 duration = `Còn ${diffDays} ngày`;
             }
-            else {
-                duration = val.toLocaleString("en-GB");
-            }
+            // else {
+            //     duration = val.toLocaleString("en-GB");
+            // }
             return duration;
         },
         section: express_section()

@@ -7,6 +7,7 @@ import fs from 'fs'
 import path from 'path'
 import page from "../utils/page.js";
 import {ObjectId} from "mongodb";
+import productModel from "../models/product-model.js";
 
 const router = express.Router();
 
@@ -25,6 +26,8 @@ router.get("/channel/product", async (req, res) => {
     //Handle Category
     const catParentFind = req.query.catParent;
     const catChildFind = req.query.catChild;
+
+
     if (catParentFind != undefined && catChildFind != undefined)
         products = await modelProduct.findByCategory(catParentFind, catChildFind);
     else if (catParentFind != undefined)
@@ -36,24 +39,34 @@ router.get("/channel/product", async (req, res) => {
     const userID = res.locals.user._id;
     formatProduct.findProductWithSellerID(products, userID);
 
+    //Find with status product
+    let status = req.query.status;
+    if (status != undefined )
+        await formatProduct.findProductWithStatus(products, status);
+
+    if (status === "1")
+        status = "Đấu giá thành công"
+    else if (status === "2")
+        status = "Đấu giá thất bại"
+    else if (status === "3")
+        status = "Đang được đấu giá"
+    else if (status === "4")
+        status = "Chưa được đấu giá"
+    else
+        status = "Tất cả"
 
     //Handle page
     let nPage = Math.floor((products.length - 1) / 6) + 1;
     const choosenPage = req.query.page;
-    // console.log("Page : " + choosenPage);
     let prevPage = {check:true, value : 0};
     let nextPage = {check:true, value : 0};
     let curPage = {check:true, value : 0};
     await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );
-    // console.log(prevPage);
-    // console.log(curPage);
-    // console.log(nextPage);
 
-    // Find Product  with category
+
     //Find offset base on curPage
     let limitProduct = 6;
     let offset = ((+choosenPage - 1) * limitProduct) || 0;
-    // console.log("offset : " + offset)
     const numberProduct = products.length;
     products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)
 
@@ -65,6 +78,7 @@ router.get("/channel/product", async (req, res) => {
         layout: "seller.layout.hbs",
         products,
         categories,
+        status,
         prevPage,
         nextPage,
         curPage
@@ -155,11 +169,13 @@ router.get("/channel/product/detail/:id", async function(req, res) {
     const list =  await modelProduct.findById(ProID);
     const product = list[0];
     await formatProduct.formatCategory(product);
+    const status = await formatProduct.getStatus(product);
     res.locals.XemSanPham.isActive = true;
     res.locals.XemChiTiet.isActive = true;
     res.render("./seller/channel_product_detail", {
         layout: "seller.layout.hbs",
-        product
+        product,
+        status
     })
 })
 
@@ -179,11 +195,50 @@ router.post("/channel/product/detail/:id", async (req, res) => {
     res.redirect(`/seller/channel/product/detail/${ProID}`);
 })
 
-router.get("/channel/product/detail/:id/list", (req, res) => {
+router.get("/channel/product/detail/:id/list", async (req, res) => {
     res.locals.XemSanPham.isActive = true;
+
+    //Getting user data from bidderHistory
+    const productID = req.params.id;
+    const bidderHistory = await productModel.getBidderHistoryWithProID(productID);
+
+    //Handle page
+    let nPage = Math.floor((bidderHistory.length - 1) / 8) + 1;
+    const choosenPage = req.query.page;
+    let prevPage = {check:true, value : 0};
+    let nextPage = {check:true, value : 0};
+    let curPage = {check:true, value : 0};
+    await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );
+
+
+    //Find offset base on curPage
+    let limitUser = 8;
+    let offset = ((+choosenPage - 1) * limitUser) || 0;
+    const numberUser = bidderHistory.length;
+    bidderHistory.slice(offset, (offset + limitUser  < numberUser) ? offset + limitUser : numberUser)
+
     res.render("./seller/channel_product_detail_listBider", {
-        layout: "seller.layout.hbs"
+        layout: "seller.layout.hbs",
+        bidderHistory,
+        productID,
+        prevPage,
+        nextPage,
+        curPage
     })
+})
+
+router.post("/channel/product/detail/:id/list", async (req, res) => {
+    res.locals.XemSanPham.isActive = true;
+
+    //Getting user data from bidderHistory
+    const productID = req.params.id;
+    const userID = req.body.userID;
+
+    console.log(productID);
+    console.log(userID);
+    await productModel.denyUserOnBidderHistory(productID, userID);
+
+    res.redirect(`/seller/channel/product/detail/${productID}/list`)
 })
 
 //API

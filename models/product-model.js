@@ -100,7 +100,7 @@ async function findByIdFunc(collection, id) {
 
 async function findByCategoryParentFunc(collection, cat, numberProduct) {
   if (numberProduct === undefined)
-    return await collection.find({catParent: cat}).toArray();
+    return await collection.find({proType: new ObjectId(cat)}).toArray();
   else
     return await collection.find({catParent: cat}).limit(numberProduct).toArray();
 }
@@ -338,6 +338,34 @@ async function getExpiredProductFunc(collection, now) {
   ]).toArray();
 }
 
+async function getBidderHistoryWithProIDFunc(collection, proID){
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'userID',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $match: {
+        proID:{$eq: new ObjectId(proID)},
+        isDenied:{$eq:0}
+      }
+    }
+  ]).sort({"price" : -1}).toArray();
+}
+
+async function denyUserOnBidderHistoryFunc(collection, productID, userID){
+  const myQuery = {"proID" : new ObjectId(productID), "userID" : new ObjectId(userID)};
+  const myUpdate =  {$set : {isDenied : 1}};
+
+  await collection.updateOne(myQuery, myUpdate);
+}
+
+
+
 export default {
   async findTopExpiration(now) {
     try {
@@ -550,4 +578,28 @@ export default {
       await mongoClient.close()
     }
   },
+  async getBidderHistoryWithProID(proID) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('bidderHistory');
+      return await getBidderHistoryWithProIDFunc(collection, proID);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async denyUserOnBidderHistory(productID, userID) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('bidderHistory');
+      await denyUserOnBidderHistoryFunc(collection, productID, userID);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  }
 };

@@ -32,9 +32,7 @@
     <div class="card-header row justify-content-between" style="margin:0;">
         <span class="mt-2">
             <b>Tình trạng : </b>
-            <span class="text-success">Thành công /</span>
-        <span class="text-info">Đang bán / </span>
-        <span class="text-danger">Thất bại</span>
+            <span class="text-success">{{this.status}}</span>
         </span>
 
         <a class="btn btn-outline-info" href="#" role="button">
@@ -78,9 +76,6 @@
                 <div class="card-body d-flex flex-column">
                     <div class="h2 border-bottom">
                         <b>{{this.product.proName}}</b>
-                        <a href="#" role="button" class="h3 ml-5">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                        </a>
                     </div>
 
                     <ul class="list-group border-bottom" >
@@ -100,24 +95,24 @@
                             <p class="mb-4 font-weight-bolder">
                                 <b class="h5">Danh mục : </b>
                                 <span class="h5">
-                                    {{this.product.catName}}
-
+                                    {{this.product.catParent}} - {{this.product.catChild}}
                                 </span>
-
-                                <a href="#" class="h2 ml-3">
-                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                </a>
                             </p>
                         </li>
                         <li class="list-group-item" style="background-color:  #f7f7f9;">
-                            <div class="input-group input-group-sm mb-3">
-                                <div class="input-group-prepend">
-                            <span class="input-group-text bg-white border-0 p-0" id="inputGroup-sizing-sm">
+                            <p class="mb-4 font-weight-bolder">
                                 <b class="h5">Người đặt giá cao nhất :   </b>
                                 <span class="h5">{{this.product.curBidderInfo}}</span>
-                            </span>
-                                </div>
-                            </div>
+                            </p>
+
+<!--                            <div class="input-group input-group-sm mb-3">-->
+<!--                                <div class="input-group-prepend">-->
+<!--                                <span class="input-group-text border-0 p-0" id="inputGroup-sizing-sm">-->
+<!--                                    <b class="h5">Người đặt giá cao nhất :   </b>-->
+<!--                                    <span class="h5">{{this.product.curBidderInfo}}</span>-->
+<!--                                </span>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </li>
                         <li class="list-group-item" style="background-color:  #f7f7f9;">
                             <p class="mb-4 font-weight-bolder">
