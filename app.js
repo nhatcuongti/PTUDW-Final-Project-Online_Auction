@@ -4,7 +4,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import express_section from 'express-handlebars-sections';
 import localMDW from "./middlewares/local.mdw.js";
-import { authAdmin } from './middlewares/auth-mdw.js';
+import { authAdmin, authSeller } from './middlewares/auth-mdw.js';
 import express from 'express';
 import numeral from 'numeral';
 import main from './routes/main-route.js'
@@ -78,7 +78,7 @@ cron.schedule('* * * * *', async function () {
 localMDW(app);
 app.use('/', main);
 app.use('/user', account);
-app.use('/seller', seller);
+app.use('/seller', authSeller, seller);
 app.use('/admin', authAdmin, admin);
 
 const port = 3000;

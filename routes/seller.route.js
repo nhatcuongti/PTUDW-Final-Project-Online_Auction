@@ -21,6 +21,7 @@ router.get("/channel/product", async (req, res) => {
     res.locals.XemSanPham.isActive = true;
     let products = null;
     const categories = await modelCategory.getAll();
+
     //Handle Category
     const catParentFind = req.query.catParent;
     const catChildFind = req.query.catChild;
@@ -31,26 +32,32 @@ router.get("/channel/product", async (req, res) => {
     else
         products = await modelProduct.getAll();
 
+    //Taking products with id seller
+    const userID = res.locals.user._id;
+    formatProduct.findProductWithSellerID(products, userID);
+
 
     //Handle page
     let nPage = Math.floor((products.length - 1) / 6) + 1;
     const choosenPage = req.query.page;
-    console.log("Page : " + choosenPage);
+    // console.log("Page : " + choosenPage);
     let prevPage = {check:true, value : 0};
     let nextPage = {check:true, value : 0};
     let curPage = {check:true, value : 0};
     await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );
-    console.log(prevPage);
-    console.log(curPage);
-    console.log(nextPage);
+    // console.log(prevPage);
+    // console.log(curPage);
+    // console.log(nextPage);
 
     // Find Product  with category
     //Find offset base on curPage
     let limitProduct = 6;
     let offset = ((+choosenPage - 1) * limitProduct) || 0;
-    console.log("offset : " + offset)
+    // console.log("offset : " + offset)
     const numberProduct = products.length;
     products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)
+
+
 
 
 
@@ -75,12 +82,12 @@ router.get("/channel/product/insert", async (req, res) => {
     })
 })
 
-const uploadData = async (req, res, next) => {
-    req.body = formatProduct.formatForInsert(req.body);
-    await modelProduct.insertData(req.body);
-    console.log(req.body._id);
-    next();
-}
+// const uploadData = async (req, res, next) => {
+//     req.body = formatProduct.formatForInsert(req.body);
+//     await modelProduct.insertData(req.body);
+//     console.log(req.body._id);
+//     next();
+// }
 
 //Upload Image
 const storage = multer.diskStorage({
@@ -113,14 +120,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
 
-const uploadAfterImage = async (req, res, next) => {
-    req.body = formatProduct.formatForInsert(req.body);
+const afterUploadImage = async (req, res, next) => {
+    req.body = await formatProduct.formatForInsert(req.body, res.locals.user._id);
     await modelProduct.insertData(req.body);
     console.log(req.body);
     next();
 }
 
-router.post("/channel/product/insert", cpUpload,  uploadAfterImage, async (req, res) => {
+router.post("/channel/product/insert", cpUpload,  afterUploadImage, async (req, res) => {
     //Change folder name
     const oldFolderName = "./public/image";
     const newFolderName = `./public/${req.body._id}`;

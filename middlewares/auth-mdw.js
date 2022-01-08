@@ -15,3 +15,13 @@ export function authAdmin(req, res, next) {
         return res.redirect('/');
     next();
 };
+
+export function authSeller(req, res, next) {
+    if (req.session.auth === false) {
+        req.session.retUrl = req.originalUrl;
+        return res.redirect('/login');
+    }
+    if (res.locals.sellerRole === false)
+        return res.redirect('/');
+    next();
+};

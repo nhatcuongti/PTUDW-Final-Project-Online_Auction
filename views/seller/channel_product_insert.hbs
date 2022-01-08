@@ -51,7 +51,7 @@
                         console.log(data)
                         $('#selectCatChild').append($('<option>', {
                             value: i,
-                            text : item
+                            text : item.name
                         }));
                     });
                 }
@@ -130,10 +130,6 @@
             caret_pos = updated_len - original_len + caret_pos;
             input[0].setSelectionRange(caret_pos, caret_pos);
         }
-
-
-
-
 
     </script>
 

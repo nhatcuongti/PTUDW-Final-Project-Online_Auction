@@ -2,15 +2,23 @@ import {ObjectID} from "mongodb";
 import modelCategory from '../models/category-model.js'
 
 export default {
-    formatForInsert(dataProduct){
+    async formatForInsert(dataProduct, sellerID){
         const goodData = {};
         goodData.proName = dataProduct.proName;
+
         goodData.proType = new ObjectID(dataProduct.catParent);
         goodData.catChildType = +dataProduct.catChild;
+        const catInformation = await modelCategory.findByID(goodData.proType);
+        goodData.carParent = catInformation[0].catParent;
+        goodData.catChild = catInformation[0].catChild[goodData.catChildType].name;
+
         goodData.autoExtend = (dataProduct.autoExtend === 'true');
         goodData.bidderType = (dataProduct.bidderRange === 'true');
+
         goodData.proDescription = dataProduct.proDescription;
-        goodData.sellerInfo = "nhatcuongti";
+
+        goodData.sellerInfo = sellerID
+
         goodData.proStartDate = new Date();
         var in30days = new Date();
         in30days.setDate(in30days.getDate() + 30);
@@ -18,6 +26,7 @@ export default {
         goodData.proBuyNowPrice = Number(dataProduct.proBuyNowPrice.replace(/[^0-9.-]+/g,""));
         goodData.proCurBidPrice = Number(dataProduct.firstPrice.replace(/[^0-9.-]+/g,""));
         goodData.proPriceStep = Number(dataProduct.proPriceStep.replace(/[^0-9.-]+/g,""));
+
         return goodData;
     },
 
@@ -46,6 +55,17 @@ export default {
             const catName = cat[0].catParent + " - " + cat[0].catChild[i];
             dataProduct.catName = catName;
         }
+    },
+
+    findProductWithSellerID(products, sellerID){
+
+        for (const product of products){
+            if (product.sellerInfo.toString() != sellerID.toString()){
+                const index = products.indexOf(product);
+                products.splice(index, 1);
+            }
+        }
+
     }
 
 }
