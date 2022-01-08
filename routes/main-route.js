@@ -25,7 +25,7 @@ router.get('/product/:id', async function (req, res) {
 router.get('/product', async function (req, res) {
     const category = req.query.category;
     let product = false;
-    let type = false;
+    let by = false;
     const limit = 9;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
@@ -39,7 +39,7 @@ router.get('/product', async function (req, res) {
     let listResult;
     if (category) {
         listResult = await productModel.getLimitCategoryProduct(limit, offset, category);
-        type = true;
+        by = true;
     }
     else {
         listResult = await productModel.getLimitProduct(limit, offset);
@@ -62,7 +62,7 @@ router.get('/product', async function (req, res) {
         prevPage,
         listResult,
         product,
-        type,
+        by,
         category
     });
 });
