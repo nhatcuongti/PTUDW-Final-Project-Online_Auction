@@ -57,6 +57,14 @@ async function showAllCommentFunc(collection, id) {
     ]).toArray();
 }
 
+async function getCommentWithProIDFunc(collection, ProID) {
+    // let time = moment().format();
+    return await collection.aggregate([
+        { $match: { "proID": new ObjectId(ProID) } }
+    ]).toArray();
+}
+
+
 // async function showFavoriteListFunc(collection, id) {
 //     let userFavorite = await collection.find({userID: id},{}).toArray();
 //     userFavorite.list
@@ -175,6 +183,25 @@ async function deleteUpgradeRequestFunc(collection, id) {
     return await collection.findOneAndDelete({userId: new ObjectId(id)});
 }
 
+async function updateCommentFromProID(collection, proID, commentData){
+    const myQuery = { proID : proID};
+    const newValues = { $set:
+            {
+                bidderComment: commentData.bidderComment,
+                sellerComment: commentData.sellerComment,
+                bidderRate: commentData.bidderRate,
+                sellerRate: commentData.sellerRate,
+                bidderID: commentData.bidderID,
+                sellerID: commentData.sellerID
+            }
+    };
+    await collection.updateOne(myQuery, newValues);
+}
+
+async function insertNewCommentFunc(collection, commentOfProduct){
+    await collection.insertOne(commentOfProduct);
+}
+
 export default {
     async showFavoriteList(id) {
         try {
@@ -263,6 +290,18 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('comment');
             return await showAllCommentFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async getCommentWithProID(ProID) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('comment');
+            return await getCommentWithProIDFunc(collection, ProID);
         } catch (e) {
             console.error(e);
         } finally {
@@ -393,6 +432,30 @@ export default {
             await mongoClient.close()
         }
     },
+    async updateCommentFromProID(proID, commentData) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('comment');
+            return await updateCommentFromProID(collection, proID, commentData);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async insertNewComment(commentOfProduct) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('comment');
+            return await insertNewCommentFunc(collection, commentOfProduct);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    }
 }
 
 

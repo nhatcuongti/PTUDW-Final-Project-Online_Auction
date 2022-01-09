@@ -8,9 +8,22 @@
             padding-bottom: 20px;
         }
 
-        #exampleModal{
+        #exampleModal, #evaluateModal{
             z-index: 999999;
         }
+
+        #likeBtn:hover{
+            cursor: pointer;
+            color: #3498db;
+        }
+
+        #dislikeBtn:hover{
+            cursor: pointer;
+            color: #e74c3c;
+        }
+
+
+
     </style>
 {{/section}}
 
@@ -32,6 +45,20 @@
         <script>
             $('#exampleModal').on('shown.bs.modal', function () {
                 $('#exampleModalLabel').trigger('focus')
+            })
+        </script>
+
+        <script>
+            $('#likeBtn').on('click', function (e){
+                $(this).attr('class', 'fa fa-thumbs-up fa-3x text-primary mr-5 ');
+                $('#dislikeBtn').attr('class', 'fa fa-thumbs-down fa-3x mr-5 ');
+                $('#score').val('1');
+            })
+
+            $('#dislikeBtn').on('click', function (e){
+                $(this).attr('class', 'fa fa-thumbs-down fa-3x text-danger mr-5 ');
+                $('#likeBtn').attr('class', 'fa fa-thumbs-up fa-3x mr-5 ');
+                $('#score').val('0');
             })
         </script>
 {{/section}}
@@ -119,24 +146,63 @@
                                     {{/each}}
 
                                     {{#if isSuccess}}
-                                        <a class="btn btn-outline-primary float-right" href="#" role="button">
-                                            Đánh giá
-                                        </a>
+
+                                        <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#evaluateModal">
+                                            <span>
+                                                Đánh giá
+                                            </span>
+                                        </button>
+
+                                        <div class="modal fade" id="evaluateModal" tabindex="-1" aria-labelledby="evaluateModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="evaluateModalLabel">Đánh giá khách hàng</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+
+                                                            <form method="post" action="/seller/channel/product/detail/{{this.product._id}}">
+                                                                <div class="form-group">
+                                                            {{#each this.product.curBidderInfo}}
+                                                                <p>Người mua : <b>{{email}}</b></p>
+                                                                <input type="text" name="userID" value="{{_id}}" hidden>
+                                                            {{/each}}
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <textarea class="form-control"
+                                                                              name="sellerComment"
+                                                                              id="comment"
+                                                                              rows="3"
+                                                                              placeholder="Nhận xét người mua ...." required></textarea>
+                                                                </div>
+                                                                <div class="form-group row justify-content-end">
+                                                                    <i id="likeBtn" class="fa fa-thumbs-up fa-3x mr-5 " aria-hidden="true"></i>
+                                                                    <i id="dislikeBtn" class="fa fa-thumbs-down fa-3x mr-5" aria-hidden="true"></i>
+                                                                    <input type="text" name="score" id="score"  hidden>
+                                                                </div>
+
+
+
+                                                                <div class="form-group">
+                                                                    <button type="submit" class="btn btn-outline-primary">Xác nhận</button>
+                                                                    <button type="button" class="btn btn-outline-danger ml-5" data-dismiss="modal">Thoát</button>
+                                                                </div>
+                                                            </form>
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     {{/if}}
                                 {{else}}
                                     <span class="h5">Chưa có</span>
                                 {{/if}}
-
                             </p>
-
-<!--                            <div class="input-group input-group-sm mb-3">-->
-<!--                                <div class="input-group-prepend">-->
-<!--                                <span class="input-group-text border-0 p-0" id="inputGroup-sizing-sm">-->
-<!--                                    <b class="h5">Người đặt giá cao nhất :   </b>-->
-<!--                                    <span class="h5">{{this.product.curBidderInfo}}</span>-->
-<!--                                </span>-->
-<!--                                </div>-->
-<!--                            </div>-->
                         </li>
                         <li class="list-group-item" style="background-color:  #f7f7f9;">
                             <p class="mb-4 font-weight-bolder">
@@ -245,8 +311,4 @@
             </div>
         </div>
             </div>
-        </div>
-
-
-    </div>
 </div>

@@ -8,6 +8,7 @@ import path from 'path'
 import page from "../utils/page.js";
 import {ObjectId} from "mongodb";
 import productModel from "../models/product-model.js";
+import accountModel from "../models/account-model.js";
 
 const router = express.Router();
 
@@ -184,10 +185,59 @@ router.get("/channel/product/detail/:id", async function(req, res) {
 })
 
 router.post("/channel/product/detail/:id", async (req, res) => {
+    console.log(req.body);
     const userID = req.body.userID;
     let ProID = req.params.id;
+
+    let rate = null;
+    let comment = "Người thằng không thanh toán";
+    let isSuccess = false;
+
+    if (req.body.sellerComment !== undefined){
+        comment = req.body.sellerComment;
+        isSuccess = true;
+    }
+
+    if (req.body.score === '1') {
+        rate = true;
+    }
+    else if (req.body.score === '0'){
+        rate = false;
+    }
+    else
+        rate = false;
+
     if (userID != undefined){
-        console.log(userID);
+        if (!isSuccess)
+            await productModel.updateCurrenBidderInfor(ProID, null);
+
+        // Update lại commnet trong bidderHistory
+        const rawData = await accountModel.getCommentWithProID(ProID);
+        let commentOfProduct = rawData[0];
+        //----TH1 : Nếu như đã có rồi thì update lại thôi
+        if (rawData.length != 0){
+
+
+            commentOfProduct.sellerRate = rate;
+            commentOfProduct.sellerComment = comment;
+
+            await accountModel.updateCommentFromProID(commentOfProduct.proID, commentOfProduct);
+        }
+        //----Th2 : Nếu như chưa có thì phải tổng hợp dữ liệu để thêm vào
+        if (rawData.length === 0){
+
+            commentOfProduct = {};
+
+            commentOfProduct.proID = new ObjectId(ProID);
+            commentOfProduct.bidderComment = "";
+            commentOfProduct.sellerComment = comment;
+            commentOfProduct.bidderRate = false;
+            commentOfProduct.sellerRate = rate;
+            commentOfProduct.bidderID = new ObjectId(userID);
+            commentOfProduct.sellerID = new ObjectId(res.locals.user._id);
+
+            await accountModel.insertNewComment(commentOfProduct);
+        }
     }
     else{
         let Message = req.body.proDescription;

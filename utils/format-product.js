@@ -18,7 +18,7 @@ export default {
 
         goodData.proDescription = dataProduct.proDescription;
 
-        goodData.sellerInfo = sellerID
+        goodData.sellerInfo = new ObjectID(sellerID);
 
         goodData.proStartDate = new Date();
         var in30days = new Date();
@@ -59,13 +59,9 @@ export default {
     },
 
     findProductWithSellerID(products, sellerID){
-
-        for (const product of products){
-            if (product.sellerInfo.toString() != sellerID.toString()){
-                const index = products.indexOf(product);
-                products.splice(index, 1);
-            }
-        }
+        for (let i = products.length - 1; i >= 0; i--)
+            if (products[i].sellerInfo.toString() !== sellerID.toString())
+                products.splice(i, 1);
 
     },
 
@@ -98,9 +94,9 @@ export default {
 
 
             //Kiểm tra có người mua hay không
-            const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
+            // const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
 
-            if (bidderHistory.length === 0) {// Nếu như không có người mua
+            if (product.curBidderInfo === null || product.curBidderInfo === undefined || product.curBidderInfo.length === 0) {// Nếu như không có người mua
                 if (status === 1 || status === 3) {
                     const index = products.indexOf(product);
                     products.splice(index, 1);
@@ -128,15 +124,15 @@ export default {
         const endDate = new Date(product.proEndDate);
         const currentDate = new Date();
         //Kiểm tra có người mua hay không
-        const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
+        // const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
 
         if (endDate - currentDate <= 0) { // Nếu còn hạn
-            if (bidderHistory.length === 0)
+            if (product.curBidderInfo === null || product.curBidderInfo === undefined || product.curBidderInfo.length === 0)
                 return "Đấu giá thất bại"
             else
                 return "Đấu giá thành công"
         } else { // Nếu hết hạn
-            if (bidderHistory.length === 0)
+            if (product.curBidderInfo === null || product.curBidderInfo === undefined)
                 return "Chưa được đấu giá"
             else
                 return "Đang được đấu giá"

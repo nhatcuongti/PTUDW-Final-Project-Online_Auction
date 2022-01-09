@@ -364,6 +364,13 @@ async function denyUserOnBidderHistoryFunc(collection, productID, userID){
   await collection.updateOne(myQuery, myUpdate);
 }
 
+async function updateCurrenBidderInforFunc(collection, ProID, newUser){
+  const myQuery = {"_id" : new ObjectId(ProID)};
+  const myUpdate =  {$set : {curBidderInfo : newUser}};
+
+  await collection.updateOne(myQuery, myUpdate);
+}
+
 
 
 export default {
@@ -596,6 +603,18 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('bidderHistory');
       await denyUserOnBidderHistoryFunc(collection, productID, userID);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updateCurrenBidderInfor(ProID, newUser) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateCurrenBidderInforFunc(collection, ProID, newUser);
     } catch (e) {
       console.error(e);
     } finally {
