@@ -169,28 +169,40 @@ router.get("/channel/product/detail/:id", async function(req, res) {
     const list =  await modelProduct.findById(ProID);
     const product = list[0];
     await formatProduct.formatCategory(product);
+
     const status = await formatProduct.getStatus(product);
+    const isSuccess = (status === "Đấu giá thành công") ? true : false;
+
     res.locals.XemSanPham.isActive = true;
     res.locals.XemChiTiet.isActive = true;
     res.render("./seller/channel_product_detail", {
         layout: "seller.layout.hbs",
         product,
-        status
+        status,
+        isSuccess
     })
 })
 
 router.post("/channel/product/detail/:id", async (req, res) => {
-    let Message = req.body.proDescription;
-    Message =  `<p class="text-danger h3"> ${new Date().toLocaleString("en-GB")}</p> ${Message}`;
-
+    const userID = req.body.userID;
     let ProID = req.params.id;
-    const dataProduct = await modelProduct.findById(ProID);
-    let insertedMessage = dataProduct[0].proDescription + Message;
+    if (userID != undefined){
+        console.log(userID);
+    }
+    else{
+        let Message = req.body.proDescription;
+        Message =  `<p class="text-danger h3"> ${new Date().toLocaleString("en-GB")}</p> ${Message}`;
 
-    console.log("Message : " + req.body.proDescription);
-    console.log("inserted message : " + insertedMessage);
 
-    await modelProduct.updateDescription(new ObjectId(ProID), insertedMessage);
+        const dataProduct = await modelProduct.findById(ProID);
+        let insertedMessage = dataProduct[0].proDescription + Message;
+
+        console.log("Message : " + req.body.proDescription);
+        console.log("inserted message : " + insertedMessage);
+
+        await modelProduct.updateDescription(new ObjectId(ProID), insertedMessage);
+    }
+
 
     res.redirect(`/seller/channel/product/detail/${ProID}`);
 })

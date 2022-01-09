@@ -7,6 +7,10 @@
         .border-bottom {
             padding-bottom: 20px;
         }
+
+        #exampleModal{
+            z-index: 999999;
+        }
     </style>
 {{/section}}
 
@@ -24,7 +28,14 @@
             });
 
         </script>
+
+        <script>
+            $('#exampleModal').on('shown.bs.modal', function () {
+                $('#exampleModalLabel').trigger('focus')
+            })
+        </script>
 {{/section}}
+
 
 
 
@@ -102,7 +113,20 @@
                         <li class="list-group-item" style="background-color:  #f7f7f9;">
                             <p class="mb-4 font-weight-bolder">
                                 <b class="h5">Người đặt giá cao nhất :   </b>
-                                <span class="h5">{{this.product.curBidderInfo}}</span>
+                                {{#if this.product.curBidderInfo}}
+                                    {{#each this.product.curBidderInfo}}
+                                        <span class="h5">{{email}}</span>
+                                    {{/each}}
+
+                                    {{#if isSuccess}}
+                                        <a class="btn btn-outline-primary float-right" href="#" role="button">
+                                            Đánh giá
+                                        </a>
+                                    {{/if}}
+                                {{else}}
+                                    <span class="h5">Chưa có</span>
+                                {{/if}}
+
                             </p>
 
 <!--                            <div class="input-group input-group-sm mb-3">-->
@@ -129,13 +153,56 @@
                     </ul>
 
                     <div class="row m-0 mt-5">
-                        <div class="mt-auto">
+                        <div class="mt-auto w-100 d-flex justify-content-between">
                             <a class="btn btn-outline-success" href="/seller/channel/product/detail/{{this.product._id}}/list" role="button">
                                 <i class="fa fa-list" aria-hidden="true"></i>
                                 <span>
                                     Danh sách người mua
                                 </span>
                             </a>
+<!--                            <a class="btn btn-danger" href="/seller/channel/product/detail/{{this.product._id}}/list" role="button">-->
+<!--                                <i class="fa fa-trash" aria-hidden="true"></i>-->
+<!--                                <span>-->
+<!--                                    Hủy giao dịch-->
+<!--                                </span>-->
+<!--                            </a>-->
+
+                            <!-- Button trigger modal -->
+                            {{#if isSuccess}}
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    <span>
+                                    Hủy giao dịch
+                                </span>
+                                </button>
+                            {{/if}}
+
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Bạn có chắc muốn hủy hợp đồng không ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn " data-dismiss="modal">No</button>
+                                            <form method="post" action="/seller/channel/product/detail/{{this.product._id}}">
+                                                {{#each this.product.curBidderInfo}}
+                                                    <input name="userID" value="{{_id}}" hidden>
+                                                {{/each}}
+                                                <button type="submit" class="btn btn-primary">Yes</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
