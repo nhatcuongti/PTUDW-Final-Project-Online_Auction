@@ -23,5 +23,7 @@
     <orderEntry type="library" name="bulma" level="application" />
     <orderEntry type="library" name="popper.js" level="application" />
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
+    <orderEntry type="library" name="fileinput" level="application" />
+    <orderEntry type="library" name="bootstrap-fileinput" level="application" />
   </component>
 </module>

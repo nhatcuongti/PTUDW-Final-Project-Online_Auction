@@ -91,18 +91,14 @@ router.get("/channel/product/insert", async (req, res) => {
     const catList = await modelCategory.getAll();
     console.log(catList);
 
-    res.render("./seller/channel_product_insert", {
-        layout: "seller.layout.hbs",
+    res.render("./seller/channel_product_insert_2", {
+        layout: "seller.layout.insert.hbs",
         catList
     })
-})
 
-// const uploadData = async (req, res, next) => {
-//     req.body = formatProduct.formatForInsert(req.body);
-//     await modelProduct.insertData(req.body);
-//     console.log(req.body._id);
-//     next();
-// }
+
+
+})
 
 //Upload Image
 const storage = multer.diskStorage({
@@ -115,25 +111,37 @@ const storage = multer.diskStorage({
         cb(null, `public/image`)
     },
     filename: async function (req, file, cb) {
+        if (req.body.index === undefined)
+            req.body.index = 0;
+
+        let index = req.body.index;
+
         const ext = path.extname(file.originalname);
-        console.log(ext);
-        if (file.fieldname === 'main-image'){
+        if (index === 0)
             cb(null, `main-thumb${ext}`);
-            console.log("Create main-thumb.jpg");
-        }
-        else if (file.fieldname === 'image1'){
-            cb(null, `thumb1${ext}`);
-            console.log("Create thumb1.jpg")
-        }
-        else{
-            cb(null, `thumb2${ext}`);
-            console.log("Create thumb2.jpg")
-        }
+        else
+            cb(null, `thumb${req.body.index}${ext}`);
+
+        req.body.index++;
+
+        // if (file.fieldname === 'main-image'){
+        //     cb(null, `main-thumb${ext}`);
+        //     console.log("Create main-thumb.jpg");
+        // }
+        // else if (file.fieldname === 'image1'){
+        //     cb(null, `thumb1${ext}`);
+        //     console.log("Create thumb1.jpg")
+        // }
+        // else{
+        //     cb(null, `thumb2${ext}`);
+        //     console.log("Create thumb2.jpg")
+        // }
     }
 })
 
 const upload = multer({ storage: storage })
-const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
+const cpUpload = upload.array("Image", 5);
+// const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
 
 const afterUploadImage = async (req, res, next) => {
     req.body = await formatProduct.formatForInsert(req.body, res.locals.user._id);
@@ -144,6 +152,7 @@ const afterUploadImage = async (req, res, next) => {
 
 router.post("/channel/product/insert", cpUpload,  afterUploadImage, async (req, res) => {
     //Change folder name
+    req.body.index = undefined;
     const oldFolderName = "./public/image";
     const newFolderName = `./public/${req.body._id}`;
     fs.rename(oldFolderName, newFolderName, async (err) => {
