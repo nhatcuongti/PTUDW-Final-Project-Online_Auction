@@ -42,6 +42,23 @@
               <span class="sr-only">Next</span>
             </button>
           </div>
+            <table class="table table-striped mt-lg-5 border ">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Thời điểm</th>
+                    <th scope="col">Người mua</th>
+                    <th scope="col">Giá</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each ../proHistoryBid}}
+                <tr>
+                    <td>{{dateBid}}</td>
+                    <td>{{sellerInfo}}</td>
+                    <td>{{format_number price}}</td>
+                </tr>
+                {{/each}}
+            </table>
         </div>
         <div class="col-6">
           <p class="h3">{{proName}}</p>

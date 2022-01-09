@@ -6,14 +6,31 @@ import * as Console from "console";
 import moment from "moment/moment.js";
 import entryModel from "../models/entry-model.js";
 import bcrypt from "bcryptjs";
+import bidModel from "../models/bid-model.js";
 
 const router = express.Router();
 
 router.get('/checkout', auth ,async function (req, res) {
-    // const temp = req.session.user;
-    // const userID = temp[0]._id;
-    // let list = await account.showFavoriteList(userID)
-    res.render('viewAccountBidder/bid/checkout', );
+    const proID = req.query.id;
+    const proInfor = await product.findById(proID)
+    let priceRecommend = proInfor[0].proCurBidPrice + proInfor[0].proPriceStep
+    res.render('viewAccountBidder/bid/checkout', {
+        data:proInfor,
+        priceRecommend: priceRecommend
+    });
+});
+
+router.post('/checkout', auth ,async function (req, res) {
+    const proID = req.body.proID;
+    const price = req.body.price
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    const proInfor = await product.findById(proID)
+    console.log(proInfor)
+    if (parseInt(price) >= proInfor[0].proCurBidPrice)
+        await bidModel.insertBidIntoHistory(userID,proID,price)
+    await bidModel.processBid(userID, proID, price, proInfor[0])
+    res.redirect('back');
 });
 
 export default router

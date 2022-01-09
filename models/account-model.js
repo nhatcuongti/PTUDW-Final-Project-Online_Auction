@@ -247,17 +247,21 @@ export default {
     },
     getProductsOnAuction (list){
         let listTemp = [];
+        console.log(list)
         list.forEach(function (e) {
-            if(e.details[0].proEndDate > new Date())
-                listTemp.push(e)
+            if(e.details.length !== 0)
+                if(e.details[0].proEndDate > new Date())
+                    listTemp.push(e)
         })
         return listTemp;
     },
     getSuccessfulAuction(userID,list){
         let listTemp = [];
+        console.log(list)
         list.forEach(function (e) {
-            if( e.details[0].proEndDate <= new Date()&&e.details[0].curBidderInfo == new ObjectId(userID))
-                listTemp.push(e)
+            if(e.details.length != 0)
+                if( e.details[0].proEndDate <= new Date()&&e.details[0].curBidderInfo == new ObjectId(userID))
+                    listTemp.push(e)
         })
         return listTemp;
     },

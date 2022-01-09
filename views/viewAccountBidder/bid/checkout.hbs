@@ -3,12 +3,12 @@
         $('#homePageNavbar').hide();
 
     </script>
-<!--    <script>-->
-<!--        $('#myModal').on('shown.bs.modal', function() {-->
-<!--            $(document).off('focusin.modal');-->
-<!--        });-->
+    <script>
+        $('#confirm').on('click', function (e){
+            $('#formcheckout').submit();
+        });
 
-<!--    </script>-->
+    </script>
 
 {{/section}}
 {{#section 'css'}}
@@ -115,7 +115,7 @@
     }
 
     .small {
-    font-size: 12px !important
+    font-size: 16px !important
     }
 
     .form-control-sm {
@@ -170,21 +170,26 @@
                     </div>
                 </div>
                 <div class="row justify-content-around">
+                    {{#each this.data}}
                     <div class="col-md-5">
                         <div class="card border-0">
                             <div class="card-header pb-0">
-                                <h2 class="card-title space ">Đấu giá</h2>
+                                <h2 class="card-title space"><strong>ĐẤU GIÁ</strong></h2>
                                 <hr class="my-0">
                             </div>
                             <div class="card-body">
 
                                 <div class="row mt-4">
                                     <div class="col">
-                                        <p class="text-muted mb-2">CHI TIẾT ĐẤU GIÁ</p>
+                                        <p class="text-muted mb-2 text-dark">GIÁ HỆ THỐNG ĐỀ NGHỊ: {{format_number ../this.priceRecommend}} VND</p>
                                         <hr class="mt-0">
                                     </div>
                                 </div>
-                                <div class="form-group"> <label for="NAME" class="small text-muted mb-1">GIÁ TỐI ĐA CỦA BẠN</label> <input type="text" class="form-control form-control-sm" name="NAME" id="NAME" aria-describedby="helpId" > </div>
+
+                                <form action="/bid/checkout" method="post" id="formcheckout">
+                                    <input type="text" name="proID" value="{{_id}}" hidden>
+                                    <div class="form-group"> <label for="NAME" class="small text-muted mb-1">GIÁ TỐI ĐA CỦA BẠN</label> <input type="text" class="form-control form-control-sm" name="price" id="NAME" aria-describedby="helpId" > </div>
+                                </form>
                                 <div class="row mb-md-5">
                                     <div class="col"> <button type="button" name="" id="" class="btn btn-lg btn-block" data-toggle="modal" data-target="#exampleModalCenter">ĐẤU GIÁ</button> </div>
                                 </div>
@@ -194,9 +199,12 @@
                     <div class="col-md-6">
                         <div class="card border-0">
                             <div class="card-header">
-                                <p class="card-text text-muted mb-1 space">SẢN PHẨM BẠN ĐẤU GIÁ  </p>
+                                <p class="card-text text-muted"><strong>SẢN PHẨM BẠN ĐẤU GIÁ </strong>  </p>
                                 <hr class="my-2">
                             </div>
+
+
+
                             <div class="card-body pt-0 mt-5">
                                 <div class="row justify-content-between">
                                     <div class="col-auto col-md-7">
@@ -204,23 +212,25 @@
                                             <div class="media-body my-auto">
                                                 <div class="row">
                                                     <div class="col">
-                                                        <p class="mb-0"><b>EC-GO Bag Standard</b></p>
+                                                        <p class="mb-0"><b>{{proName}}</b></p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="pl-0 flex-sm-col col-auto my-auto">
-                                        <p class="boxed">3</p>
+                                        <p class="boxed">{{proBidQuantity}}</p>
                                     </div>
                                     <div class="pl-0 flex-sm-col col-auto my-auto">
-                                        <p><b>179 SEK</b></p>
+                                        <p><b>Giá hiện tại: {{format_number proCurBidPrice}}</b></p>
                                     </div>
                                 </div>
                                 <hr class="my-2">
                             </div>
+
                         </div>
                     </div>
+                    {{/each}}
                 </div>
             </div>
         </div>
@@ -237,11 +247,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                Bạn có muốn đấu giá ngay
+                Xác nhận bạn muốn đấu giá ngay
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button id="confirm" type="button" class="btn btn-primary">Xác nhận</button>
             </div>
         </div>
     </div>

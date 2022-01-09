@@ -11,13 +11,23 @@ const router = express.Router();
 router.get('/product/:id', async function (req, res) {
     const id = req.params.id;
     const proInfo = await productModel.findById(id);
+    const proHistoryBid = await productModel.getBidderHistoryWithProID(id)
+
+    for(let i = 0; i < proHistoryBid.length; i++){
+        proHistoryBid[i].dateBid = moment(proHistoryBid[i].dateBid).format('DD/MM/YYYY')
+        var mask = proHistoryBid[i].sellerInfo[0].name
+
+        proHistoryBid[i].sellerInfo = mask.replace(/\D(?=\D{4})/g, "*");
+    }
+    console.log(proHistoryBid)
     if(typeof (proInfo) === 'undefined')
         res.redirect('/');
     else {
         const listSimilarity = await productModel.findByCategoryParent(proInfo[0].catParent, 5);
         res.render('detail', {
             proInfo,
-            listSimilarity
+            listSimilarity,
+            proHistoryBid
         });
     }
 });
