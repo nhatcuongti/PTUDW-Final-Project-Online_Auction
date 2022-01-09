@@ -40,13 +40,13 @@ app.engine('hbs', engine({
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             let duration = null;
             if (date2 < date1){
-                duration = 'Đã hết hạn'
+                duration = '<p class="text-danger h4">Đã hết hạn</p>'
             }
             else if (diffDays <= 3) {
-                duration = `Còn ${diffDays * 24} giờ`;
+                duration = `<p class="text-warning h4">Còn ${diffDays * 24} giờ</p>`;
             }
             else{
-                duration = `Còn ${diffDays} ngày`;
+                duration = `<p class="text-success h4">Còn ${diffDays} ngày</p>`;
             }
             // else {
             //     duration = val.toLocaleString("en-GB");

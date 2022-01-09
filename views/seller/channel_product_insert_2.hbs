@@ -4,13 +4,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.2.5/themes/fa/theme.min.js"></script>
     <script>
 
-        $("#subImage").fileinput({
+        $("#Image").fileinput({
             uploadUrl: "/site/test-upload",
             enableResumableUpload: true,
             allowedFileExtensions: ['jpg', 'png', 'gif'],
             initialPreviewAsData: true,
             maxFileCount: 5,
-            theme: 'fas',
+            theme: 'fa',
+            language: 'vi',
             deleteUrl: '/site/file-delete',
             fileActionSettings: {
                 showZoom: function(config) {
@@ -168,7 +169,7 @@
 {{/section}}
 
 
-<div class="container">
+<div class="container-fluid ">
     <p class="h3">
         <b>Thêm sản phẩm</b>
     </p>
@@ -216,7 +217,6 @@
 
         <div class="row mt-5">
             <div class="col">
-
                     <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
                         <div class="card-header ">
                             <b class="h3">Thông tin sản phẩm</b>
@@ -224,14 +224,14 @@
 
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="TenSanPham" class="h4">Tên sản phẩm</label>
                                         <input type="text" id="TenSanPham" name="proName" class="form-control" placeholder="Áo Hoddie xám chất lượng cao ..." required>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-6">
+                                <div class="col-md-6">
                                     <div class="row">
                                         <div class="col-xl-4 ">
                                             <div class="form-group">
@@ -317,62 +317,13 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-12">
                                     <div class="form-group">
-                                        <label for="TenSanPham" class="h4">Ảnh chính của sản phẩm</label>
-                                        <img
-                                                src="https://www.lifewire.com/thmb/P856-0hi4lmA2xinYWyaEpRIckw=/1920x1326/filters:no_upscale():max_bytes(150000):strip_icc()/cloud-upload-a30f385a928e44e199a62210d578375a.jpg"
-                                                alt="Press here to upload image"
-                                                width="300px"
-                                                height="300px"
-                                                id="main-image"
-                                                class="d-block"
-                                                style="cursor: pointer;">
-
-                                        <input type="file"
-                                               id="my_file"
-                                               name="main-image"
-                                               style="display:none"
-                                               onchange="document.getElementById('main-image').src = window.URL.createObjectURL(this.files[0])"/>
-
-
+                                        <label for="subImage" class="h4">Ảnh sản phẩm (Ảnh đầu tiên là ảnh chính)</label>
+                                        <input id="Image" name="Image" type="file" multiple>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-6">
-<!--                                    <div class="form-group">-->
-<!--                                        <label for="subImage">Large Input Group</label>-->
-<!--                                        <input id="subImage" name="subImage" type="file" multiple>-->
-<!--                                    </div>-->
-                                        <img
-                                                src="https://www.lifewire.com/thmb/P856-0hi4lmA2xinYWyaEpRIckw=/1920x1326/filters:no_upscale():max_bytes(150000):strip_icc()/cloud-upload-a30f385a928e44e199a62210d578375a.jpg"
-                                                alt="Press here to upload image"
-                                                width="300px"
-                                                height="300px"
-                                                id="image1"
-                                                style="cursor: pointer;">
-
-                                        <input type="file"
-                                               id="my_file1"
-                                               name="image1"
-                                               style="display:none"
-                                               onchange="document.getElementById('image1').src = window.URL.createObjectURL(this.files[0])"/>
-
-                                        <img
-                                                src="https://www.lifewire.com/thmb/P856-0hi4lmA2xinYWyaEpRIckw=/1920x1326/filters:no_upscale():max_bytes(150000):strip_icc()/cloud-upload-a30f385a928e44e199a62210d578375a.jpg"
-                                                alt="Press here to upload image"
-                                                width="300px"
-                                                height="300px"
-                                                id="image2"
-                                                style="cursor: pointer;">
-
-                                        <input type="file"
-                                               id="my_file2"
-                                               name="image2"
-                                               style="display:none"
-                                               onchange="document.getElementById('image2').src = window.URL.createObjectURL(this.files[0])"/>
-
-                                </div>
                             </div>
 
                             <div class="row">
