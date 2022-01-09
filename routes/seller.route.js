@@ -9,6 +9,7 @@ import page from "../utils/page.js";
 import {ObjectId} from "mongodb";
 import productModel from "../models/product-model.js";
 import accountModel from "../models/account-model.js";
+import mailing from "../utils/mailing.js";
 
 const router = express.Router();
 
@@ -71,8 +72,13 @@ router.get("/channel/product", async (req, res) => {
     const numberProduct = products.length;
     products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)
 
+    //const number Image
+    for (const product of products){
+        const indexImage = [];
 
-
+        for (let index = 1; index < product.numberImage; index++)
+            indexImage.push(index);
+    }
 
 
     res.render("./seller/channel_product", {
@@ -144,6 +150,8 @@ const cpUpload = upload.array("Image", 5);
 // const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
 
 const afterUploadImage = async (req, res, next) => {
+    console.log("Raw Data : ")
+    console.log(req.body);
     req.body = await formatProduct.formatForInsert(req.body, res.locals.user._id);
     await modelProduct.insertData(req.body);
     console.log(req.body);
@@ -183,13 +191,23 @@ router.get("/channel/product/detail/:id", async function(req, res) {
     const status = await formatProduct.getStatus(product);
     const isSuccess = (status === "Đấu giá thành công") ? true : false;
 
+    const indexImage = [];
+    for (let index = 1; index < product.numberImage; index++)
+        indexImage.push(index);
+
     res.locals.XemSanPham.isActive = true;
     res.locals.XemChiTiet.isActive = true;
+    const files = fs.readdirSync(`./public/${product._id}/`);
+    // console.log(files);
+    files.splice(0, 1);
+    // product.files = files;
+    // console.log(product);
     res.render("./seller/channel_product_detail", {
         layout: "seller.layout.hbs",
         product,
         status,
-        isSuccess
+        isSuccess,
+        files
     })
 })
 
@@ -305,10 +323,27 @@ router.post("/channel/product/detail/:id/list", async (req, res) => {
     const productID = req.params.id;
     const userID = req.body.userID;
 
-    console.log(productID);
-    console.log(userID);
     await productModel.denyUserOnBidderHistory(productID, userID);
+    const product = await productModel.findById(productID);
 
+    // Gửi mail
+    await mailing.sendEmail(product.sellerInfo[0].email,
+        "Thông báo từ chối ra giá",
+        `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
+
+    //Roll back giá sản phẩm
+    const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
+    let maximumPrice = product.proInitalPrice;
+
+    for (const bidderHistory of bidderHistories)
+        if (bidderHistory.isDenied !== 1){
+            maximumPrice = bidderHistory.price;
+            break;
+        }
+
+
+
+    await productModel.updatePriceProduct(productID, maximumPrice);
     res.redirect(`/seller/channel/product/detail/${productID}/list`)
 })
 

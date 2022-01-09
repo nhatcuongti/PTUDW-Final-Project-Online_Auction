@@ -21,11 +21,13 @@ export default {
         goodData.sellerInfo = new ObjectID(sellerID);
 
         goodData.proStartDate = new Date();
-        var in30days = new Date();
-        in30days.setDate(in30days.getDate() + 30);
-        goodData.proEndDate = in30days;
+        // var in30days = new Date();
+        // in30days.setDate(in30days.getDate() + 30);
+        goodData.proEndDate = new Date(dataProduct.proEndDate);
+        goodData.numberImage = dataProduct.index;
         goodData.proBuyNowPrice = Number(dataProduct.proBuyNowPrice.replace(/[^0-9.-]+/g,""));
         goodData.proCurBidPrice = Number(dataProduct.firstPrice.replace(/[^0-9.-]+/g,""));
+        goodData.proInitalPrice = goodData.proCurBidPrice;
         goodData.proPriceStep = Number(dataProduct.proPriceStep.replace(/[^0-9.-]+/g,""));
 
         return goodData;

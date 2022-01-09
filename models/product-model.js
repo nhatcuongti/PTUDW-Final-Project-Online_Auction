@@ -354,7 +354,7 @@ async function getBidderHistoryWithProIDFunc(collection, proID){
         isDenied:{$eq:0}
       }
     }
-  ]).sort({"price" : -1}).toArray();
+  ]).sort({"price" : -1, "dateBid" : -1}).toArray();
 }
 
 async function denyUserOnBidderHistoryFunc(collection, productID, userID){
@@ -367,6 +367,13 @@ async function denyUserOnBidderHistoryFunc(collection, productID, userID){
 async function updateCurrenBidderInforFunc(collection, ProID, newUser){
   const myQuery = {"_id" : new ObjectId(ProID)};
   const myUpdate =  {$set : {curBidderInfo : newUser}};
+
+  await collection.updateOne(myQuery, myUpdate);
+}
+
+async function updatePriceProductFunc(collection, productID, maximumPrice){
+  const myQuery = {"_id" : new ObjectId(productID)};
+  const myUpdate =  {$set : {proCurBidPrice : maximumPrice}};
 
   await collection.updateOne(myQuery, myUpdate);
 }
@@ -615,6 +622,18 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       await updateCurrenBidderInforFunc(collection, ProID, newUser);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updatePriceProduct(productID, maximumPrice) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updatePriceProductFunc(collection, productID, maximumPrice);
     } catch (e) {
       console.error(e);
     } finally {

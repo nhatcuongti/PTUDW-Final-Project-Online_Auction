@@ -6,20 +6,22 @@
 
         $("#Image").fileinput({
             uploadUrl: "/site/test-upload",
+            upload:false,
             enableResumableUpload: true,
-            allowedFileExtensions: ['jpg', 'png', 'gif'],
+            allowedFileExtensions: ['jpg', 'png', 'gif','jpeg', 'webp'],
             initialPreviewAsData: true,
             maxFileCount: 5,
             theme: 'fa',
             language: 'vi',
             deleteUrl: '/site/file-delete',
+            showUpload: false,
             fileActionSettings: {
                 showZoom: function(config) {
                     if (config.type === 'pdf' || config.type === 'image') {
                         return true;
                     }
                     return false;
-                }
+                },
             }
         });
     </script>
@@ -39,6 +41,9 @@
     </script>
 
     <script>
+        $("#proEndDate").attr("min", new Date());
+
+
         $("#main-image").on("click", function(){
             $("#my_file").trigger("click")
         })
@@ -160,6 +165,53 @@
     </script>
 
 
+    <script>
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("proEndDate").setAttribute("min", today);
+    </script>
+
+
+    <!--Validation form before We submit-->
+    <script>
+        $('#formSubmit').on('submit', function (e){
+            e.preventDefault();
+            // So sánh giá khởi điểm và giá mua ngay
+            const firstPrice = Number($('#firstPrice').val().replace(/[^0-9.-]+/g,""));
+            const proBuyNowPrice = Number($('#proBuyNowPrice').val().replace(/[^0-9.-]+/g,""));
+
+            if (firstPrice >= proBuyNowPrice){
+                alert('Giá khởi điểm phải nhỏ hơn giá mua ngay')
+                return;
+            }
+
+            const numberImage = $('#Image')[0].files.length;
+            console.log(numberImage);
+            if (numberImage < 3){
+                alert('Số lượng ảnh phải lớn hơn 3')
+                return;
+            }
+
+            console.log(firstPrice);
+            console.log(proBuyNowPrice);
+
+            $('#formSubmit').off('submit').submit();
+        })
+    </script>
+
+
 
 
 {{/section}}
@@ -174,7 +226,7 @@
         <b>Thêm sản phẩm</b>
     </p>
 
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="" method="post" enctype="multipart/form-data" id="formSubmit">
         <div class="row">
             <div class="col-sm-6">
                 <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
@@ -217,90 +269,92 @@
 
         <div class="row mt-5">
             <div class="col">
-                    <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
-                        <div class="card-header ">
-                            <b class="h3">Thông tin sản phẩm</b>
+                <div class="card" style="background-color: #E5E5E5; border-radius: 20px;">
+                    <div class="card-header ">
+                        <b class="h3">Thông tin sản phẩm</b>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group w-100 p-3">
+                                <label for="TenSanPham" class="h4">Tên sản phẩm</label>
+                                <textarea id="TenSanPham" rows="3" name="proName" class="form-control" placeholder="Áo Hoddie xám chất lượng cao ..." required></textarea>
+<!--                                <input type="text" id="TenSanPham" name="proName" class="form-control" placeholder="Áo Hoddie xám chất lượng cao ..." required>-->
+                            </div>
                         </div>
 
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="TenSanPham" class="h4">Tên sản phẩm</label>
-                                        <input type="text" id="TenSanPham" name="proName" class="form-control" placeholder="Áo Hoddie xám chất lượng cao ..." required>
+                        <div class="row">
+                            <div class="col-sm-4 ">
+                                <div class="form-group">
+                                    <label for="firstPrice" class="h4">Giá khởi điểm</label>
+                                    <div>
+                                        <input type="text"
+                                               name="firstPrice"
+                                               style="padding: 6px 12px 6px 12px;"
+                                               id="firstPrice"
+                                               pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
+                                               value=""
+                                               data-type="currency"
+                                               placeholder="$1,000,000"
+                                               required>
                                     </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-xl-4 ">
-                                            <div class="form-group">
-                                                <label for="firstPrice" class="h4">Giá khởi điểm</label>
-                                                <input type="text"
-                                                       name="firstPrice"
-                                                       style="padding: 6px 12px 6px 12px;"
-                                                       id="firstPrice"
-                                                       pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
-                                                       value=""
-                                                       data-type="currency"
-                                                       placeholder="$1,000,000">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xl-4">
-                                            <div class="form-group">
-                                                <label for="proPriceStep" class="h4">Bước giá</label>
-                                                <input type="text"
-                                                       name="proPriceStep"
-                                                       style="padding: 6px 12px 6px 12px;"
-                                                       id="proPriceStep"
-                                                       pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
-                                                       value=""
-                                                       data-type="currency"
-                                                       placeholder="$1,000,000">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xl-4">
-                                            <div class="form-group">
-                                                <label for="proBuyNowPrice" class="h4">Giá mua ngay</label>
-                                                <input type="text"
-                                                       name="proBuyNowPrice"
-                                                       style="padding: 6px 12px 6px 12px;"
-                                                       id="proBuyNowPrice"
-                                                       pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
-                                                       value=""
-                                                       data-type="currency"
-                                                       placeholder="$1,000,000">
-
-                                                <!--                                                <input type="number" id="TenSanPham" name="proBuyNowPrice" class="form-control" placeholder="1.000.000" required>-->
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="TenSanPham" class="h4">Tự động gia hạn</label>
-                                        <div>
-                                            <div class="custom-control custom-radio custom-control-inline" >
-                                                <input type="radio" id="customRadioInline1" value="true" name="autoExtend" class="custom-control-input" checked>
-                                                <label class="custom-control-label" for="customRadioInline1">Có</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline" >
-                                                <input type="radio" id="customRadioInline2" value="no" name="autoExtend" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline2">Không</label>
-                                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="proPriceStep" class="h4">Bước giá</label>
+                                    <div>
+                                        <input type="text"
+                                               name="proPriceStep"
+                                               style="padding: 6px 12px 6px 12px;"
+                                               id="proPriceStep"
+                                               pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
+                                               value=""
+                                               data-type="currency"
+                                               placeholder="$1,000,000"
+                                               required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="proBuyNowPrice" class="h4">Giá mua ngay</label>
+                                    <div>
+                                        <input type="text"
+                                               name="proBuyNowPrice"
+                                               style="padding: 6px 12px 6px 12px;"
+                                               id="proBuyNowPrice"
+                                               pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
+                                               value=""
+                                               data-type="currency"
+                                               placeholder="$1,000,000"
+                                               required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="TenSanPham" class="h4">Tự động gia hạn</label>
+                                    <div>
+                                        <div class="custom-control custom-radio custom-control-inline" >
+                                            <input type="radio" id="customRadioInline1" value="true" name="autoExtend" class="custom-control-input" checked>
+                                            <label class="custom-control-label" for="customRadioInline1">Có</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline" >
+                                            <input type="radio" id="customRadioInline2" value="no" name="autoExtend" class="custom-control-input">
+                                            <label class="custom-control-label" for="customRadioInline2">Không</label>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="col-sm-6">
+                            <div class="col-sm-4">
+                                <div class="form-group">
                                     <label for="TenSanPham" class="h4">Bidder có thể đấu giá</label>
                                     <div>
                                         <div class="custom-control custom-radio custom-control-inline">
@@ -312,39 +366,49 @@
                                             <label class="custom-control-label" for="customRadioInline4">Bidder Uy Tín</label>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="subImage" class="h4">Ảnh sản phẩm (Ảnh đầu tiên là ảnh chính)</label>
-                                        <input id="Image" name="Image" type="file" multiple>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="TenSanPham" class="h4">Ngày kết thúc</label>
+
+                                    <div>
+                                        <input type="date" id="proEndDate" name="proEndDate" min="2021-05-27"  required>
                                     </div>
                                 </div>
-
                             </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col">
-                                    <label for="txtArea"><b class="h4">Mô tả sản phẩm</b></label>
-                                    <textarea class="form-control border-dark" name="proDescription" style="height: 500px" placeholder="Mô tả sản phẩm" id="txtArea" rows="3"></textarea>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="subImage" class="h4">Ảnh sản phẩm (Ảnh đầu tiên là ảnh chính)</label>
+                                    <input id="Image" name="Image" type="file" multiple>
                                 </div>
                             </div>
+
                         </div>
 
-                        <div class="card-footer text-muted">
-                            <!--                            <a class="btn btn-lg btn-primary" href="#" role="button">-->
-                            <!--                                <i class="fa fa-eye fa-2x" aria-hidden="true"></i>-->
-                            <!--                                <span class="h3">Review sản phẩm</span>-->
-                            <!--                            </a>-->
-                            <button class="btn btn-lg btn-primary" type="submit">
-                                <i class="fa fa-eye fa-2x" aria-hidden="true"></i>
-                                <span class="h3">Thêm sản phẩm</span>
-                            </button>
+                        <div class="row">
+                            <div class="col">
+                                <label for="txtArea"><b class="h4">Mô tả sản phẩm</b></label>
+                                <textarea class="form-control border-dark" name="proDescription" style="height: 500px" placeholder="Mô tả sản phẩm" id="txtArea" rows="3"></textarea>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="card-footer text-muted">
+                        <!--                            <a class="btn btn-lg btn-primary" href="#" role="button">-->
+                        <!--                                <i class="fa fa-eye fa-2x" aria-hidden="true"></i>-->
+                        <!--                                <span class="h3">Review sản phẩm</span>-->
+                        <!--                            </a>-->
+                        <button class="btn btn-lg btn-primary" type="submit" id="addProductBtn">
+                            <i class="fa fa-eye fa-2x" aria-hidden="true"></i>
+                            <span class="h3">Thêm sản phẩm</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
 

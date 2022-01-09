@@ -7,10 +7,16 @@
             $('form').submit();
         })
     </script>
-
-
 {{/section}}
 
+{{#section 'css'}}
+    <style>
+        #deleteModal{
+            z-index: 999999;
+        }
+    </style>
+
+{{/section}}
 
 <form method="post" action="/seller/channel/product/detail/{{this.productID}}/list">
     <input type="text" name="userID" id="userIDInput" hidden>
@@ -53,11 +59,42 @@
 
 
                                 <td class="text-right">
-                                    <a class="btn btn-outline-danger denyUser" role="button" data-id="{{_id}}">
-                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>
-                                        Hủy
-                                    </a>
+<!--                                    <a class="btn btn-outline-danger denyUser" role="button" data-id="{{_id}}">-->
+<!--                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>-->
+<!--                                        Hủy-->
+<!--                                    </a>-->
+
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                                        <i class="fa fa-ban mr-2" aria-hidden="true"></i>
+                                        <span>
+                                            Từ chối
+                                        </span>
+                                    </button>
                                 </td>
+
+                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel">Modal title</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Bạn có chắc muốn từ chối người mua này không ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn" data-dismiss="modal">No</button>
+
+                                                <form method="post" action="">
+                                                    <input name="userID" value="{{_id}}" hidden>
+                                                    <button type="submit" class="btn btn-primary">Yes</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             {{/each}}
 
                         </tr>

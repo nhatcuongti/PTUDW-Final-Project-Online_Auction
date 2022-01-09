@@ -19,6 +19,13 @@
             filter: alpha(opacity=80);
             opacity: 0.8;
         }
+
+        .mainThumb{
+            float:left;
+            width: 400px;
+            height: 400px;
+            object-fit: cover;
+        }
     </style>
 {{/section}}
 
@@ -85,8 +92,8 @@
         {{#each this.products}}
             <a class="col-lg-4 col-md-6 p-3 clickElement productElement" style="text-decoration: none" href="/seller/channel/product/detail/{{_id}}">
                     <div class="card h-100">
-                        <img src = "https://htsport.vn/wp-content/uploads/2019/11/4-size-giay-lon-nhat-1-300x300.jpg"
-                             class="card-img-top"
+                        <img src = "/public/{{_id}}/main-thumb.jpg"
+                             class="card-img-top mainThumb"
                              alt="Hình"
                              width="200"
                              height="200">
