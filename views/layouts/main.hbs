@@ -59,11 +59,15 @@
                             <p class="ml-3">{{user.name}}</p>
                         </div>
                         <div class="navbar-dropdown">
-                            <a class="navbar-item text-decoration-none">
-                                <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
-                                Thông tin cá nhân
-                            </a>
+<!--                            <a class="navbar-item text-decoration-none">-->
+<!--                                <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>-->
+<!--                                Thông tin cá nhân-->
+<!--                            </a>-->
                             {{#if bidderRole}}
+                                <a class="navbar-item text-decoration-none" href="../user/update-profile">>
+                                    <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
+                                    Thông tin cá nhân
+                                </a>
                                 <a class="navbar-item text-decoration-none" href="../user/favorite">
                                     <i class="fa fa-heart-o fa-2x mr-2" aria-hidden="true"></i>
                                     Danh sách yêu thích

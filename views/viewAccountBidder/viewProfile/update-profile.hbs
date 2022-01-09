@@ -1,9 +1,15 @@
+{{#section 'js'}}
+    <script>
+        $('#homePageNavbar').hide();
+
+    </script>
+{{/section}}
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-sm-3 has-background-grey-lighter">
             <ul class="nav flex-column">
                 <div class="h4 text-center ml-auto mr-auto p-4">Hồ sơ</div>
-                <li class="nav-item">
+                <li class="nav-item bg-light">
                     <a class="nav-link h6 text-center" href="/user/update-profile">Cập nhật hồ sơ</a>
                 </li>
                 <li class="nav-item">
@@ -15,31 +21,33 @@
             </ul>
         </div>
         <div class="col-sm-9">
-            <form>
-                <div class="form-group row ml-auto mr-auto">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-7">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-                    </div>
-                </div>
-                <div class="form-group row ml-auto mr-auto">
+            {{#each this.data}}
+            <form method="post" action="/user/update-profile">
+                <div class="form-group row ml-auto mr-auto mt-5">
                     <label for="inputName" class="col-sm-2 col-form-label">Họ và tên</label>
                     <div class="col-sm-7">
-                        <input type="password" class="form-control" id="inputName" placeholder="Họ và tên">
+                        <input type="text" class="form-control" id="inputName" placeholder="{{name}}" name="name" required>
                     </div>
                 </div>
                 <div class="form-group row ml-auto mr-auto">
-                    <label for="inputDOB" class="col-sm-2 col-form-label">Ngày sinh</label>
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Địa chỉ</label>
                     <div class="col-sm-7">
-                        <input type="password" class="form-control" id="inputDOB" placeholder="">
+                        <input type="text" class="form-control" id="inputAddress3" placeholder="{{address}}" name="address" required>
                     </div>
                 </div>
+<!--                <div class="form-group row ml-auto mr-auto">-->
+<!--                    <label for="inputDOB" class="col-sm-2 col-form-label">Ngày sinh</label>-->
+<!--                    <div class="col-sm-7">-->
+<!--                        <input type="date" class="form-control" id="inputDOB" placeholder="">-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="form-group row">
                     <div class="col-sm-10 text-center">
                         <button type="submit" class="btn btn-primary ml-auto mr-auto mb-3">Cập nhật</button>
                     </div>
                 </div>
             </form>
+            {{/each}}
         </div>
 
     </div>

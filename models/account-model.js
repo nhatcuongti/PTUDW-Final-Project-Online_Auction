@@ -183,6 +183,7 @@ async function deleteUpgradeRequestFunc(collection, id) {
     return await collection.findOneAndDelete({userId: new ObjectId(id)});
 }
 
+<<<<<<< Updated upstream
 async function updateCommentFromProID(collection, proID, commentData){
     const myQuery = { proID : proID};
     const newValues = { $set:
@@ -202,6 +203,22 @@ async function insertNewCommentFunc(collection, commentOfProduct){
     await collection.insertOne(commentOfProduct);
 }
 
+=======
+async function getInforBidderAccountFunc(collection, id) {
+    return await collection.findOne({_id: new ObjectId(id)});
+}
+
+async function updateBidderInforFunc(collection, userID, newName, newAddress) {
+
+    return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {name: newName, address: newAddress}})
+}
+async function updateBidderPassFunc(collection, userID, newPass) {
+
+    return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {pass: newPass}})
+}
+
+
+>>>>>>> Stashed changes
 export default {
     async showFavoriteList(id) {
         try {
@@ -266,6 +283,42 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('bidderHistory');
             return await showBidderHistoryFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close();
+        }
+    },
+    async getInforBidderAccount(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await getInforBidderAccountFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close();
+        }
+    },
+    async updateBidderInfor(id, newName, newAddress) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await updateBidderInforFunc(collection, id, newName, newAddress);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close();
+        }
+    },
+    async updateBidderPass(id, newPass) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await updateBidderPassFunc(collection, id, newPass);
         } catch (e) {
             console.error(e);
         } finally {
@@ -432,18 +485,28 @@ export default {
             await mongoClient.close()
         }
     },
+<<<<<<< Updated upstream
     async updateCommentFromProID(proID, commentData) {
         try {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('comment');
             return await updateCommentFromProID(collection, proID, commentData);
+=======
+    async checkPassAccount(email) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await checkPassAccountFunc(collection, email);
+>>>>>>> Stashed changes
         } catch (e) {
             console.error(e);
         } finally {
             await mongoClient.close()
         }
     },
+<<<<<<< Updated upstream
     async insertNewComment(commentOfProduct) {
         try {
             await mongoClient.connect();
@@ -456,6 +519,8 @@ export default {
             await mongoClient.close()
         }
     }
+=======
+>>>>>>> Stashed changes
 }
 
 
