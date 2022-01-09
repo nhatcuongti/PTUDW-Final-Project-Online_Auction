@@ -8,6 +8,7 @@ import { authAdmin, authSeller } from './middlewares/auth-mdw.js';
 import express from 'express';
 import numeral from 'numeral';
 import main from './routes/main-route.js'
+import bid from './routes/bid.js'
 import account  from "./routes/account.js";
 import seller from "./routes/seller.route.js"
 import admin from './routes/admin-route.js'
@@ -83,6 +84,7 @@ app.use('/', main);
 app.use('/user', account);
 app.use('/seller', authSeller, seller);
 app.use('/admin', authAdmin, admin);
+app.use('/bid', bid);
 
 const port = 3000;
 app.listen(port, function () {

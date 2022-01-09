@@ -66,7 +66,7 @@
               {{#if ../auth}}
                     <div class="col-12">
                       <a data-id="{{_id}}" class="addItemFavorite" href="#"><button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button></a>
-                      <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button>
+                      <a href="/bid/checkout?id={{_id}}" <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button></a>
                       <button type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button>
                     </div>
               {{/if}}
