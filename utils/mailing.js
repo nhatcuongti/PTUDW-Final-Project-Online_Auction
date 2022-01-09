@@ -10,6 +10,9 @@ export default {
                 auth: {
                     user: 'onlineauction.mailing@gmail.com',
                     pass: 'onlineauction123',
+                },
+                tls: {
+                    rejectUnauthorized: false
                 }
             });
             await transporter.sendMail({

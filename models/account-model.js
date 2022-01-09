@@ -213,12 +213,26 @@ async function updateBidderInforFunc(collection, userID, newName, newAddress) {
     return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {name: newName, address: newAddress}})
 }
 async function updateBidderPassFunc(collection, userID, newPass) {
-
     return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {pass: newPass}})
+}
+async function findByUserIDFunc(collection, userID){
+    return await collection.findOne({_id :  new ObjectId(userID)});
 }
 
 // >>>>>>> Stashed changes
 export default {
+    async findByID(userID){
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await findByUserIDFunc(collection, userID);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
     async showFavoriteList(id) {
         try {
             await mongoClient.connect();

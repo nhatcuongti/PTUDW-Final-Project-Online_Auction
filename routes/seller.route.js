@@ -324,26 +324,55 @@ router.post("/channel/product/detail/:id/list", async (req, res) => {
     const userID = req.body.userID;
 
     await productModel.denyUserOnBidderHistory(productID, userID);
-    const product = await productModel.findById(productID);
+    const productRaw = await productModel.findById(productID);
+    const product = productRaw[0];
+    const account = await  accountModel.findByID(userID)
+
 
     // Gửi mail
-    await mailing.sendEmail(product.sellerInfo[0].email,
+    await mailing.sendEmail(account.email,
         "Thông báo từ chối ra giá",
         `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
 
     //Roll back giá sản phẩm
     const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
-    let maximumPrice = product.proInitalPrice;
+    let currentPrice = product.proInitalPrice;
+    let bidderWithHighest = bidderHistories[0];
 
-    for (const bidderHistory of bidderHistories)
-        if (bidderHistory.isDenied !== 1){
-            maximumPrice = bidderHistory.price;
-            break;
+    if (bidderHistories.length > 1){
+        let highestUser = null;
+        let secondUser = null;
+        let count = 0;
+
+        for (const bidderHistory of bidderHistories)
+            if (bidderHistory.isDenied !== 1){
+                if (count === 0){
+                    highestUser = bidderHistory;
+                    bidderWithHighest = bidderHistory;
+                    count++;
+                }
+                else{
+                    secondUser = bidderHistory;
+                    break;
+                }
+            }
+
+        if (count > 1){
+
+            if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất
+                currentPrice = secondUser.price + product.proPriceStep;
+            else // Nếu thằng thứ hai tới sau thằng thứ nhất
+                currentPrice = secondUser.price;
         }
+    }
 
 
+    await productModel.updatePriceProduct(productID, currentPrice);
 
-    await productModel.updatePriceProduct(productID, maximumPrice);
+    //Chuyển người mua cao thứ nhì thành bidder infor
+    await productModel.updateCurrenBidderInfor(productID, bidderWithHighest.userID);
+
+
     res.redirect(`/seller/channel/product/detail/${productID}/list`)
 })
 
