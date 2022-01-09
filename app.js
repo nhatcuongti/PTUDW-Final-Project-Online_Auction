@@ -35,16 +35,27 @@ app.engine('hbs', engine({
         },
         format_duration(val){
             //Format time
-            const date1 = new Date();
-            const date2 = val;
+            const date1 = new Date().getTime();
+            const date2 = val.getTime();
             const diffTime = Math.abs(date2 - date1);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            console.log("------------------------");
+            console.log(diffTime);
+            console.log(date1);
+            console.log(date2);
+            console.log("------------------------");
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
+            const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+
+
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             let duration = null;
             if (date2 < date1){
-                duration = '<p class="text-danger h4">Đã hết hạn</p>'
+                console.log(date2);
+                console.log(date1);
+                duration = '<p class="text-danger h4" >Đã hết hạn</p>'
             }
             else if (diffDays <= 3) {
-                duration = `<p class="text-warning h4">Còn ${diffDays * 24} giờ</p>`;
+                duration = `<p class="text-warning h4">Còn ${diffHours} giờ ${diffMinutes} phút</p>`;
             }
             else{
                 duration = `<p class="text-success h4">Còn ${diffDays} ngày</p>`;

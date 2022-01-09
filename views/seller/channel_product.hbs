@@ -1,7 +1,40 @@
 {{#section 'js'}}
-    <script>
+<!--    <script>-->
+<!--        function countDown(el) { // Create a function that recieves the element as argument-->
 
-    </script>
+<!--            const countDownDate = new Date(el.dataset.date).getTime();-->
+<!--            const now = new Date().getTime();-->
+<!--            const dif = countDownDate - now;-->
+<!--            const h = Math.floor( dif / (1000 * 60 * 60));-->
+<!--            const m = Math.floor((dif % (1000 * 60 * 60)) / (1000 * 60));-->
+<!--            if (h >= 1 || m > 30)-->
+<!--                return;-->
+
+
+
+<!--            const x = setInterval(function() {-->
+
+<!--                const now = new Date().getTime();-->
+<!--                const dif = countDownDate - now;-->
+<!--                const h = Math.floor( dif / (1000 * 60 * 60));-->
+<!--                const m = Math.floor((dif % (1000 * 60 * 60)) / (1000 * 60));-->
+<!--                const s = Math.floor((dif % (1000 * 60)) / 1000);-->
+
+<!--                const formatted = `<p class="text-danger h4">Còn ${m} phút ${s} giây</p>`;-->
+<!--                // Output the result in the argument element-->
+<!--                el.innerHTML = dif < 0 ? "Expired" : formatted;-->
+
+<!--                // If the count down is over, stop Intervals-->
+<!--                if (dif < 0) {-->
+<!--                    clearInterval(x);-->
+<!--                }-->
+<!--            }, 1000);-->
+
+<!--        }-->
+
+
+<!--        [...document.querySelectorAll("[data-date]")].forEach(el => countDown(el));-->
+<!--    </script>-->
 
 {{/section}}
 
@@ -109,7 +142,7 @@
                         <div class="card-footer justify-content-between">
                             <p class="h5">
                                 <i class="fa fa-clock-o fa-2x" aria-hidden="true"></i>
-                                <span class="countTime" data-time="{{proEndDate}}">
+                                <span class="countTime" data-date="{{proEndDate}}">
                                     {{{format_duration proEndDate}}}
                                 </span>
                             </p>

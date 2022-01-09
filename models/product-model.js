@@ -100,13 +100,13 @@ async function findByIdFunc(collection, id) {
 
 async function findByCategoryParentFunc(collection, cat, numberProduct) {
   if (numberProduct === undefined)
-    return await collection.find({proType: new ObjectId(cat)}).toArray();
+    return await collection.find({proType: new ObjectId(cat)}).sort({proEndDate : 1}).toArray();
   else
     return await collection.find({catParent: cat}).limit(numberProduct).toArray();
 }
 
 async function findByCategoryFunc(collection, catID, catChildType) {
-  return await collection.find({ proType: catID, catChildType: catChildType}).toArray();
+  return await collection.find({ proType: catID, catChildType: catChildType}).sort({proEndDate: 1}).toArray();
 }
 
 async function countTotalSearchProductFunc(collection, keyword, type) {
@@ -289,7 +289,7 @@ async function getLimitProductFunc(collection, limit, offset){
 }
 
 async function getAllFunc(collection){
-  return await collection.find().toArray();
+  return await collection.find().sort({proEndDate: 1}).toArray();
 }
 
 async function insertDataFunc(collection, data){

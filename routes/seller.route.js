@@ -383,4 +383,7 @@ router.get("/channel/getCatChild", async (req, res) => {
     res.json(catChildList[0].catChild);
 })
 
+router.post("/channel/updateEndDate", async (req, res) => {
+
+})
 export default router;
