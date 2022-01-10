@@ -7,7 +7,7 @@
 <!--            const dif = countDownDate - now;-->
 <!--            const h = Math.floor( dif / (1000 * 60 * 60));-->
 <!--            const m = Math.floor((dif % (1000 * 60 * 60)) / (1000 * 60));-->
-<!--            if (h >= 1 || m > 30)-->
+<!--            if (h >= 1 || m > 10)-->
 <!--                return;-->
 
 
@@ -20,9 +20,9 @@
 <!--                const m = Math.floor((dif % (1000 * 60 * 60)) / (1000 * 60));-->
 <!--                const s = Math.floor((dif % (1000 * 60)) / 1000);-->
 
-<!--                const formatted = `<p class="text-danger h4">Còn ${m} phút ${s} giây</p>`;-->
+<!--                const formatted = `<span class="text-danger h4">Còn ${m} phút ${s} giây</span>`;-->
 <!--                // Output the result in the argument element-->
-<!--                el.innerHTML = dif < 0 ? "Expired" : formatted;-->
+<!--                el.innerHTML = dif < 0 ? "Đã hết hạn" : formatted;-->
 
 <!--                // If the count down is over, stop Intervals-->
 <!--                if (dif < 0) {-->
@@ -35,7 +35,6 @@
 
 <!--        [...document.querySelectorAll("[data-date]")].forEach(el => countDown(el));-->
 <!--    </script>-->
-
 
 {{/section}}
 
@@ -75,46 +74,62 @@
                         {{status}}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 90 !important;">
-                        <a class="dropdown-item" href="/seller/channel/product">Tất cả</a>
-                        <a class="dropdown-item" href="/seller/channel/product/?status=1">Đấu giá thành công</a>
-                        <a class="dropdown-item" href="/seller/channel/product/?status=2">Đấu giá thất bại</a>
-                        <a class="dropdown-item" href="/seller/channel/product/?status=3">Đang được đấu giá</a>
-                        <a class="dropdown-item" href="/seller/channel/product/?status=4">Chưa được đấu giá</a>
+                        <a class="dropdown-item" href="/seller/channel/product/{{this.initalPagePath}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}">Tất cả</a>
+                        <a class="dropdown-item" href="/seller/channel/product/{{this.initalPagePath}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}&status=1">Đấu giá thành công</a>
+                        <a class="dropdown-item" href="/seller/channel/product/{{this.initalPagePath}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}&status=2">Đấu giá thất bại</a>
+                        <a class="dropdown-item" href="/seller/channel/product/{{this.initalPagePath}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}&status=3">Đang được đấu giá</a>
+                        <a class="dropdown-item" href="/seller/channel/product/{{this.initalPagePath}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}&status=4">Chưa được đấu giá</a>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 mt-2">
-            <form method="get" action="">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Product Name..." name="keyword" aria-describedby="button-addon2" id="keyword" value="">
+<!--            <form method="get" action="/seller/channel/product/{{this.pagePath}}{{this.catParentPath}}{{this.catChildPath}}{{this.statusPath}}">-->
+<!--                <div class="input-group mb-3">-->
+<!--                    <input type="text" class="form-control" placeholder="Product Name..." name="keyword" aria-describedby="button-addon2" id="keyword" value="">-->
 
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit" id="searchBtn">
-                            Search
-                            <i class="fa fa-search" aria-hidden="true"></i>
-                        </button>
-                    </div>
+<!--                    <div class="input-group-append">-->
+<!--                        <button class="btn btn-outline-secondary" type="submit" id="searchBtn">-->
+<!--                            Search-->
+<!--                            <i class="fa fa-search" aria-hidden="true"></i>-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Product Name..." name="keyword" aria-describedby="button-addon2" id="keyword" value="">
+
+                <div class="input-group-append">
+                    <a class="btn btn-outline-secondary"
+                       data-ref="/seller/channel/product/{{this.initalPagePath}}{{this.catParentPath}}{{this.catChildPath}}{{this.statusPath}}"
+                       id="searchBtn"
+                       href="">
+                        Search
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </a>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
 
      <div class="row back">
          <nav class="navbar" id="homePageNavbar" role="navigation" aria-label="dropdown navigation">
-             <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product">
+             <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product/{{this.initalPagePath}}{{this.keywordPath}}{{this.statusPath}}">
                  <strong> Tất cả</strong>
              </a>
              {{#each this.categories}}
                  <div class="navbar-item has-dropdown is-hoverable">
-                     <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product/?catParent={{_id}}">
+                     <a style="text-decoration:none "
+                        class="navbar-link {{#if isActive}} btn btn-secondary {{/if}} "
+                        href="/seller/channel/product/{{../initalPagePath}}{{../statusPath}}{{../keywordPath}}&catParent={{_id}}">
                          <strong> {{catParent}}</strong>
                      </a>
                      <div class="navbar-dropdown">
                          {{#each catChild}}
-                             <a class="navbar-item" href="/seller/channel/product/?catParent={{../_id}}&catChild={{@index}}">
+                             <a class="navbar-item" href="/seller/channel/product/{{../../initalPagePath}}{{../../this.statusPath}}{{../../this.keywordPath}}&catParent={{../_id}}&catChild={{@index}}">
                                  {{name}}
                              </a>
                          {{/each}}
@@ -127,35 +142,35 @@
 
     <div class="row mt-3" >
         {{#each this.products}}
-            <a class="col-lg-4 col-md-6 p-3 clickElement productElement" style="text-decoration: none" href="/seller/channel/product/detail/{{_id}}">
-                    <div class="card h-100">
-                        <img src = "/public/{{_id}}/main-thumb.jpg"
-                             class="card-img-top mainThumb"
-                             alt="Hình"
-                             width="200"
-                             height="200">
+            <a class="col-xl-4 col-lg-6 p-3 clickElement productElement" style="text-decoration: none" href="/seller/channel/product/detail/{{_id}}">
+                <div class="card h-100">
+                    <img src = "/public/{{_id}}/main-thumb.jpg"
+                         class="card-img-top mainThumb"
+                         alt="Hình"
+                         width="200"
+                         height="200">
 
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <p class="h4 font-weight-bold">{{proName}}</p>
-                            <p class="mt-5 text-secondary h5">
-                                {{catParent}} - {{catChild}}
-                            </p>
-                        </div>
-
-
-                        <div class="card-footer justify-content-between">
-                            <p class="h5">
-                                <i class="fa fa-clock-o fa-2x" aria-hidden="true"></i>
-                                <span class="countTime" data-date="{{proEndDate}}">
-                                    {{{format_duration proEndDate}}}
-                                </span>
-                            </p>
-
-                            <p class="h4">
-                                {{format_number proCurBidPrice}} ₫
-                            </p>
-                        </div>
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <p class="h4 font-weight-bold">{{proName}}</p>
+                        <p class="mt-5 text-secondary h5">
+                            {{catParent}} - {{catChild}}
+                        </p>
                     </div>
+
+
+                    <div class="card-footer justify-content-between">
+                        <p class="h5">
+                            <i class="fa fa-clock-o fa-2x" aria-hidden="true"></i>
+                            <span class="countTime" data-date="{{proEndDate}}">
+                                {{{format_duration proEndDate}}}
+                            </span>
+                        </p>
+
+                        <p class="h4">
+                            {{format_number proCurBidPrice}} ₫
+                        </p>
+                    </div>
+                </div>
             </a>
         {{/each}}
 
@@ -163,22 +178,42 @@
 
     <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
          {{#if this.prevPage.check}}
-                 <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.prevPage.value}}">Previous page</a>
+                 <a class="pagination-previous page-link"
+                    style="text-decoration:none"
+                    href="/seller/channel/product/?page={{this.prevPage.value}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}{{this.statusPath}}">Previous page</a>
          {{/if}}
 
          {{#if this.nextPage.check}}
-             <a class="pagination-next page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.nextPage.value}}">Next page</a>
+             <a class="pagination-next page-link"
+                style="text-decoration:none"
+                href="/seller/channel/product/?page={{this.nextPage.value}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}{{this.statusPath}}">Next page</a>
          {{/if}}
 
          <ul class="pagination-list">
              {{#if this.prevPage.check}}
-                     <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                     <li>
+                         <a class="pagination-link page-link"
+                            style="text-decoration:none"
+                            href="/seller/channel/product/?page={{this.prevPage.value}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}{{this.statusPath}}">
+                             {{this.prevPage.value}}
+                         </a>
+                     </li>
              {{/if}}
 
-             <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+             <li>
+                 <a style="text-decoration:none" class="pagination-link is-current">
+                     {{this.curPage.value}}
+                 </a>
+             </li>
 
              {{#if this.nextPage.check}}
-                     <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/?page={{this.nextPage.value}}">{{this.nextPage.value}}</a></li>
+                     <li>
+                         <a class="pagination-link page-link"
+                            style="text-decoration:none"
+                            href="/seller/channel/product/?page={{this.nextPage.value}}{{this.catParentPath}}{{this.catChildPath}}{{this.keywordPath}}{{this.statusPath}}">
+                         {{this.nextPage.value}}
+                         </a>
+                     </li>
              {{/if}}
          </ul>
      </nav>

@@ -45,15 +45,16 @@ app.engine('hbs', engine({
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             let duration = null;
             if (date2 < date1){
-                console.log(date2);
-                console.log(date1);
-                duration = '<p class="text-danger h4" >Đã hết hạn</p>'
+                duration = '<span class="text-danger h4" >Đã hết hạn</span>'
             }
             else if (diffDays <= 3) {
-                duration = `<p class="text-warning h4">Còn ${diffHours} giờ ${diffMinutes} phút</p>`;
+                if (diffHours > 0)
+                    duration = `<span class="text-warning h4">Còn ${diffHours} giờ ${diffMinutes} phút</span>`;
+                else
+                    duration = `<span class="text-warning h4">Còn ${diffMinutes} phút</span>`;
             }
             else{
-                duration = `<p class="text-success h4">Còn ${diffDays} ngày</p>`;
+                duration = `<span class="text-success h4">Còn ${diffDays} ngày</span>`;
             }
             // else {
             //     duration = val.toLocaleString("en-GB");
@@ -75,6 +76,7 @@ app.use(session({
 }));
 
 cron.schedule('* * * * *', async function () {
+    console.log("-------------------Cron Schedule--------------- ");
     const listResult = await productModel.getExpiredProduct(new Date());
     for (const product of listResult) {
         if (product.curBidderInfo.length === 0)
@@ -83,19 +85,6 @@ cron.schedule('* * * * *', async function () {
             await mailing.sendEmail(product.sellerInfo[0].email, 'Thông báo sản phẩm đã hết hạn', `Sản phẩm ${product.proName} của bạn đã hết hạn và người chiến thắng là ${product.curBidderInfo[0].name}. Vui lòng vào website để đánh giá người chiến thắng.\nXin cảm ơn đã sử dụng dịch vụ của chúng tôi`);
             await mailing.sendEmail(product.curBidderInfo[0].email, 'Thông báo đấu giá thành công sản phẩm', `Chúc mừng bạn đã chiến thắng sản phẩm ${product.proName}. Vui lòng vào website để đánh giá sản phẩm và người bán.\nXin cảm ơn đã sử dụng dịch vụ của chúng tôi.`)
         }
-    }
-
-    // Kiểm tra các product có tự động gia hạn và tự tăng thêm 10 phút nếu chỉ còn 5 phút và thông báo mail về
-    //--- Tìm product có tự động gia hạn
-    const autoExtendProduct = await productModel.getAutoExtendProduct();
-    for (const product of autoExtendProduct){
-        const newDate = new Date(product.proEndDate.getTime() + 10 * (1000 * 60));
-        product.proEndDate = newDate;
-        product.ixExtend = true;
-        await productModel.updateProEndDate(product._id, newDate);
-
-        const curBidderInfo = product.curBidderInfo[0];
-        await mailing.sendEmail.sendEmail(curBidderInfo.email, "Thông báo sản phẩm gần hết hạn", `Sản phẩm ${product.proName} gần hết hạn . Chúng tôi mong bạn hãy luôn theo dõi sản phẩm này để có thể chắc chắn sản phẩm sẽ về tay của bạn .`)
     }
 });
 

@@ -13,15 +13,11 @@ router.get('/product/:id', async function (req, res) {
     const proInfo = await productModel.findById(id);
     const proHistoryBid = await productModel.getBidderHistoryWithProID(id)
 
-    const historyList = []
     for(let i = 0; i < proHistoryBid.length; i++){
-        if(i === 4)
-            break
-        proHistoryBid[i].dateBid = moment(proHistoryBid[i].dateBid).format('DD/MM/YYYY HH:mm')
+        proHistoryBid[i].dateBid = moment(proHistoryBid[i].dateBid).format('DD/MM/YYYY')
         var mask = proHistoryBid[i].sellerInfo[0].name
 
         proHistoryBid[i].sellerInfo = mask.replace(/\D(?=\D{4})/g, "*");
-        historyList.push(proHistoryBid[i])
     }
     console.log(proHistoryBid)
     if(typeof (proInfo) === 'undefined')
@@ -31,7 +27,7 @@ router.get('/product/:id', async function (req, res) {
         res.render('detail', {
             proInfo,
             listSimilarity,
-            historyList
+            proHistoryBid
         });
     }
 });

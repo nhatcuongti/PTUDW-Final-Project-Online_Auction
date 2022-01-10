@@ -23,15 +23,15 @@
               <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
             </ol>
             <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" class="d-block w-100" alt="...">
-              </div>
+                <div class="carousel-item active">
+                    <img class="d-block w-100" src="/public/{{_id}}/main-thumb.jpg" alt="slide">
+                </div>
+
+                {{#each ../files}}
+                    <div class="carousel-item">
+                        <img class="d-block w-100" src="/public/{{../_id}}/{{this}}" alt="slide">
+                    </div>
+                {{/each}}
             </div>
             <button class="carousel-control-prev" type="button" data-target="#carouselExampleIndicators" data-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
