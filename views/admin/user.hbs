@@ -69,27 +69,20 @@
                                     <td>Chưa kích hoạt</td>
                                 {{/if}}
                                 <td class="row d-flex justify-content-center">
-                                    <form action="/admin/user/lock" method="post">
+                                    <form action="/admin/user/delete" method="post">
                                         <input type="hidden" name="id" value="{{_id}}">
-                                        {{#if verified}}
                                             <button class="btn btn-outline-danger" type="submit">
-                                        {{else}}
-                                            <button class="btn btn-outline-secondary" type="submit" disabled>
-                                        {{/if}}
-                                            <i class="fa fa-lock mr-2" aria-hidden="true"></i>
-                                            Khóa
+                                            <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                            Xóa
                                         </button>
                                     </form>
                                     <span>&nbsp;</span>
-                                    <form action="/admin/user/unlock" method="post">
+                                    <form action="/admin/user/reset" method="post">
+                                        <input type="hidden" name="email" value="{{email}}">
                                         <input type="hidden" name="id" value="{{_id}}">
-                                        {{#if verified}}
-                                            <button class="btn btn-outline-secondary" type="submit" disabled>
-                                        {{else}}
                                             <button class="btn btn-outline-info" type="submit">
-                                        {{/if}}
-                                            <i class="fa fa-unlock mr-2" aria-hidden="true"></i>
-                                            Kích hoạt
+                                            <i class="fa fa-undo mr-2" aria-hidden="true"></i>
+                                            Đặt lại
                                         </button>
                                     </form>
                                     <span>&nbsp;</span>

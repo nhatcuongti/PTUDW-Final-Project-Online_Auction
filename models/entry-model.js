@@ -24,7 +24,7 @@ async function loginAccountFunc(collection, user, pass) {
 }
 
 async function changePasswordFunc(collection, id, pass) {
-    await collection.updateOne({_id: new ObjectId(id)}, {$set: {pass: pass}});
+    return await collection.updateOne({_id: new ObjectId(id)}, {$set: {pass: pass}});
 }
 
 
@@ -82,7 +82,7 @@ export default {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('account');
-            await changePasswordFunc(collection, id, pass);
+            return await changePasswordFunc(collection, id, pass);
         } catch (e) {
             console.error(e);
         } finally {

@@ -183,6 +183,10 @@ async function deleteUpgradeRequestFunc(collection, id) {
     return await collection.findOneAndDelete({userId: new ObjectId(id)});
 }
 
+async function deleteAccountFunc(collection, id) {
+    return await collection.findOneAndDelete({_id: new ObjectId(id)});
+}
+
 // <<<<<<< Updated upstream
 async function updateCommentFromProID(collection, proID, commentData){
     const myQuery = { proID : proID};
@@ -496,6 +500,18 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('updateList');
             return await deleteUpgradeRequestFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async deleteAccount(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await deleteAccountFunc(collection, id);
         } catch (e) {
             console.error(e);
         } finally {

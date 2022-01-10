@@ -154,7 +154,7 @@ router.post('/signup', async function (req, res) {
         verified: false
     };
     const id = await entryModel.addAccount(account);
-    await mailing.sendEmail(account.email, 'Xác minh tài khoản', `Để xác minh tài khoản ở website của chúng tôi, bạn vui lòng nhấn vào đường link ở bên dưới:\nhttp://localhost:3000/verify/${randomstring.generate(70)}/${id.toString()}`);
+    await mailing.sendEmail(account.email, 'Xác minh tài khoản', `Để xác minh tài khoản ở website của chúng tôi, bạn vui lòng nhấn vào đường link ở bên dưới:\nhttp://localhost:3000/verify/${randomstring.generate(70)}/${id.toString()}\nXin cảm ơn.`);
     res.redirect('/login');
 });
 
@@ -211,7 +211,7 @@ router.get('/forget-password', async function (req, res) {
 router.post('/forget-password', async function (req, res) {
     const result = await entryModel.checkAccount(req.body.email);
     const id = result[0]._id;
-    await mailing.sendEmail(req.body.email, 'Quên mật khẩu', `Bạn đã yêu cầu thay đổi mật khẩu, xin vui lòng truy cập vào đường link ở bên dưới để tiến hành thay đổi mật khẩu:\nhttp://localhost:3000/change/${randomstring.generate(70)}/${id.toString()}`);
+    await mailing.sendEmail(req.body.email, 'Quên mật khẩu', `Bạn đã yêu cầu thay đổi mật khẩu, xin vui lòng truy cập vào đường link ở bên dưới để tiến hành thay đổi mật khẩu:\nhttp://localhost:3000/change/${randomstring.generate(70)}/${id.toString()}\nXin cảm ơn.`);
     res.redirect('/');
 });
 

@@ -6,6 +6,9 @@ import {ObjectId} from "mongodb";
 import moment from "moment";
 import bcrypt from "bcryptjs";
 import entryModel from "../models/entry-model.js";
+import randomstring from 'randomstring';
+import mailing from "../utils/mailing.js";
+
 
 const router = express.Router();
 
@@ -21,6 +24,8 @@ router.get('/', async function (req, res) {
         totalUpgrade
     });
 });
+
+/*
 router.get('/product', async function (req, res) {
     const keyword = req.query.keyword;
     const limit = 6;
@@ -64,6 +69,7 @@ router.post('/product/delete', async function (req, res) {
     await categoryModel.removeProductFromCat(result[0].catParent, result[0].catChild);
     res.redirect(req.headers.referer);
 });
+*/
 
 router.get('/category', async function (req, res) {
     const keyword = req.query.keyword;
@@ -183,18 +189,34 @@ router.get('/user', async function (req, res) {
     });
 });
 
-router.post('/user/lock', async function (req, res) {
-    await accountModel.lockAccount(req.body.id);
-    res.redirect(req.headers.referer);
-});
-
 router.post('/user/downgrade', async function (req, res) {
     await accountModel.downgradeAccount(req.body.id);
     res.redirect(req.headers.referer);
 });
 
+/*
+router.post('/user/lock', async function (req, res) {
+    await accountModel.lockAccount(req.body.id);
+    res.redirect(req.headers.referer);
+});
+
 router.post('/user/unlock', async function (req, res) {
     await accountModel.unlockAccount(req.body.id);
+    res.redirect(req.headers.referer);
+});
+*/
+
+router.post('/user/delete', async function (req, res) {
+    await accountModel.deleteAccount(req.body.id);
+    res.redirect(req.headers.referer);
+});
+
+router.post('/user/reset', async function (req, res) {
+    const random = randomstring.generate(10);
+    const salt = bcrypt.genSaltSync(10);
+    const result = await entryModel.changePassword(req.body.id, bcrypt.hashSync(random, salt));
+    if (result.modifiedCount === 1)
+        await mailing.sendEmail(req.body.email, 'Thông báo tài khoản đã được đặt lại', `Tài khoản của bạn trên website Online Auction đã được Admin đặt lại mật khẩu. Mật khẩu mới là:\n${random}\nXin cảm ơn.`);
     res.redirect(req.headers.referer);
 });
 
