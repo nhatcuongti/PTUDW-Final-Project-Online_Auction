@@ -15,9 +15,11 @@
                 <li class="nav-item">
                     <a class="nav-link h6 text-center" href="/user/change-password">Đổi mật khẩu</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link h6 text-center" href="#">Nâng cấp tài khoản</a>
-                </li>
+                {{#if bidderRole}}
+                    <li class="nav-item">
+                        <a class="nav-link h6 text-center" href="#">Nâng cấp tài khoản</a>
+                    </li>
+                {{/if}}
             </ul>
         </div>
         <div class="col-sm-9">

@@ -36,6 +36,7 @@
 <!--        [...document.querySelectorAll("[data-date]")].forEach(el => countDown(el));-->
 <!--    </script>-->
 
+
 {{/section}}
 
 {{#section 'css'}}
@@ -85,15 +86,18 @@
         </div>
 
         <div class="col-md-6 mt-2">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Product Name..." aria-label="Recipient's username" aria-describedby="button-addon2">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="button" id="button-addon2">
-                      Search
-                      <i class="fa fa-search" aria-hidden="true"></i>
-                  </button>
+            <form method="get" action="">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Product Name..." name="keyword" aria-describedby="button-addon2" id="keyword" value="">
+
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit" id="searchBtn">
+                            Search
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
-              </div>
+            </form>
         </div>
     </div>
 

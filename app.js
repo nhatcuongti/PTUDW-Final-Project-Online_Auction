@@ -12,10 +12,10 @@ import bid from './routes/bid.js'
 import account  from "./routes/account.js";
 import seller from "./routes/seller.route.js"
 import admin from './routes/admin-route.js'
-import session from 'express-session';
 import cron from 'node-cron';
 import productModel from './models/product-model.js';
 import mailing from "./utils/mailing.js";
+import session from 'express-session';
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -38,11 +38,6 @@ app.engine('hbs', engine({
             const date1 = new Date().getTime();
             const date2 = val.getTime();
             const diffTime = Math.abs(date2 - date1);
-            console.log("------------------------");
-            console.log(diffTime);
-            console.log(date1);
-            console.log(date2);
-            console.log("------------------------");
             const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
             const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
 
@@ -78,6 +73,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { }
 }));
+
 cron.schedule('* * * * *', async function () {
     const listResult = await productModel.getExpiredProduct(new Date());
     for (const product of listResult) {
@@ -87,6 +83,19 @@ cron.schedule('* * * * *', async function () {
             await mailing.sendEmail(product.sellerInfo[0].email, 'Thông báo sản phẩm đã hết hạn', `Sản phẩm ${product.proName} của bạn đã hết hạn và người chiến thắng là ${product.curBidderInfo[0].name}. Vui lòng vào website để đánh giá người chiến thắng.\nXin cảm ơn đã sử dụng dịch vụ của chúng tôi`);
             await mailing.sendEmail(product.curBidderInfo[0].email, 'Thông báo đấu giá thành công sản phẩm', `Chúc mừng bạn đã chiến thắng sản phẩm ${product.proName}. Vui lòng vào website để đánh giá sản phẩm và người bán.\nXin cảm ơn đã sử dụng dịch vụ của chúng tôi.`)
         }
+    }
+
+    // Kiểm tra các product có tự động gia hạn và tự tăng thêm 10 phút nếu chỉ còn 5 phút và thông báo mail về
+    //--- Tìm product có tự động gia hạn
+    const autoExtendProduct = await productModel.getAutoExtendProduct();
+    for (const product of autoExtendProduct){
+        const newDate = new Date(product.proEndDate.getTime() + 10 * (1000 * 60));
+        product.proEndDate = newDate;
+        product.ixExtend = true;
+        await productModel.updateProEndDate(product._id, newDate);
+
+        const curBidderInfo = product.curBidderInfo[0];
+        await mailing.sendEmail.sendEmail(curBidderInfo.email, "Thông báo sản phẩm gần hết hạn", `Sản phẩm ${product.proName} gần hết hạn . Chúng tôi mong bạn hãy luôn theo dõi sản phẩm này để có thể chắc chắn sản phẩm sẽ về tay của bạn .`)
     }
 });
 

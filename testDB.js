@@ -4,9 +4,8 @@ import accountModel from "./models/account-model.js";
 import mailing from "./utils/mailing.js";
 
 async function testFunc(){
-    // const data = await productModel.findById("61b05792c6e975e18b1035da");
-    // console.log(data);
-    console.log(Math.floor(0.1));
+    const product = await productModel.updateProEndDate('61db158587e0b892a6097df7', new Date());
+    console.log(product);
 }
 
 testFunc();

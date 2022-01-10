@@ -14,6 +14,8 @@ export default {
         goodData.catChild = catInformation[0].catChild[goodData.catChildType].name;
 
         goodData.autoExtend = (dataProduct.autoExtend === 'true');
+        if (goodData.autoExtend)
+            goodData.isExtend = false;
         goodData.bidderType = (dataProduct.bidderRange === 'true');
 
         goodData.proDescription = dataProduct.proDescription;

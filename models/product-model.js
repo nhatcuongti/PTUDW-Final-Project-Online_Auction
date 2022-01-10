@@ -98,15 +98,17 @@ async function findByIdFunc(collection, id) {
   ]).toArray();
 }
 
-async function findByCategoryParentFunc(collection, cat, numberProduct) {
+async function findByCategoryParentFunc(collection, cat, numberProduct, userID) {
   if (numberProduct === undefined)
-    return await collection.find({proType: new ObjectId(cat)}).sort({proEndDate : 1}).toArray();
+    return await collection.find({proType: new ObjectId(cat), sellerInfo: new ObjectId(userID)}).sort({proEndDate : 1}).toArray();
   else
     return await collection.find({catParent: cat}).limit(numberProduct).toArray();
 }
 
-async function findByCategoryFunc(collection, catID, catChildType) {
-  return await collection.find({ proType: catID, catChildType: catChildType}).sort({proEndDate: 1}).toArray();
+//sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();
+
+async function findByCategoryFunc(collection, catID, catChildType, userID) {
+  return await collection.find({ proType: catID, catChildType: catChildType, sellerInfo: new ObjectId(userID)}).sort({proEndDate: 1}).toArray();
 }
 
 async function countTotalSearchProductFunc(collection, keyword, type) {
@@ -144,64 +146,172 @@ async function countTotalSearchProductFunc(collection, keyword, type) {
   }
 }
 
-async function searchByTypeFunc(collection, keyword, type, limit, offset, sort) {
+async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {
   if (type === 'name') {
-    if(sort === 'price-ascending')
-      return await collection.aggregate([
-        {
-          '$search':{
-            'index': 'custom',
-            'text': {
-              'query': keyword,
-              'path': 'proName',
-              'fuzzy': {}
+    if(sort === 'price-ascending'){
+        return await collection.aggregate([
+          {
+            '$search':{
+              'index': 'custom',
+              'text': {
+                'query': keyword,
+                'path': 'proName',
+                'fuzzy': {}
+              }
             }
-          }
-        },
-        {
-          $lookup: {
-            from: 'account',
-            localField: 'sellerInfo',
-            foreignField: '_id',
-            as: 'sellerInfo'
           },
-        },
-        {
-          $lookup: {
-            from: 'account',
-            localField: 'curBidderInfo',
-            foreignField: '_id',
-            as: 'curBidderInfo'
-          }
-        }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();
-    else if(sort === 'time-descending')
-      return await collection.aggregate([
-        {
-          '$search':{
-            'index': 'custom',
-            'text': {
-              'query': keyword,
-              'path': 'proName',
-              'fuzzy': {}
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'sellerInfo',
+              foreignField: '_id',
+              as: 'sellerInfo'
+            },
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'curBidderInfo',
+              foreignField: '_id',
+              as: 'curBidderInfo'
             }
-          }
-        },
-        {
-          $lookup: {
-            from: 'account',
-            localField: 'sellerInfo',
-            foreignField: '_id',
-            as: 'sellerInfo'
+          }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();
+    }
+    else if(sort === 'time-descending'){
+      if (catParentFind && catChildFind){
+        return await collection.aggregate([
+          {
+            '$search':{
+              'index': 'custom',
+              'text': {
+                'query': keyword,
+                'path': 'proName',
+                'fuzzy': {}
+              }
+            }
           },
-        },
-        {
-          $lookup: {
-            from: 'account',
-            localField: 'curBidderInfo',
-            foreignField: '_id',
-            as: 'curBidderInfo'
-          }
-        }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();
+          {
+            '$match':{
+              'proType' : catParentFind,
+              'catChildType': catChildFind,
+              'sellerInfo': new ObjectId(userID)
+            }
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'sellerInfo',
+              foreignField: '_id',
+              as: 'sellerInfo'
+            },
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'curBidderInfo',
+              foreignField: '_id',
+              as: 'curBidderInfo'
+            }
+          }]).sort({proCurBidPrice: 1}).toArray();
+      }
+      else if (catParentFind){
+        return await collection.aggregate([
+          {
+            '$search':{
+              'index': 'custom',
+              'text': {
+                'query': keyword,
+                'path': 'proName',
+                'fuzzy': {}
+              }
+            }
+          },
+          {
+            '$match':{
+              'proType' : catParentFind,
+              'sellerInfo': new ObjectId(userID)
+            }
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'sellerInfo',
+              foreignField: '_id',
+              as: 'sellerInfo'
+            },
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'curBidderInfo',
+              foreignField: '_id',
+              as: 'curBidderInfo'
+            }
+          }]).sort({proCurBidPrice: 1}).toArray();
+      }
+      else if (userID){
+        return await collection.aggregate([
+          {
+            '$search':{
+              'index': 'custom',
+              'text': {
+                'query': keyword,
+                'path': 'proName',
+                'fuzzy': {}
+              }
+            }
+          },
+          {
+            $match:{
+              'sellerInfo': new ObjectId(userID)
+            }
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'sellerInfo',
+              foreignField: '_id',
+              as: 'sellerInfo'
+            },
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'curBidderInfo',
+              foreignField: '_id',
+              as: 'curBidderInfo'
+            }
+          }]).sort({proEndDate: -1}).toArray();
+      }
+      else
+        return await collection.aggregate([
+          {
+            '$search':{
+              'index': 'custom',
+              'text': {
+                'query': keyword,
+                'path': 'proName',
+                'fuzzy': {}
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'sellerInfo',
+              foreignField: '_id',
+              as: 'sellerInfo'
+            },
+          },
+          {
+            $lookup: {
+              from: 'account',
+              localField: 'curBidderInfo',
+              foreignField: '_id',
+              as: 'curBidderInfo'
+            }
+          }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();
+    }
   }
   else if (type === 'category') {
     if(sort === 'price-ascending')
@@ -288,8 +398,11 @@ async function getLimitProductFunc(collection, limit, offset){
   ]).skip(offset).limit(limit).toArray()
 }
 
-async function getAllFunc(collection){
-  return await collection.find().sort({proEndDate: 1}).toArray();
+async function getAllFunc(collection, userID){
+  if (userID != undefined)
+    return await collection.find({sellerInfo : new ObjectId(userID)}).sort({proEndDate: 1}).toArray();
+  else
+    return await collection.find().sort({proEndDate: 1}).toArray();
 }
 
 async function insertDataFunc(collection, data){
@@ -378,7 +491,57 @@ async function updatePriceProductFunc(collection, productID, maximumPrice){
   await collection.updateOne(myQuery, myUpdate);
 }
 
+async function getAutoExtendProductFunc(collection){
 
+  const myQuery = {autoExtend: true, isExtend: false};
+  const products = await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    },
+    {
+      $match: {autoExtend: true, isExtend: false}
+    }
+  ]).toArray();
+  // const products = await collection.find(myQuery).toArray();
+
+  for (let i =products.length - 1; i>=0; i--) {
+    const endDate = products[0].proEndDate.getTime();
+    const currentDate = new Date().getTime();
+    if (currentDate > endDate) {
+      products.splice(i, 1);
+      continue;
+    }
+
+    const diffTime = Math.abs(currentDate - endDate);
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+    if (diffMinutes > 5 || products[0].isExtend || diffHours > 1)
+      products.splice(i, 1);
+      continue;
+  }
+
+  return products;
+}
+
+async function updateProEndDateFunc(collection, proID, newDate){
+  const myQuery = {"_id" : new ObjectId(proID)};
+  const myUpdate =  {$set : {proEndDate : newDate, isExtend : true}};
+
+  await collection.updateOne(myQuery, myUpdate);
+}
 
 export default {
   async findTopExpiration(now) {
@@ -429,25 +592,25 @@ export default {
       await mongoClient.close()
     }
   },
-  async findByCategoryParent(cat, numberProduct) {
+  async findByCategoryParent(cat, numberProduct, userID) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await findByCategoryParentFunc(collection, cat, numberProduct);
+      return await findByCategoryParentFunc(collection, cat, numberProduct, userID);
     } catch (e) {
       console.error(e);
     } finally {
       await mongoClient.close()
     }
   },
-  async findByCategory(catID, catChildType){
+  async findByCategory(catID, catChildType, userID){
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       const id = new ObjectId(catID);
-      return await findByCategoryFunc(collection, id, catChildType);
+      return await findByCategoryFunc(collection, id, catChildType, userID);
     } catch (e) {
       console.error(e);
     } finally {
@@ -466,12 +629,14 @@ export default {
       await mongoClient.close()
     }
   },
-  async searchByType(keyword, type, limit, offset, sort) {
+  async searchByType(keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      const result = await searchByTypeFunc(collection, keyword, type, limit, offset, sort);
+      // async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {
+
+      const result = await searchByTypeFunc(collection, keyword, type, limit, offset, sort, catParentFind, catChildFind, userID);
       return result;
     } catch (e) {
       console.error(e);
@@ -518,12 +683,12 @@ export default {
       await mongoClient.close()
     }
   },
-  async getAll() {
+  async getAll(userID) {
     try {
       await mongoClient.connect();
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
-      return await getAllFunc(collection);
+      return await getAllFunc(collection, userID);
     } catch (e) {
       console.error(e);
     } finally {
@@ -634,6 +799,30 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       await updatePriceProductFunc(collection, productID, maximumPrice);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async getAutoExtendProduct() {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      return await getAutoExtendProductFunc(collection);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updateProEndDate(proID, newDate) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateProEndDateFunc(collection, proID, newDate);
     } catch (e) {
       console.error(e);
     } finally {

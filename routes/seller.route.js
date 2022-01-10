@@ -25,21 +25,35 @@ router.get("/channel/product", async (req, res) => {
     let products = null;
     const categories = await modelCategory.getAll();
 
+
     //Handle Category
     const catParentFind = req.query.catParent;
     const catChildFind = req.query.catChild;
-
-
-    if (catParentFind != undefined && catChildFind != undefined)
-        products = await modelProduct.findByCategory(catParentFind, catChildFind);
-    else if (catParentFind != undefined)
-        products = await modelProduct.findByCategoryParent(new ObjectId(catParentFind));
-    else
-        products = await modelProduct.getAll();
-
+    //Search
+    let keyword = req.query.keyword;
     //Taking products with id seller
     const userID = res.locals.user._id;
-    formatProduct.findProductWithSellerID(products, userID);
+
+
+
+    //Find offset base on curPage
+    const choosenPage = req.query.page;
+    let limitProduct = 6;
+    let offset = ((+choosenPage - 1) * limitProduct) || 0;
+
+    // async searchByType(keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {
+    console.log("keyword : " + keyword);
+
+    if (keyword !== undefined)
+        products = await productModel.searchByType(keyword, 'name', limitProduct, offset, 'time-descending', catParentFind, catChildFind, userID);
+    else{
+            if (catParentFind != undefined && catChildFind != undefined)
+                products = await modelProduct.findByCategory(catParentFind, catChildFind, userID);
+            else if (catParentFind != undefined)
+                products = await modelProduct.findByCategoryParent(new ObjectId(catParentFind), undefined, userID);
+            else
+                products = await modelProduct.getAll(userID);
+    }
 
     //Find with status product
     let status = req.query.status;
@@ -59,27 +73,18 @@ router.get("/channel/product", async (req, res) => {
 
     //Handle page
     let nPage = Math.floor((products.length - 1) / 6) + 1;
-    const choosenPage = req.query.page;
     let prevPage = {check:true, value : 0};
     let nextPage = {check:true, value : 0};
     let curPage = {check:true, value : 0};
     await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );
 
-
-    //Find offset base on curPage
-    let limitProduct = 6;
-    let offset = ((+choosenPage - 1) * limitProduct) || 0;
     const numberProduct = products.length;
     products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)
 
-    //const number Image
-    for (const product of products){
-        const indexImage = [];
-
-        for (let index = 1; index < product.numberImage; index++)
-            indexImage.push(index);
-    }
-
+    // const currentPath = '/seller/channel/product?page=' + choosenPage
+    //                     + (req.query.status !== undefined ? `&status=${req.query.status}` : "")
+    //                     + (req.query.catParent !== undefined ? `&catParent=${req.query.catParent}` : "")
+    //                     + (req.query.catChild !== undefined ? `&catChild=${req.query.catChild}` : "");
 
     res.render("./seller/channel_product", {
         layout: "seller.layout.hbs",
@@ -91,6 +96,83 @@ router.get("/channel/product", async (req, res) => {
         curPage
     })
 })
+
+// router.get("/channel/product", async (req, res) => {
+//     res.locals.XemSanPham.isActive = true;
+//     let products = null;
+//     const categories = await modelCategory.getAll();
+//
+//     //Handle Category
+//     const catParentFind = req.query.catParent;
+//     const catChildFind = req.query.catChild;
+//
+//     //Search
+//     const keyword = req.query.keyword;
+//
+//
+//
+//     if (catParentFind != undefined && catChildFind != undefined)
+//         products = await modelProduct.findByCategory(catParentFind, catChildFind);
+//     else if (catParentFind != undefined)
+//         products = await modelProduct.findByCategoryParent(new ObjectId(catParentFind));
+//     else
+//         products = await modelProduct.getAll();
+//
+//     //Taking products with id seller
+//     const userID = res.locals.user._id;
+//     formatProduct.findProductWithSellerID(products, userID);
+//
+//     //Find with status product
+//     let status = req.query.status;
+//     if (status != undefined )
+//         await formatProduct.findProductWithStatus(products, status);
+//
+//     if (status === "1")
+//         status = "Đấu giá thành công"
+//     else if (status === "2")
+//         status = "Đấu giá thất bại"
+//     else if (status === "3")
+//         status = "Đang được đấu giá"
+//     else if (status === "4")
+//         status = "Chưa được đấu giá"
+//     else
+//         status = "Tất cả"
+//
+//
+//     //Handle page
+//     let nPage = Math.floor((products.length - 1) / 6) + 1;
+//     const choosenPage = req.query.page;
+//     let prevPage = {check:true, value : 0};
+//     let nextPage = {check:true, value : 0};
+//     let curPage = {check:true, value : 0};
+//     await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );
+//
+//
+//     //Find offset base on curPage
+//     let limitProduct = 6;
+//     let offset = ((+choosenPage - 1) * limitProduct) || 0;
+//     const numberProduct = products.length;
+//     products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)
+//
+//     // if (keyword != undefined)
+//     //     products = await productModel.searchByType(keyword, 'name', limitProduct, offset, 'time-descending', );
+//
+//     console.log(products);
+//
+//
+//
+//
+//
+//     res.render("./seller/channel_product", {
+//         layout: "seller.layout.hbs",
+//         products,
+//         categories,
+//         status,
+//         prevPage,
+//         nextPage,
+//         curPage
+//     })
+// })
 
 router.get("/channel/product/insert", async (req, res) => {
     res.locals.ThemSanPham.isActive = true;
