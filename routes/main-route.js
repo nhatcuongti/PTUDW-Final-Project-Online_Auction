@@ -5,6 +5,7 @@ import mailing from "../utils/mailing.js";
 import entryModel from '../models/entry-model.js'
 import bcrypt from 'bcryptjs';
 import randomstring from 'randomstring';
+import fs from "fs";
 
 const router = express.Router();
 
@@ -20,6 +21,17 @@ router.get('/product/:id', async function (req, res) {
         proHistoryBid[i].sellerInfo = mask.replace(/\D(?=\D{4})/g, "*");
     }
     console.log(proHistoryBid)
+
+    let files = null;
+    try{
+        files = fs.readdirSync(`./public/${id}/`);
+        console.log(files);
+        files.splice(0, 1);
+    } catch (e){
+        console.log(e);
+    }
+
+
     if(typeof (proInfo) === 'undefined')
         res.redirect('/');
     else {
@@ -27,7 +39,8 @@ router.get('/product/:id', async function (req, res) {
         res.render('detail', {
             proInfo,
             listSimilarity,
-            proHistoryBid
+            proHistoryBid,
+            files
         });
     }
 });

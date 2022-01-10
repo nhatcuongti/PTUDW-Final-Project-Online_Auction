@@ -132,14 +132,14 @@ export default {
 
         if (endDate - currentDate <= 0) { // Nếu còn hạn
             if (product.curBidderInfo === null || product.curBidderInfo === undefined || product.curBidderInfo.length === 0)
-                return "Đấu giá thất bại"
+                return "<span class='text-danger'>Đấu giá thất bại</span>"
             else
-                return "Đấu giá thành công"
+                return "<span class='text-success'>Đấu giá thành công</span>"
         } else { // Nếu hết hạn
             if (product.curBidderInfo === null || product.curBidderInfo === undefined)
-                return "Chưa được đấu giá"
+                return "<span class='text-warning'>Chưa được đấu giá</span>"
             else
-                return "Đang được đấu giá"
+                return "<span class='text-success'>Đang được đấu giá</span>"
         }
     },
 
