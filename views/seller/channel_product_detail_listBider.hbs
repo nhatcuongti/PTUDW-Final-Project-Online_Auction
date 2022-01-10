@@ -32,102 +32,107 @@
     </div>
 
 
-    <div class="row">
-        <div class="card w-100">
-            <div class="card-body">
-                <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th scope="col p-0">#</th>
-                        <th scope="col">Thời điểm</th>
-                        <th scope="col">Người mua</th>
-                        <th scope="col">Giá</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-
-                    {{#each this.bidderHistory}}
+    {{#if emptyMsg}}
+        <p class="text-danger h1">{{this.emptyMsg}}</p>
+    {{else}}
+        <div class="row">
+            <div class="card w-100">
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
                         <tr>
-                            <th scope="row">{{@index}}</th>
-                            <td>{{format_date dateBid}}</td>
-                            {{#each sellerInfo}}
-                                <td>{{ email}}</td>
+                            <th scope="col p-0">#</th>
+                            <th scope="col">Thời điểm</th>
+                            <th scope="col">Người mua</th>
+                            <th scope="col">Giá</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
 
-                                <td>{{format_number ../price}}</td>
+                        <tbody>
+
+                        {{#each this.bidderHistory}}
+                            <tr>
+                                <th scope="row">{{@index}}</th>
+                                <td>{{format_date dateBid}}</td>
+                                {{#each sellerInfo}}
+                                    <td>{{ email}}</td>
+
+                                    <td>{{format_number ../price}}</td>
 
 
-                                <td class="text-right">
-<!--                                    <a class="btn btn-outline-danger denyUser" role="button" data-id="{{_id}}">-->
-<!--                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>-->
-<!--                                        Hủy-->
-<!--                                    </a>-->
+                                    <td class="text-right">
+                                        <!--                                    <a class="btn btn-outline-danger denyUser" role="button" data-id="{{_id}}">-->
+                                        <!--                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>-->
+                                        <!--                                        Hủy-->
+                                        <!--                                    </a>-->
 
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
-                                        <i class="fa fa-ban mr-2" aria-hidden="true"></i>
-                                        <span>
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                                            <i class="fa fa-ban mr-2" aria-hidden="true"></i>
+                                            <span>
                                             Từ chối
                                         </span>
-                                    </button>
-                                </td>
+                                        </button>
+                                    </td>
 
-                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModalLabel">Modal title</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Bạn có chắc muốn từ chối người mua này không ?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn" data-dismiss="modal">No</button>
+                                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel">Modal title</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Bạn có chắc muốn từ chối người mua này không ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn" data-dismiss="modal">No</button>
 
-                                                <form method="post" action="">
-                                                    <input name="userID" value="{{_id}}" hidden>
-                                                    <button type="submit" class="btn btn-primary">Yes</button>
-                                                </form>
+                                                    <form method="post" action="">
+                                                        <input name="userID" value="{{_id}}" hidden>
+                                                        <button type="submit" class="btn btn-primary">Yes</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            {{/each}}
+                                {{/each}}
 
-                        </tr>
-                    {{/each}}
-                    </tbody>
-                </table>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
 
-            </div>
-            <div class="card-footer text-muted">
-                <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
-                    {{#if this.prevPage.check}}
-                        <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">Previous page</a>
-                    {{/if}}
-
-                    {{#if this.nextPage.check}}
-                        <a class="pagination-next page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">Next page</a>
-                    {{/if}}
-
-                    <ul class="pagination-list">
+                </div>
+                <div class="card-footer text-muted">
+                    <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
                         {{#if this.prevPage.check}}
-                            <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                            <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">Previous page</a>
                         {{/if}}
-
-                        <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
 
                         {{#if this.nextPage.check}}
-                            <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">{{this.nextPage.value}}</a></li>
+                            <a class="pagination-next page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">Next page</a>
                         {{/if}}
-                    </ul>
-                </nav>
+
+                        <ul class="pagination-list">
+                            {{#if this.prevPage.check}}
+                                <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                            {{/if}}
+
+                            <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
+
+                            {{#if this.nextPage.check}}
+                                <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">{{this.nextPage.value}}</a></li>
+                            {{/if}}
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
+    {{/if}}
+
 </div>
 
 

@@ -10,6 +10,7 @@ import {ObjectId} from "mongodb";
 import productModel from "../models/product-model.js";
 import accountModel from "../models/account-model.js";
 import mailing from "../utils/mailing.js";
+import {authUserWithProduct} from "../middlewares/auth-mdw.js";
 
 const router = express.Router();
 
@@ -96,10 +97,18 @@ router.get("/channel/product", async (req, res) => {
     const initalPagePath = `?page=1`;
 
     for (const product of products){
-        const files = fs.readdirSync(`./public/${product._id}/`);
-        const mainThumb = files[0];
-        product.mainThumb = mainThumb;
+        try{
+            const files = fs.readdirSync(`./public/${product._id}/`);
+            const mainThumb = files[0];
+            product.mainThumb = mainThumb;
+        } catch (e) {
+            console.log(e)
+        }
     }
+
+    let emptyMsg;
+    if (products.length === 0)
+        emptyMsg = "Hiện tại không có sản phẩm nào"
 
     res.render("./seller/channel_product", {
         layout: "seller.layout.hbs",
@@ -107,6 +116,7 @@ router.get("/channel/product", async (req, res) => {
         categories,
 
         status,
+        emptyMsg,
 
         prevPage,
         nextPage,
@@ -187,7 +197,7 @@ const afterUploadImage = async (req, res, next) => {
     next();
 }
 
-router.post("/channel/product/insert", cpUpload,  afterUploadImage, async (req, res) => {
+router.post("/channel/product/insert", cpUpload, async (req, res) => {
     //Change folder name
     req.body.index = undefined;
     const oldFolderName = "./public/image";
@@ -211,7 +221,7 @@ router.get("/channel/product/insert/review", (req, res) => {
     })
 })
 
-router.get("/channel/product/detail/:id", async function(req, res) {
+router.get("/channel/product/detail/:id", authUserWithProduct, async function(req, res) {
     const ProID = req.params.id;
     const list =  await modelProduct.findById(ProID);
     const product = list[0];
@@ -226,9 +236,16 @@ router.get("/channel/product/detail/:id", async function(req, res) {
 
     res.locals.XemSanPham.isActive = true;
     res.locals.XemChiTiet.isActive = true;
-    const files = fs.readdirSync(`./public/${product._id}/`);
-    const mainThumb = files[0];
-    files.splice(0, 1);
+    let files = null;
+    let mainThumb = null;
+    try{
+        files = fs.readdirSync(`./public/${product._id}/`);
+        mainThumb = files[0];
+        files.splice(0, 1);
+    }catch(e){
+        console.log(e);
+    }
+
 
 
     res.render("./seller/channel_product_detail", {
@@ -314,7 +331,7 @@ router.post("/channel/product/detail/:id", async (req, res) => {
     res.redirect(`/seller/channel/product/detail/${ProID}`);
 })
 
-router.get("/channel/product/detail/:id/list", async (req, res) => {
+router.get("/channel/product/detail/:id/list", authUserWithProduct, async (req, res) => {
     res.locals.XemSanPham.isActive = true;
 
     //Getting user data from bidderHistory
@@ -336,17 +353,22 @@ router.get("/channel/product/detail/:id/list", async (req, res) => {
     const numberUser = bidderHistory.length;
     bidderHistory.slice(offset, (offset + limitUser  < numberUser) ? offset + limitUser : numberUser)
 
+    let emptyMsg;
+    if (bidderHistory.length === 0)
+        emptyMsg = "Hiện tại chưa có ai đặt sản phẩm của bạn"
+
     res.render("./seller/channel_product_detail_listBider", {
         layout: "seller.layout.hbs",
         bidderHistory,
         productID,
         prevPage,
         nextPage,
-        curPage
+        curPage,
+        emptyMsg
     })
 })
 
-router.post("/channel/product/detail/:id/list", async (req, res) => {
+router.post("/channel/product/detail/:id/list", authUserWithProduct, async (req, res) => {
     res.locals.XemSanPham.isActive = true;
 
     //Getting user data from bidderHistory

@@ -146,6 +146,8 @@ async function countTotalSearchProductFunc(collection, keyword, type) {
   }
 }
 
+
+
 async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {
   if (type === 'name') {
     if(sort === 'price-ascending'){
@@ -543,6 +545,28 @@ async function updateProEndDateFunc(collection, proID, newDate){
   await collection.updateOne(myQuery, myUpdate);
 }
 
+async function updateProNameEnglishFunc(collection, proID, proNameEnglish){
+  const myQuery = {"_id" : new ObjectId(proID)};
+  const myUpdate =  {$set : {proNameEnglish : proNameEnglish}};
+
+  await collection.updateOne(myQuery, myUpdate);
+}
+
+async function searchVietnameseFunc(collection, keyword){
+    return await collection.aggregate([
+      {
+        '$search':{
+          'index': 'custom1',
+          'text': {
+            'query': keyword,
+            'path': 'proNameEnglish',
+            'fuzzy': {}
+          }
+        }
+      }]).toArray();
+}
+
+//----------------------------------------------------------------------------------------//
 export default {
   async findTopExpiration(now) {
     try {
@@ -644,6 +668,21 @@ export default {
       await mongoClient.close()
     }
   },
+  async searchVietnamese(keyword){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+
+      const result = await searchVietnameseFunc(collection, keyword);
+      return result;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  }
+  ,
   async countTotalProduct() {
     try {
       await mongoClient.connect();
@@ -823,6 +862,18 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       await updateProEndDateFunc(collection, proID, newDate);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updateProNameEnglish(product) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateProNameEnglishFunc(collection, product._id, product.proNameEnglish);
     } catch (e) {
       console.error(e);
     } finally {
