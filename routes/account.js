@@ -13,6 +13,7 @@ router.get('/favorite', auth ,async function (req, res) {
     const temp = req.session.user;
     const userID = temp[0]._id;
     let list = await account.showFavoriteList(userID)
+    list = list.reverse()
     res.render('viewAccountBidder/favorite', {
         product: list
     });

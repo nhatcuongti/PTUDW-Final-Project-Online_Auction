@@ -42,6 +42,8 @@
               <span class="sr-only">Next</span>
             </button>
           </div>
+            {{#if ../historyList}}
+
             <table class="table table-striped mt-lg-5 border">
                 <thead class="thead-dark">
                 <tr>
@@ -51,14 +53,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{#each ../proHistoryBid}}
+                {{#each ../historyList}}
                 <tr>
                     <td>{{dateBid}}</td>
                     <td>{{sellerInfo}}</td>
                     <td>{{format_number curProPrice}}</td>
                 </tr>
                 {{/each}}
+
             </table>
+            {{/if}}
+
+
         </div>
         <div class="col-6">
           <p class="h3">{{proName}}</p>

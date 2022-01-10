@@ -1,3 +1,26 @@
+{{#section 'js'}}
+    <script>
+        $('.btnFavorite').on('click', function (e){
+            e.preventDefault();
+            const id = $(this).data('id');
+            $('#txtProID').val(id);
+            alert(id)
+            $('#formAddFavorite').submit();
+
+        });
+
+    </script>
+    <style>
+        .rediconcolor{
+            color: #e74c3c;
+        }
+    </style>
+{{/section}}
+
+<form action="/user/favorite/add" method="post" id="formAddFavorite">
+    <input type="text" name="id" id="txtProID" hidden>
+</form>
+
 {{#if this.product}}
 {{else}}
     {{#if this.by}}
@@ -69,10 +92,12 @@
     <div class="container">
         <div class="row mt-3 d-flex justify-content-center">
             {{#each this.listResult}}
-                <a class="col-lg-4 p-3" style="text-decoration:none" href="/product/{{_id}}">
+                <a class="col-lg-4 p-3 tagA" href="/product/{{_id}}" style="text-decoration:none" onclick="alert('Ngoài');">
                     <div class="card h-100">
-                        <img src="">
+
+                        <img src="/public/61dae95569874df04d21612a/main-thumb.jpg">
                         <div class="card-body">
+
                             <p class="h4 font-weight-bold">{{proName}}</p>
                             {{#if check}}
                                 <p class="has-text-primary font-italic">Sản phẩm mới</p>
@@ -87,6 +112,7 @@
                             </div>
                         </div>
                         <div class="has-background-grey-lighter">
+
                             <div class="card-footer justify-content-between">
                                 <p class="h4 has-text-danger">
                                     Giá đặt hiện tại: {{format_number proCurBidPrice}} VNĐ
@@ -97,8 +123,16 @@
                                     Giá mua ngay: {{format_number proBuyNowPrice}} VNĐ
                                 </p>
                             </div>
+
                         </div>
+                        {{#if ../auth}}
+
+<!--                                <input class="proIDFavorite" value="" hidden>-->
+                                <button data-id="{{_id}}" class="btn-lg bg-light btnFavorite"> Thêm vào yêu thích <i class="fa fa-heart rediconcolor" aria-hidden="true"></i></button>
+
+                        {{/if}}
                     </div>
+
                 </a>
             {{/each}}
         </div>
