@@ -26,11 +26,11 @@ router.post('/checkout', auth ,async function (req, res) {
     const temp = req.session.user;
     const userID = temp[0]._id;
     let proInfor = await product.findById(proID)
+    console.log(typeof proInfor[0].proEndDate)
     await bidModel.processBid(userID, proID, price, proInfor[0])
     proInfor = await product.findById(proID)
     if (parseInt(price) >= proInfor[0].proCurBidPrice)
         await bidModel.insertBidIntoHistory(userID,proID,price,proInfor[0].proCurBidPrice)
-
     res.redirect('back');
 });
 

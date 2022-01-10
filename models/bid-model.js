@@ -53,6 +53,16 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
                 `Sản phẩm ` + productInfor.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
         }
 
+        if((Math.abs(productInfor.proEndDate - new Date())/(1000*60)) <= 5){
+            productInfor.proEndDate.setMinutes(productInfor.proEndDate.setMinutes + 10)
+            return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
+                    curBidderInfo: new ObjectId(curBidder),
+                    proCurBidPrice: curProductPrice,
+                    proHighestPrice: curHighestPrice,
+                    proEndDate: productInfor.proEndDate
+                }
+            })
+        }
         return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
                     curBidderInfo: new ObjectId(curBidder),
                     proCurBidPrice: curProductPrice,
