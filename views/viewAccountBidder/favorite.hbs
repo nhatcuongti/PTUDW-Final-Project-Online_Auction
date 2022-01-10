@@ -10,37 +10,41 @@
     </script>
 {{/section}}
 
-<p><h1 class="display-4 text-center"> <small>Danh sách yêu thích</small></h1></p>
+<form action="/user/favorite" method="post" id="formDel">
+    <input type="text" name="id" id="txtProID" hidden>
+</form>
+
+<p><h1 class="display-4 text-center"> Danh sách yêu thích</h1></p>
 <p class="container-fluid">
-    <form action="/user/favorite" method="post" id="formDel">
-        <input type="text" name="id" id="txtProID" hidden>
-    </form>
     {{#each this.product}}
-        <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
-            <div class="row no-gutters">
-                <div class="col-md-4">
-                    <img src="..." class="card-img" alt="...">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <div class="d-flex">
-                            {{#each details}}
-                            <div><h5 class="card-title">{{proName}}</h5></div>
-
-                            <div class="flex-fill">
-                                <a data-id="{{_id}}" class="delItem" id="delItem" href="#">
-                                    <i class="fa fa-times float-right" aria-hidden="true"></i>
-                                </a>
+        {{#each details}}
+                    <div class="card mb-2 ml-auto mr-auto" style="width: 70vw">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="/public/61dae95569874df04d21612a/main-thumb.jpg" class="card-img" alt="..." style="height: max-content">
                             </div>
-                            {{/each}}
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="card-title h5"><strong>{{proName}}</strong></div>
+                                        <div class="flex-fill">
+                                            <a data-id="{{_id}}" class="delItem" id="delItem" href="#">
+                                                <i class="fa fa-times float-right" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">Giá hiện tại: {{format_number proCurBidPrice}}VND.</p>
+                                    <p class="card-text mt-2">Ngày hết hạn: {{proEndDate}}</p>
+                                </div>
+                                <div class="card-footer">
+                                <div class="flex-fill">
+                                    <a href="/product/{{_id}}"><button class="btn btn-primary float-right is-rounded" aria-hidden="true">Xem sản phẩm</button> </a>
+                                </div>
+                                </div>
+                            </div>
                         </div>
-
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                     </div>
-                </div>
-            </div>
-        </div>
+        {{/each}}
     {{else}}
         <hr class="navbar-divider">
         <div class="h4 text-center mt-5 mb-5">Hiện tại bạn chưa có sản phẩm yêu thích nào</div>

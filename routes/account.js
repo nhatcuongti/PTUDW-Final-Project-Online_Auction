@@ -14,6 +14,10 @@ router.get('/favorite', auth ,async function (req, res) {
     const userID = temp[0]._id;
     let list = await account.showFavoriteList(userID)
     list = list.reverse()
+    console.log(list)
+    for(let i = 0; i< list.length; i++){
+        list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')
+    }
     res.render('viewAccountBidder/favorite', {
         product: list
     });
@@ -43,8 +47,14 @@ router.get('/auction-history',auth,  async function (req, res) {
     const userID = temp[0]._id;
     let list = await account.showBidderHistory(userID)
     //console.log(list);
+    list = account.getProductsOnAuction(list)
+    for(let i = 0; i< list.length; i++){
+        list[i].dateBid = moment(list[i].dateBid).format('DD/MM/YYYY HH:mm')
+        list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')
+    }
+
     res.render('viewAccountBidder/viewHistory/auction-history',{
-            product: account.getProductsOnAuction(list)
+            product: list
         }
     );
 });
@@ -54,8 +64,13 @@ router.get('/auction-already-history', auth ,async function (req, res) {
     const userID = temp[0]._id;
     let list = await account.showBidderHistory(userID)
     console.log(account.getSuccessfulAuction(userID, list))
+    list = account.getSuccessfulAuction(userID, list)
+    for(let i = 0; i< list.length; i++){
+        list[i].dateBid = moment(list[i].dateBid).format('DD/MM/YYYY HH:mm')
+        list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')
+    }
     res.render('viewAccountBidder/viewHistory/auction-already-history',{
-        product: account.getSuccessfulAuction(userID, list)
+        product: list
     });
 });
 

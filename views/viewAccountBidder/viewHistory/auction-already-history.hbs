@@ -21,36 +21,37 @@
         </div>
         <div class="col-sm-9">
             {{#each this.product}}
-                <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
-                    <div class="row no-gutters">
-                        <div class="col-md-4">
-                            <img src="..." class="card-img" alt="...">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                {{#each details}}
-                                <h5 class="card-title">{{proName}}</h5>
+                {{#each details}}
+                    <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="/public/61dae95569874df04d21612a/main-thumb.jpg" class="card-img" alt="..." style="height: max-content">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title"><strong>{{proName}}</strong></h5>
+                                    <p class="card-text">Ngày đấu giá: {{../dateBid}}</p>
+                                    <p class="card-text">Ngày hết hạn: {{proEndDate}}</p>
+                                    <p class="card-text mt-1">Giá: {{format_number proCurBidPrice}}VNĐ</p>
+                                    <div class="d-flex mt-2">
+                                        <p class="card-text"><a href="/product/{{_id}}"><button class="btn btn-primary">Sản phẩm</button></a></p>
+                                        {{#unless isBidderComment}}
+                                            <div class="flex-fill">
+                                                <a href="/user/auction-already-comment?id={{_id}}"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button>
+                                            </div>
+                                        {{else}}
+                                            <div class="flex-fill">
+                                                <a href="#"><button class="btn btn-secondary float-right" aria-hidden="true" disabled>Đã nhận xét</button></a>
+                                            </div>
+                                        {{/unless}}
+                                    </div>
 
-
-                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                <div class="d-flex">
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                    {{#unless isBidderComment}}
-                                        <div class="flex-fill">
-                                            <a href="/user/auction-already-comment?id={{_id}}"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a>
-                                        </div>
-                                    {{else}}
-                                        <div class="flex-fill">
-                                            <a href="#"><button class="btn btn-secondary float-right" aria-hidden="true" disabled>Đã nhận xét</button></a>
-                                        </div>
-                                    {{/unless}}
-                                {{/each}}
                                 </div>
-
                             </div>
                         </div>
                     </div>
-                </div>
+                {{/each}}
+
             {{else}}
                 <p class="h4 text-center mt-5">Bạn chưa đấu giá thành công sản phẩm nào cả, hãy đấu giá ngay</p>
             {{/each}}

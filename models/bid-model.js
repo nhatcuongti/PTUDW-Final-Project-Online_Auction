@@ -54,12 +54,11 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
         }
 
         if((Math.abs(productInfor.proEndDate - new Date())/(1000*60)) <= 5){
-            productInfor.proEndDate.setMinutes(productInfor.proEndDate.setMinutes + 10)
             return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
                     curBidderInfo: new ObjectId(curBidder),
                     proCurBidPrice: curProductPrice,
                     proHighestPrice: curHighestPrice,
-                    proEndDate: productInfor.proEndDate
+                    proEndDate: new Date(productInfor.proEndDate.getTime() + 10*60*1000)
                 }
             })
         }
