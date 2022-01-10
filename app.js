@@ -1,4 +1,5 @@
 import morgan from 'morgan';
+import asyncErrors from 'express-async-errors';
 import { engine } from 'express-handlebars';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -16,6 +17,7 @@ import cron from 'node-cron';
 import productModel from './models/product-model.js';
 import mailing from "./utils/mailing.js";
 import session from 'express-session';
+
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

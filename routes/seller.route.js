@@ -94,7 +94,12 @@ router.get("/channel/product", async (req, res) => {
     const keywordPath = (req.query.keyword !== undefined) ? `&keyword=${req.query.keyword}` : "";
     const pagePath = `?page=${(choosenPage) ? choosenPage : 1}`;
     const initalPagePath = `?page=1`;
-    console.log(initalPagePath);
+
+    for (const product of products){
+        const files = fs.readdirSync(`./public/${product._id}/`);
+        const mainThumb = files[0];
+        product.mainThumb = mainThumb;
+    }
 
     res.render("./seller/channel_product", {
         layout: "seller.layout.hbs",
@@ -222,6 +227,7 @@ router.get("/channel/product/detail/:id", async function(req, res) {
     res.locals.XemSanPham.isActive = true;
     res.locals.XemChiTiet.isActive = true;
     const files = fs.readdirSync(`./public/${product._id}/`);
+    const mainThumb = files[0];
     files.splice(0, 1);
 
 
@@ -230,7 +236,8 @@ router.get("/channel/product/detail/:id", async function(req, res) {
         product,
         status,
         isSuccess,
-        files
+        files,
+        mainThumb
     })
 })
 

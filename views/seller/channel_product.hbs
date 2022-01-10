@@ -144,7 +144,7 @@
         {{#each this.products}}
             <a class="col-xl-4 col-lg-6 p-3 clickElement productElement" style="text-decoration: none" href="/seller/channel/product/detail/{{_id}}">
                 <div class="card h-100">
-                    <img src = "/public/{{_id}}/main-thumb.jpg"
+                    <img src = "/public/{{_id}}/{{mainThumb}}"
                          class="card-img-top mainThumb"
                          alt="Hình"
                          width="200"
@@ -166,7 +166,7 @@
                             </span>
                         </p>
 
-                        <p class="h4">
+                        <p class="h4 mt-3">
                             {{format_number proCurBidPrice}} ₫
                         </p>
                     </div>

@@ -5,6 +5,7 @@ import mailing from "../utils/mailing.js";
 import entryModel from '../models/entry-model.js'
 import bcrypt from 'bcryptjs';
 import randomstring from 'randomstring';
+import fs from 'fs'
 
 const router = express.Router();
 
@@ -24,6 +25,17 @@ router.get('/product/:id', async function (req, res) {
         proHistoryBid[i].sellerInfo = mask.replace(/\D(?=\D{4})/g, "*");
         historyList.push(proHistoryBid[i])
     }
+
+    let files = null;
+    let mainThumb = null;
+    try{
+        files = fs.readdirSync(`./public/${id}/`);
+        mainThumb = files[0];
+        files.splice(0, 1);
+    } catch (e){
+        console.log(e);
+    }
+
     console.log(proHistoryBid)
     if(typeof (proInfo) === 'undefined')
         res.redirect('/');
@@ -32,7 +44,9 @@ router.get('/product/:id', async function (req, res) {
         res.render('detail', {
             proInfo,
             listSimilarity,
-            historyList
+            historyList,
+            files,
+            mainThumb
         });
     }
 });
@@ -70,7 +84,17 @@ router.get('/product', async function (req, res) {
         item.time = Math.ceil(Math.abs(item.proEndDate - new Date()) / (1000 * 60 * 60));
         item.check = Math.ceil(Math.abs(new Date() - item.proStartDate) / (1000 * 60)) <= 30;
         item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY');
+
+        try{
+            const files = fs.readdirSync(`./public/${item._id}/`);
+            const mainThumb = files[0];
+            item.mainThumb = mainThumb;
+        } catch(e){
+            console.log(e)
+        }
     }
+
+
     res.render('search', {
         nexPage,
         curPage,
@@ -87,13 +111,39 @@ router.get('/', async function (req, res) {
     const listExpiration = await productModel.findTopExpiration(now);
     const listMostBid = await productModel.findTopBid(now);
     const listTopPrice = await productModel.findTopPrice(now);
+    let files = null;
+    let mainThumb = null;
     for (let i = 0; i < listExpiration.length; i++) {
         listExpiration[i].proStartDate = moment(listExpiration[i].proStartDate).format('DD/MM/YYYY')
         listExpiration[i].time = Math.ceil(Math.abs(listExpiration[i].proEndDate - now) / (1000 * 60 * 60));
+        try{
+            files = fs.readdirSync(`./public/${listExpiration[i]._id}/`);
+            mainThumb = files[0];
+            listExpiration[i].mainThumb = mainThumb
+        } catch(e){
+            console.log(e);
+        }
+
         listMostBid[i].proStartDate = moment(listMostBid[i].proStartDate).format('DD/MM/YYYY')
         listMostBid[i].time = Math.ceil(Math.abs(listMostBid[i].proEndDate - now) / (1000 * 60 * 60));
+        try{
+            files = fs.readdirSync(`./public/${listMostBid[i]._id}/`);
+            mainThumb = files[0];
+            listMostBid[i].mainThumb = mainThumb
+        } catch(e){
+            console.log(e);
+        }
+
+
         listTopPrice[i].proStartDate = moment(listTopPrice[i].proStartDate).format('DD/MM/YYYY')
         listTopPrice[i].time = Math.ceil(Math.abs(listTopPrice[i].proEndDate - now) / (1000 * 60 * 60));
+        try{
+            files = fs.readdirSync(`./public/${listTopPrice[i]._id}/`);
+            mainThumb = files[0];
+            listTopPrice[i].mainThumb = mainThumb
+        } catch(e){
+            console.log(e);
+        }
     }
     now = moment(now).format('DD/MM/YYYY HH:mm:ss')
     res.render('home', {
@@ -130,6 +180,14 @@ router.get('/search', async function (req, res) {
         item.time = Math.ceil(Math.abs(item.proEndDate - new Date()) / (1000 * 60 * 60));
         item.check = Math.ceil(Math.abs(new Date() - item.proStartDate) / (1000 * 60)) <= 30;
         item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY');
+
+        try{
+            const files = fs.readdirSync(`./public/${item._id}/`);
+            const mainThumb = files[0];
+            item.mainThumb = mainThumb;
+        } catch(e){
+            console.log(e)
+        }
     }
     res.render('search', {
         sortType,
