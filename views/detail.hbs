@@ -1,15 +1,52 @@
 {{#section 'js'}}
     <script>
+
         $('.addItemFavorite').on('click', function (e){
             const id = $(this).data('id');
             $('#txtProID').val(id);
             $('#formAddFavorite').submit();
         });
+
+        $('.buyNow').on('click', function (e){
+            const id = $(this).data('id');
+            $.getJSON(`/bid/check-buynow?id=${id}`, function (data) {
+                if (data === false) {
+                    $('#exampleModalCenter').modal('show')
+                }
+                else {
+                    $('#confirmModal').modal('show')
+                    $('#confirm').on('click', function (e){
+                        $('#confirmModal').modal('toggle')
+                        $('#txtProIDforBuyNow').val(id);
+                        $('#formBuyNow').submit();
+                    });
+
+                }
+            });
+
+        });
+
     </script>
+{{/section}}
+{{#section 'css'}}
+    <style>
+
+        body {
+            padding-right: 0px !important;
+        }
+
+        .modal-backdrop {
+            z-index: -1;
+
+        }
+    </style>
 {{/section}}
 
 <form action="/user/favorite/add" method="post" id="formAddFavorite">
     <input type="text" name="id" id="txtProID" hidden>
+</form>
+<form action="/bid/buynow" method="post" id="formBuyNow">
+    <input type="text" name="id" id="txtProIDforBuyNow" hidden>
 </form>
 
 {{#each this.proInfo}}
@@ -88,9 +125,9 @@
           <div class="row mt-3">
               {{#if ../auth}}
                     <div class="col-12">
-                      <a data-id="{{_id}}" class="addItemFavorite" href="#"><button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button></a>
+                      <a data-id="{{_id}}" class="addItemFavorite text-decoration-none" href="#"><button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button></a>
                       <a href="/bid/checkout?id={{_id}}" <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button></a>
-                      <button type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button>
+                        <a data-id="{{_id}}" class="buyNow text-decoration-none" href="#"><button id="buynowBtn" type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button></a>
                     </div>
               {{/if}}
           </div>
@@ -140,3 +177,42 @@
         </div>
     </div>
 {{/each}}
+
+<div class="modal fade has-background-grey-lighter" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Giá đấu giá đã vượt qua giá mua ngay. Bạn không thể "mua ngay".
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade has-background-grey-lighter" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Xác nhận</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Xác nhận bạn muốn mua ngay.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button id="confirm" type="button" class="btn btn-primary">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>

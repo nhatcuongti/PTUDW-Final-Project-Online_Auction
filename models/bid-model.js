@@ -15,8 +15,18 @@ async function insertBidtoHistory(collection, userID, proID, price, curProPrice)
     })
 }
 
-async function getUserInfor(db, userID) {
+async function getUserInfo(db, userID) {
     return db.collection("account").findOne({_id: new ObjectId(userID)})
+}
+async function buyNowFunc(collection, userID, proID,proInfo) {
+            let dateNow = new Date()
+    return collection.updateOne({_id: new ObjectId(proID)}, { $set: {
+            curBidderInfo: new ObjectId(userID),
+            proCurBidPrice: proInfo.proBuyNowPrice,
+            proHighestPrice: proInfo.proBuyNowPrice,
+            proEndDate: new Date(dateNow.getTime() - 1000)
+        }
+    })
 }
 
 async function processBidFunc(db,collection, userID, proID, priceString, productInfor) {
@@ -26,7 +36,7 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
 
     const oldBidderMail = productInfor.curBidderInfo[0].email
     const sellerMail = productInfor.sellerInfo[0].email
-    const curBidderInfor = await getUserInfor(db,userID)
+    const curBidderInfor = await getUserInfo(db,userID)
     const curBidderMail = curBidderInfor.email
 
 
@@ -113,6 +123,18 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('bidderHistory');
             return await insertBidtoHistory(collection, userID, proID, price,curProPrice);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async buyNow(userID, proID,proInfo) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('product');
+            return await buyNowFunc(collection, userID, proID,proInfo);
         } catch (e) {
             console.error(e);
         } finally {

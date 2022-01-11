@@ -13,9 +13,8 @@ router.get('/product/:id', async function (req, res) {
     const id = req.params.id;
     const proInfo = await productModel.findById(id);
     const proHistoryBid = await productModel.getBidderHistoryWithProID(id)
-
     const historyList = []
-
+    proHistoryBid.sort((a, b) => b.dateBid - a.dateBid);
     for(let i = 0; i < proHistoryBid.length; i++){
         if(i === 4)
             break
@@ -36,7 +35,7 @@ router.get('/product/:id', async function (req, res) {
         console.log(e);
     }
 
-    console.log(proHistoryBid)
+    console.log(new Date())
     if(typeof (proInfo) === 'undefined')
         res.redirect('/');
     else {
