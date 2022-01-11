@@ -81,10 +81,13 @@ router.get('/product', async function (req, res) {
     if (prevPage.value === 0) prevPage.check = false;
     if (total === 0) curPage.check = false;
     for (const item of listResult) {
-        item.time = Math.ceil(Math.abs(item.proEndDate - new Date()) / (1000 * 60 * 60));
-        item.check = Math.ceil(Math.abs(new Date() - item.proStartDate) / (1000 * 60)) <= 30;
+        item.time = (item.proEndDate - new Date()) / (1000 * 60 * 60);
+        item.check = (new Date() - item.proStartDate) / (1000 * 60) <= 30 && (new Date() - item.proStartDate) / (1000 * 60) > 0;
         item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY');
-
+        if (item.time <= 0)
+            item.check1 = true;
+        else
+            item.check1 = false;
         try{
             const files = fs.readdirSync(`./public/${item._id}/`);
             const mainThumb = files[0];
@@ -115,7 +118,7 @@ router.get('/', async function (req, res) {
     let mainThumb = null;
     for (let i = 0; i < listExpiration.length; i++) {
         listExpiration[i].proStartDate = moment(listExpiration[i].proStartDate).format('DD/MM/YYYY')
-        listExpiration[i].time = Math.ceil(Math.abs(listExpiration[i].proEndDate - now) / (1000 * 60 * 60));
+        listExpiration[i].time = (listExpiration[i].proEndDate - now) / (1000 * 60 * 60);
         try{
             files = fs.readdirSync(`./public/${listExpiration[i]._id}/`);
             mainThumb = files[0];
@@ -123,9 +126,8 @@ router.get('/', async function (req, res) {
         } catch(e){
             console.log(e);
         }
-
         listMostBid[i].proStartDate = moment(listMostBid[i].proStartDate).format('DD/MM/YYYY')
-        listMostBid[i].time = Math.ceil(Math.abs(listMostBid[i].proEndDate - now) / (1000 * 60 * 60));
+        listMostBid[i].time = (listMostBid[i].proEndDate - now) / (1000 * 60 * 60);
         try{
             files = fs.readdirSync(`./public/${listMostBid[i]._id}/`);
             mainThumb = files[0];
@@ -136,7 +138,7 @@ router.get('/', async function (req, res) {
 
 
         listTopPrice[i].proStartDate = moment(listTopPrice[i].proStartDate).format('DD/MM/YYYY')
-        listTopPrice[i].time = Math.ceil(Math.abs(listTopPrice[i].proEndDate - now) / (1000 * 60 * 60));
+        listTopPrice[i].time = (listTopPrice[i].proEndDate - now) / (1000 * 60 * 60);
         try{
             files = fs.readdirSync(`./public/${listTopPrice[i]._id}/`);
             mainThumb = files[0];
@@ -177,10 +179,13 @@ router.get('/search', async function (req, res) {
     if (prevPage.value === 0) prevPage.check = false;
     if (total === 0) curPage.check = false;
     for (const item of listResult) {
-        item.time = Math.ceil(Math.abs(item.proEndDate - new Date()) / (1000 * 60 * 60));
-        item.check = Math.ceil(Math.abs(new Date() - item.proStartDate) / (1000 * 60)) <= 30;
+        item.time = (item.proEndDate - new Date()) / (1000 * 60 * 60);
+        item.check = (new Date() - item.proStartDate) / (1000 * 60) <= 30 && (new Date() - item.proStartDate) / (1000 * 60) > 0;
         item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY');
-
+        if (item.time <= 0)
+            item.check1 = true;
+        else
+            item.check1 = false;
         try{
             const files = fs.readdirSync(`./public/${item._id}/`);
             const mainThumb = files[0];

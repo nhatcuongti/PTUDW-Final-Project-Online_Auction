@@ -107,7 +107,11 @@
                                     <p>Người đặt hiện tại: {{email}}</p>
                                 {{/each}}
                                 <p>Ngày đăng sản phẩm: {{proStartDate}}</p>
-                                <p>Thời gian còn lại: {{format_number time}} giờ</p>
+                                {{#if check1}}
+                                    <p>Thời gian còn lại: Đã hết hạn</p>
+                                {{else}}
+                                    <p>Thời gian còn lại: {{format_number time}} giờ</p>
+                                {{/if}}
                                 <p>Số lượt ra giá: {{proBidQuantity}} lượt</p>
                             </div>
                         </div>
