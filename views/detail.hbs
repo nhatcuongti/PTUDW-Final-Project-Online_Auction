@@ -124,11 +124,17 @@
           <p class="mt-3 has-text-danger font-weight-bold">Giá mua ngay: {{format_number proBuyNowPrice}} VNĐ</p>
           <div class="row mt-3">
               {{#if ../auth}}
-                    <div class="col-12">
+                  <div class="col-12">
                       <a data-id="{{_id}}" class="addItemFavorite text-decoration-none" href="#"><button type="button" class="btn is-info btn-lg btn-block button is-rounded">Thêm vào yêu thích</button></a>
-                      <a href="/bid/checkout?id={{_id}}" <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button></a>
-                        <a data-id="{{_id}}" class="buyNow text-decoration-none" href="#"><button id="buynowBtn" type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button></a>
-                    </div>
+                      {{#if ../isOutOfDate}}
+                            <button type="button" class="btn is-warning btn-lg btn-block button is-rounded" disabled>Đấu giá đã hết hạn</button>
+                            <button id="buynowBtn" type="button" class="btn is-danger btn-lg btn-block button is-rounded" disabled>Mua ngay đã hết hạn</button>
+                      {{else}}
+                          <a href="/bid/checkout?id={{_id}}" <button type="button" class="btn is-warning btn-lg btn-block button is-rounded">Đấu giá</button></a>
+                          <a data-id="{{_id}}" class="buyNow text-decoration-none" href="#"><button id="buynowBtn" type="button" class="btn is-danger btn-lg btn-block button is-rounded">Mua ngay</button></a>
+                      {{/if}}
+                 </div>
+
               {{/if}}
           </div>
         </div>

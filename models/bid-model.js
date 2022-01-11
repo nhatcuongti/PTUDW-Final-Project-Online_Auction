@@ -19,7 +19,11 @@ async function getUserInfo(db, userID) {
     return db.collection("account").findOne({_id: new ObjectId(userID)})
 }
 async function buyNowFunc(db,collection, userID, proID,proInfo) {
-    const oldBidderMail = proInfo.curBidderInfo[0].email
+
+    let oldBidderMail
+
+    if(proInfo.curBidderInfo.length !== 0)
+        oldBidderMail = proInfo.curBidderInfo[0].email
     const sellerMail = proInfo.sellerInfo[0].email
     const curBidderInfo = await getUserInfo(db,userID)
     const curBidderMail = curBidderInfo.email
@@ -29,11 +33,12 @@ async function buyNowFunc(db,collection, userID, proID,proInfo) {
 
 
     await mailing.sendEmail(curBidderMail, 'Hệ thống auction online',
-        `Bạn đã mua ngay sản phẩm ` + productInfo.proName + ` thành công.`);
+        `Bạn đã mua ngay sản phẩm ` + proInfo
+            .proName + ` thành công.`);
 
-    if(curBidderMail !== oldBidderMail){
+    if(curBidderMail !== oldBidderMail && proInfo.curBidderInfo.length !== 0){
         await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
-            `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác "mua ngay".`);
+            `Sản phẩm ` + proInfo.proName + ` mà bạn đấu giá đã bị người khác "mua ngay".`);
     }
 
     let dateNow = new Date()
@@ -41,7 +46,9 @@ async function buyNowFunc(db,collection, userID, proID,proInfo) {
             curBidderInfo: new ObjectId(userID),
             proCurBidPrice: proInfo.proBuyNowPrice,
             proHighestPrice: proInfo.proBuyNowPrice,
-            proEndDate: new Date(dateNow.getTime() - 1000)
+            proEndDate: new Date(dateNow.getTime() - 1000),
+            proBidQuantity:  proInfo.proBidQuantity + 1
+
         }
     })
 }
@@ -85,7 +92,8 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
                     curBidderInfo: new ObjectId(curBidder),
                     proCurBidPrice: curProductPrice,
                     proHighestPrice: curHighestPrice,
-                    proEndDate: new Date(productInfo.proEndDate.getTime() + 10*60*1000)
+                    proEndDate: new Date(productInfo.proEndDate.getTime() + 10*60*1000),
+                    proBidQuantity:  productInfo.proBidQuantity + 1
                 }
             })
         }
@@ -93,33 +101,38 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
                     curBidderInfo: new ObjectId(curBidder),
                     proCurBidPrice: curProductPrice,
                     proHighestPrice: curHighestPrice,
+                    proBidQuantity:  productInfo.proBidQuantity + 1
                 }
         })
 
     }
     else if (price === oldHighestPrice){
         curProductPrice = oldHighestPrice
-        await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
-            `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
+        await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
+            `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
 
         return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
-                    proCurBidPrice: curProductPrice
+                    proCurBidPrice: curProductPrice,
+                    proBidQuantity:  productInfo.proBidQuantity + 1
                 }
         })
 
     }
     else if (price < oldHighestPrice && price > oldProductPrice){
         curProductPrice = price;
-        await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
-            `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
+        await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
+            `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
 
         return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
-                    proCurBidPrice: curProductPrice
+                    proCurBidPrice: curProductPrice,
+                    proBidQuantity:  productInfo.proBidQuantity + 1
                 }
         })
     }
     return
 }
+
+
 
 export default {
     async processBid(userID, proID, price, proInfor) {

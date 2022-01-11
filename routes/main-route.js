@@ -13,6 +13,10 @@ router.get('/product/:id', async function (req, res) {
     const id = req.params.id;
     const proInfo = await productModel.findById(id);
     const proHistoryBid = await productModel.getBidderHistoryWithProID(id)
+    let isOutOfDate = false
+    const today = new Date()
+    if(proInfo[0].proEndDate.getTime() - today.getTime() <= 0)
+        isOutOfDate = true
     const historyList = []
     proHistoryBid.sort((a, b) => b.dateBid - a.dateBid);
     for(let i = 0; i < proHistoryBid.length; i++){
@@ -43,6 +47,10 @@ router.get('/product/:id', async function (req, res) {
             historyList,
             files,
             mainThumb,
+<<<<<<< Updated upstream
+=======
+            isOutOfDate
+>>>>>>> Stashed changes
         });
     }
 });

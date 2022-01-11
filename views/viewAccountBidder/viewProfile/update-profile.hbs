@@ -1,8 +1,34 @@
 {{#section 'js'}}
     <script>
         $('#homePageNavbar').hide();
+        $('.upgrade').on('click', function (e){
+            $('#confirmModal').modal('show')
+            $('#confirm').on('click', function (e){
+                $('#confirmModal').modal('toggle')
+                $.getJSON(`/user/upgrade`, function (data) {
+                    if (data === false) {
+                        $('#exampleModalCenter').modal('show')
+                    }
+                    else {
+                        $('#success').modal('show')
+                    }
+                });
 
+                })
+        })
     </script>
+{{/section}}
+{{#section 'css'}}
+    <style>
+        body {
+            background: linear-gradient(110deg, #BBDEFB 60%, #42A5F5 60%);
+            padding-right: 0px !important;
+        }
+
+        .modal-backdrop {
+            z-index: -1;
+        }
+    </style>
 {{/section}}
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -17,7 +43,7 @@
                 </li>
                 {{#if bidderRole}}
                     <li class="nav-item">
-                        <a class="nav-link h6 text-center" href="#">Nâng cấp tài khoản</a>
+                        <a class="nav-link h6 text-center upgrade" href="#">Nâng cấp tài khoản</a>
                     </li>
                 {{/if}}
             </ul>
@@ -52,5 +78,63 @@
             {{/each}}
         </div>
 
+    </div>
+</div>
+
+<div class="modal fade has-background-grey-lighter" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Yêu cầu của bạn đã được gửi trước đó.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade has-background-grey-lighter" id="success" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Yêu cầu của bạn đã được gửi thành công.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade has-background-grey-lighter" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Xác nhận</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Xác nhận bạn có muốn gửi yêu cầu nâng cấp tài khoản thành người bán.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button id="confirm" type="button" class="btn btn-primary">Xác nhận</button>
+            </div>
+        </div>
     </div>
 </div>

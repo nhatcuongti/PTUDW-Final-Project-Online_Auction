@@ -48,9 +48,14 @@ router.get('/auction-history',auth,  async function (req, res) {
     let list = await account.showBidderHistory(userID)
     //console.log(list);
     list = account.getProductsOnAuction(list)
+    list.sort((a, b) => b.dateBid - a.dateBid);
     for(let i = 0; i< list.length; i++){
         list[i].dateBid = moment(list[i].dateBid).format('DD/MM/YYYY HH:mm')
         list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')
+        if(list[i].details[0].curBidderInfo.toString() === userID)
+            list[i].details[0].curBidderInfo = true
+        else
+            list[i].details[0].curBidderInfo = false
     }
 
     res.render('viewAccountBidder/viewHistory/auction-history',{
@@ -65,6 +70,7 @@ router.get('/auction-already-history', auth ,async function (req, res) {
     let list = await account.showBidderHistory(userID)
     console.log(account.getSuccessfulAuction(userID, list))
     list = account.getSuccessfulAuction(userID, list)
+    list.sort((a, b) => b.dateBid - a.dateBid);
     for(let i = 0; i< list.length; i++){
         list[i].dateBid = moment(list[i].dateBid).format('DD/MM/YYYY HH:mm')
         list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')
@@ -153,6 +159,13 @@ router.get('/account/', async function (req, res) {
 
     console.log(await bcrypt.compareSync(req.query.pass, pass))
     if (await bcrypt.compare(req.query.pass, pass))
+        return res.json(true);
+    return res.json(false);
+});
+router.get('/upgrade/', async function (req, res) {
+    const temp = req.session.user;
+    const userID = temp[0]._id;
+    if(await account.sendUpgradingSeller(userID))
         return res.json(true);
     return res.json(false);
 });

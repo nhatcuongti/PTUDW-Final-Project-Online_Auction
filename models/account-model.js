@@ -223,6 +223,29 @@ async function findByUserIDFunc(collection, userID){
     return await collection.findOne({_id :  new ObjectId(userID)});
 }
 
+async function sendUpgradeSellerFunc(collection, userID) {
+    const isDuplicate = await collection.findOne({userID: new ObjectId(userID)})
+    console.log(isDuplicate)
+    if(isDuplicate === null){
+        await collection.insertOne({
+                userID: new ObjectId(userID),
+                date: new Date()
+            })
+        return true
+    }
+    else
+        return false
+
+    // return collection.insertOne({
+    //     dateBid: new Date(),
+    //     price: price,
+    //     curProPrice: curProPrice.toString(),
+    //     userID: new ObjectId(userID),
+    //     proID: new ObjectId(proID),
+    //     isDenied: 0
+    // })
+}
+
 // >>>>>>> Stashed changes
 export default {
     async findByID(userID){
@@ -263,9 +286,13 @@ export default {
         let listTemp = [];
         console.log(list)
         list.forEach(function (e) {
-            if(e.details.length != 0)
-                if( e.details[0].proEndDate <= new Date()&&e.details[0].curBidderInfo == new ObjectId(userID))
+            if(e.details.length != 0){
+                var date = new Date()
+                if( e.details[0].proEndDate.getTime() <= date.getTime()&& e.details[0].curBidderInfo.toString() ===  userID)
                     listTemp.push(e)
+
+            }
+
         })
         return listTemp;
     },
@@ -542,6 +569,20 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('comment');
             return await insertNewCommentFunc(collection, commentOfProduct);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async sendUpgradingSeller(userID) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('updateList');
+            if(await sendUpgradeSellerFunc(collection, userID))
+                return true
+            return false
         } catch (e) {
             console.error(e);
         } finally {

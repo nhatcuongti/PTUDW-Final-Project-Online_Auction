@@ -23,10 +23,11 @@
             {{#each this.product}}
                 {{#each details}}
                 <a href="/product/{{_id}}" class="text-decoration-none">
-                <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
+                        {{#if curBidderInfo}}
+                <div class="card mb-2 ml-auto mr-auto has-background-success-light" style="width: 70vw;">
                     <div class="row no-gutters">
                         <div class="col-md-4">
-                            <img src="/public/61dae95569874df04d21612a/main-thumb.jpg" class="card-img" alt="..." style="height: 34vh">
+                            <img src="/public/{{_id}}/main-thumb.jpg" class="card-img" alt="..." style="height: 34vh">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
@@ -35,14 +36,38 @@
                                 <p class="card-text">Ngày hết hạn: {{proEndDate}}</p>
                                 <hr>
                                 <p class="card-text">Ngày đấu giá: {{../dateBid}}</p>
-                                <div class="d-flex">
-                                    <p class="card-text">Giá của bạn: {{format_number ../price}}VND</p>
-<!--                                    <div class="flex-fill"><a href="#"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a></div>-->
+                                <p class="card-text">Giá của bạn: {{format_number ../price}}VND</p>
+                                <div class="d-flex flex-row-reverse">
+                                    <i class="fa fa-flag fa-3x" aria-hidden="true">  #1</i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                            {{else}}
+                            <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
+                                <div class="row no-gutters">
+                                    <div class="col-md-4">
+                                        <img src="/public/{{_id}}/main-thumb.jpg" class="card-img" alt="..." style="height: 34vh">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <h4 class="card-title h5"><strong>{{proName}}</strong></h4>
+                                            <p class="card-text">Giá hiện tại: {{format_number proCurBidPrice}}VND.</p>
+                                            <p class="card-text">Ngày hết hạn: {{proEndDate}}</p>
+                                            <hr>
+                                            <p class="card-text">Ngày đấu giá: {{../dateBid}}</p>
+                                            <div class="d-flex">
+                                                <p class="card-text">Giá của bạn: {{format_number ../price}}VND</p>
+                                                <!--                                    <div class="flex-fill"><a href="#"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a></div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/if}}
+
+
                 </a>
                 {{/each}}
             {{else}}
