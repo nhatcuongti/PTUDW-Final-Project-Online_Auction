@@ -113,7 +113,7 @@
 
      <div class="row back">
          <nav class="navbar" id="homePageNavbar" role="navigation" aria-label="dropdown navigation">
-             <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product/{{this.initalPagePath}}{{this.keywordPath}}{{this.statusPath}}">
+             <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product/{{this.initalPagePath}}{{this.statusPath}}">
                  <strong> Tất cả</strong>
              </a>
              {{#each this.categories}}
@@ -125,7 +125,7 @@
                      </a>
                      <div class="navbar-dropdown">
                          {{#each catChild}}
-                             <a class="navbar-item" href="/seller/channel/product/{{../../initalPagePath}}{{../../this.statusPath}}{{../../this.keywordPath}}&catParent={{../_id}}&catChild={{@index}}">
+                             <a class="navbar-item {{#if isActive}} btn btn-secondary {{/if}}" href="/seller/channel/product/{{../../initalPagePath}}{{../../this.statusPath}}{{../../this.keywordPath}}&catParent={{../_id}}&catChild={{@index}}">
                                  {{name}}
                              </a>
                          {{/each}}

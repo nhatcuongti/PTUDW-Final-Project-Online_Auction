@@ -194,7 +194,7 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, 
           },
           {
             '$match':{
-              'proType' : catParentFind,
+              'proType' : new ObjectId(catParentFind),
               'catChildType': catChildFind,
               'sellerInfo': new ObjectId(userID)
             }
@@ -214,7 +214,7 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, 
               foreignField: '_id',
               as: 'curBidderInfo'
             }
-          }]).sort({proCurBidPrice: 1}).toArray();
+          }]).toArray();
       }
       else if (catParentFind){
         return await collection.aggregate([
@@ -230,7 +230,7 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, 
           },
           {
             '$match':{
-              'proType' : catParentFind,
+              'proType' : new ObjectId(catParentFind),
               'sellerInfo': new ObjectId(userID)
             }
           },
@@ -249,7 +249,7 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, 
               foreignField: '_id',
               as: 'curBidderInfo'
             }
-          }]).sort({proCurBidPrice: 1}).toArray();
+          }]).toArray();
       }
       else if (userID){
         return await collection.aggregate([
@@ -283,7 +283,7 @@ async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, 
               foreignField: '_id',
               as: 'curBidderInfo'
             }
-          }]).sort({proEndDate: -1}).toArray();
+          }]).toArray();
       }
       else
         return await collection.aggregate([

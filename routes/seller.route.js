@@ -15,10 +15,38 @@ import rollbackProduct from "../utils/rollback-product.js";
 
 const router = express.Router();
 
-router.get("/channel", (req, res) => {
+router.get("/channel", async (req, res) => {
     res.locals.ThongTinChung.isActive = true;
+    const userID =  res.locals.user._id;
+    const products = await modelProduct.getAll(userID);
+
+    //San pham thanh cong
+    let productCopy = [...products];
+    await formatProduct.findProductWithStatus(productCopy, "1");
+    const numberSuccess = productCopy.length;
+
+    let totalRevenue = 0;
+    for (const product of productCopy)
+        totalRevenue += product.proCurBidPrice;
+
+    //San pham thất bại
+    productCopy = [...products];
+    await formatProduct.findProductWithStatus(productCopy, "2");
+    const numberFail = productCopy.length;
+
+    //Sản phẩm chưa có người đặt
+    productCopy = [...products];
+    await formatProduct.findProductWithStatus(productCopy, "4");
+    const numberNoneBidder = productCopy.length;
+
+
+
     res.render("./seller/channel", {
-        layout: "seller.layout.hbs"
+        layout: "seller.layout.hbs",
+        numberSuccess,
+        totalRevenue,
+        numberFail,
+        numberNoneBidder
     })
 })
 
@@ -35,7 +63,8 @@ router.get("/channel/product", async (req, res) => {
     for (const category of categories)
         if (category._id == catParentFind){
             category.isActive = true;
-            console.log(category);
+            if (catChildFind !== undefined)
+                category.catChild[+catChildFind].isActive = true;
             break;
         }
     //Search
@@ -50,8 +79,6 @@ router.get("/channel/product", async (req, res) => {
     let limitProduct = 6;
     let offset = ((+choosenPage - 1) * limitProduct) || 0;
 
-    // async searchByType(keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {
-    console.log("keyword : " + keyword);
 
     if (keyword !== undefined)
         products = await productModel.searchByType(keyword, 'name', limitProduct, offset, 'time-descending', catParentFind, catChildFind, userID);
@@ -179,6 +206,7 @@ const cpUpload = upload.array("Image[]", 5);
 const afterUploadImage = async (req, res, next) => {
     console.log("Raw Data : ")
     console.log(req.body);
+
     req.body = await formatProduct.formatForInsert(req.body, res.locals.user._id);
     await modelProduct.insertData(req.body);
     console.log(req.body);
@@ -187,7 +215,7 @@ const afterUploadImage = async (req, res, next) => {
 
 router.post("/channel/product/insert", cpUpload, afterUploadImage, async (req, res) => {
     //Change folder name
-    console.log(req.files);
+
     req.body.index = undefined;
     const oldFolderName = "./public/image";
     const newFolderName = `./public/${req.body._id}`;

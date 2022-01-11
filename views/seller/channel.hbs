@@ -1,21 +1,21 @@
 <div class="row p-4">
-    <div class="col-lg-3 col-md-6 p-2">
-        <div class="card text-white" style="background-color : #2ECC71">
+    <div class="col-xl-6  p-2" style="height: 300px">
+        <div class="card text-white h-100" style="background-color : #2ECC71">
             <div class="row card-body">
                 <div class="col-8">
-                    <p>
+                    <p class="h5">
                         Số lượng sản phẩm thành công
                     </p>
-                    <b class="h1">
-                        30
+                    <b class="h1" style="font-size: 100px">
+                        {{this.numberSuccess}}
                     </b>
                 </div>
-                <div class="col-4">
-                    <i class="fa fa-check-square fa-4x" aria-hidden="true"></i>
+                <div class="col-4" style="font-size: 50px">
+                    <i class="fa fa-check-square fa-3x"  aria-hidden="true"></i>
                 </div>
             </div>
             <div class="card-footer text-muted">
-                <a class="m-auto h4" style="color:#2ECC71">
+                <a class="m-auto h4" style="color:#2ECC71" href="/seller/channel/product/?page=1&status=1">
                     Chi tiết
                 </a>
 
@@ -23,23 +23,23 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6 p-2">
-        <div class="card text-white h-100" style="background-color : #C0392B">
+    <div class="col-xl-6  p-2" style="height: 300px">
+        <div class="card text-white h-100" style="background-color : #c0392b">
             <div class="row card-body">
                 <div class="col-8">
-                    <p>
-                        Sản phẩm sắp hết hạn
+                    <p class="h5">
+                        Sản phẩm đã hết hạn
                     </p>
-                    <b class="h1">
-                        10
+                    <b class="h1" style="font-size: 100px">
+                        {{this.numberFail}}
                     </b>
                 </div>
-                <div class="col-4">
-                    <i class="fa fa-exclamation-circle fa-4x" aria-hidden="true"></i>
+                <div class="col-4" style="font-size: 50px">
+                    <i class="fa fa-exclamation-circle fa-3x" aria-hidden="true"></i>
                 </div>
             </div>
             <div class="card-footer text-muted">
-                <a class="m-auto h4" style="color:#C0392B">
+                <a class="m-auto h4" style="color:#C0392B" href="/seller/channel/product/?page=1&status=2">
                     Chi tiết
                 </a>
 
@@ -47,43 +47,42 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6 p-2">
+    <div class="col-xl-6  p-2" style="height: 300px">
         <div class="card text-white h-100" style="background-color : #F1C40F">
             <div class="row card-body">
                 <div class="col-8">
-                    <p>
+                    <p class="h5">
                         Sản phẩm chưa được đấu giá
                     </p>
-                    <b class="h1">
-                        50
+                    <b class="h1" style="font-size: 100px">
+                        {{this.numberNoneBidder}}
                     </b>
                 </div>
-                <div class="col-4">
-                    <i class="fa fa-clock-o fa-4x" aria-hidden="true"></i>
+                <div class="col-4" style="font-size: 50px">
+                    <i class="fa fa-clock-o fa-3x" aria-hidden="true"></i>
                 </div>
             </div>
             <div class="card-footer text-muted">
-                <a class="m-auto h4" style="color:#F1C40F">
+                <a class="m-auto h4" style="color:#F1C40F" href="/seller/channel/product/?page=1&status=4">
                     Chi tiết
                 </a>
-
             </div>
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6 p-2">
+    <div class="col-xl-6  p-2" style="height: 300px">
         <div class="card text-white h-100" style="background-color : #2980b9">
             <div class="row card-body">
                 <div class="col-8">
-                    <p>
+                    <p class="h5 mb-5">
                         Doanh thu
                     </p>
-                    <b class="h2">
-                        2.500.000 VNĐ
+                    <b class="h1" style="font-size: 50px">
+                        {{format_number this.totalRevenue}} VNĐ
                     </b>
                 </div>
-                <div class="col-4">
-                    <i class="fa fa-money fa-4x" aria-hidden="true"></i>
+                <div class="col-4" style="font-size: 50px">
+                    <i class="fa fa-money fa-3x" aria-hidden="true"></i>
                 </div>
             </div>
             <div class="card-footer text-muted">

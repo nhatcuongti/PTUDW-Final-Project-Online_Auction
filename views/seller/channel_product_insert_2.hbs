@@ -27,10 +27,6 @@
                 },
             }
         });
-
-        $('#input-fcount-2').on('fileloaded', function (event, file, previewId, index, reader) {
-            console.log(file);
-        })
     </script>
 
 
@@ -55,13 +51,6 @@
             $("#my_file").trigger("click")
         })
 
-        // $("#image1").on("click", function(){
-        //     $("#my_file1").trigger("click")
-        // })
-        //
-        // $("#image2").on("click", function(){
-        //     $("#my_file2").trigger("click")
-        // })
 
         // Jquery Dependency
 
@@ -104,6 +93,8 @@
         function formatCurrency(input, blur) {
             // appends $ to value, validates decimal side
             // and puts cursor back in right position.
+
+
 
             // get input value
             var input_val = input.val();
@@ -193,11 +184,18 @@
 
     <!--Validation form before We submit-->
     <script>
+        let list = new DataTransfer();
+
         $('#formSubmit').on('submit', function (e){
             e.preventDefault();
+
+            // const files = $('#input-fcount-2').prop('files');
+            $('#input-fcount-2').prop('files', list.files);
+            const files = $('#input-fcount-2').prop('files');
             //Kiểm tra danh mục
             const data = $('#selectCatParent').find(':selected').val();
-            console.log(data);
+            console.log(files);
+
             // So sánh giá khởi điểm và giá mua ngay
             const firstPrice = Number($('#firstPrice').val().replace(/[^0-9.-]+/g,""));
             const proBuyNowPrice = Number($('#proBuyNowPrice').val().replace(/[^0-9.-]+/g,""));
@@ -241,20 +239,36 @@
             $('#formSubmit').off('submit').submit();
         })
 
-        // $('#input-fcount-2').change(function () {
-        //     const fileCount = this.files.length;
-        //     alert(fileCount);
-        // })
+        $('#input-fcount-2').on('fileloaded', function(event, file, previewId, fileId, index, reader) {
+            console.log("---------------------File Upload---------------------");
+            list.items.add(file);
+        })
+
+        $('#input-fcount-2').on('fileremoved', function(event, id, index) {
+            console.log("---------------------Delete---------------------");
+            const nameFileTmp = id.replace('thumb-input-fcount-2-', '');
+            const nameFile = nameFileTmp.substring(
+                    nameFileTmp.indexOf('_') + 1,
+                    nameFileTmp.length
+            );
+
+            console.log("File : " + nameFile);
+            const fileList = list.files;
+            let indexRemove = 0;
+            for (let i = 0; i < fileList.length; i++){
+                if (fileList[i].name === nameFile){
+                    indexRemove = i;
+                    break;
+                }
+            }
+
+
+            list.items.remove(indexRemove);
+        });
 
 
 
     </script>
-
-
-
-
-
-
 {{/section}}
 
 {{#section 'css'}}
@@ -263,6 +277,8 @@
 
 
 <div class="container-fluid ">
+    <input id="imageTmp" name="imageTmp[]" type="file"  hidden>
+
     <p class="h3">
         <b>Thêm sản phẩm</b>
     </p>
