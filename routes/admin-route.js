@@ -25,7 +25,7 @@ router.get('/', async function (req, res) {
     });
 });
 
-/*
+
 router.get('/product', async function (req, res) {
     const keyword = req.query.keyword;
     const limit = 6;
@@ -69,7 +69,7 @@ router.post('/product/delete', async function (req, res) {
     await categoryModel.removeProductFromCat(result[0].catParent, result[0].catChild);
     res.redirect(req.headers.referer);
 });
-*/
+
 
 router.get('/category', async function (req, res) {
     const keyword = req.query.keyword;
