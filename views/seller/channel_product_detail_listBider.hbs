@@ -1,26 +1,21 @@
 {{#section 'js'}}
     <script>
-        $('.denyUser').on("click", function (e) {
-            const userData = $(this).data('id');
-            alert(userData);
-            $('#userIDInput').val(userData);
-            $('form').submit();
-        })
+
     </script>
 {{/section}}
 
 {{#section 'css'}}
     <style>
-        #deleteModal{
+        .modal{
             z-index: 999999;
         }
     </style>
 
 {{/section}}
 
-<form method="post" action="/seller/channel/product/detail/{{this.productID}}/list">
-    <input type="text" name="userID" id="userIDInput" hidden>
-</form>
+<!--<form method="post" action="/seller/channel/product/detail/{{this.productID}}/list">-->
+<!--    <input type="text" name="userID" id="userIDInput" hidden>-->
+<!--</form>-->
 
 <div class="container">
     <div class="row justify-content-between mb-3">
@@ -62,12 +57,8 @@
 
 
                                     <td class="text-right">
-                                        <!--                                    <a class="btn btn-outline-danger denyUser" role="button" data-id="{{_id}}">-->
-                                        <!--                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>-->
-                                        <!--                                        Hủy-->
-                                        <!--                                    </a>-->
 
-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{_id}}">
                                             <i class="fa fa-ban mr-2" aria-hidden="true"></i>
                                             <span>
                                             Từ chối
@@ -75,7 +66,7 @@
                                         </button>
                                     </td>
 
-                                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="deleteModal{{_id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -92,7 +83,7 @@
 
                                                     <form method="post" action="">
                                                         <input name="userID" value="{{_id}}" hidden>
-                                                        <button type="submit" class="btn btn-primary">Yes</button>
+                                                        <button type="submit" class="btn btn-primary" onclick="alert({{_id}})">Yes</button>
                                                     </form>
                                                 </div>
                                             </div>

@@ -2,6 +2,8 @@ import productModel from "./models/product-model.js";
 import {ObjectId} from "mongodb";
 import accountModel from "./models/account-model.js";
 import mailing from "./utils/mailing.js";
+import modelCategory from "./models/category-model.js";
+import bid from "./routes/bid.js";
 
 function removeVietnameseTones(str) {
     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a");
@@ -32,9 +34,45 @@ function removeVietnameseTones(str) {
     return str;
 }
 
-async function testFunc(){
-    const productSearch = await productModel.searchVietnamese("Laptop");
-    console.log(productSearch);
+async function updateProduct(){
+    await productModel.updatePriceProduct("61b05934d39b26209b9b345d", 3000000);
+    await productModel.updateCurrenBidderInfor("61b05934d39b26209b9b345d", new ObjectId("61c047490f45bf6d97b13cc8"));
 }
 
-await testFunc();
+async function denyUser(){
+    await productModel.denyUserOnBidderHistory("61bff2b3a5f2b58eee620302", "61b9df48a38388efc7a19cf8");
+}
+
+async function sendEmail(){
+    await mailing.sendEmail("nhatcuongti@gmail.com", "test", "send");
+}
+
+
+
+async function testFunc(){
+    await console.time('doSomething')
+    await updateProduct();
+    await denyUser();
+    await sendEmail();
+    await console.timeEnd('doSomething')
+}
+
+async function testFunc1(){
+    const arr = await Promise.all([updateProduct(), denyUser(), sendEmail()]);
+    return arr;
+}
+
+async function testDB(){
+    const bidderHistories = await productModel.getBidderHistoryWithProID("61dd0106999ba1487e5c67d1");
+    console.log(bidderHistories[0]);
+}
+
+await testDB();
+
+
+// console.time('test1')
+// testFunc1().then(arr => {
+//     console.log(arr);
+//     console.timeEnd('test1')
+// })
+

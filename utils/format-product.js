@@ -7,30 +7,45 @@ export default {
         const goodData = {};
         goodData.proName = dataProduct.proName;
 
+        //Category
         goodData.proType = new ObjectID(dataProduct.catParent);
         goodData.catChildType = dataProduct.catChild;
         const catInformation = await modelCategory.findByID(goodData.proType);
+        const catData = catInformation[0];
         goodData.catParent = catInformation[0].catParent;
         goodData.catChild = catInformation[0].catChild[goodData.catChildType].name;
+        //--Update category
+        catData.quantity += 1;
+        catData.catChild[+goodData.catChildType].quantity += 1;
+        await modelCategory.updateData(catData);
 
+
+        //Auto extend and bidderType
         goodData.autoExtend = (dataProduct.autoExtend === 'true');
-        if (goodData.autoExtend)
-            goodData.isExtend = false;
         goodData.bidderType = (dataProduct.bidderRange === 'true');
 
+        //Product Description
         goodData.proDescription = dataProduct.proDescription;
 
+        //Seller infor
         goodData.sellerInfo = new ObjectID(sellerID);
 
+        //Product date
         goodData.proStartDate = new Date();
-        // var in30days = new Date();
-        // in30days.setDate(in30days.getDate() + 30);
         goodData.proEndDate = new Date(dataProduct.proEndDate);
         goodData.numberImage = dataProduct.index;
         goodData.proBuyNowPrice = Number(dataProduct.proBuyNowPrice.replace(/[^0-9.-]+/g,""));
         goodData.proCurBidPrice = Number(dataProduct.firstPrice.replace(/[^0-9.-]+/g,""));
         goodData.proInitalPrice = goodData.proCurBidPrice;
         goodData.proPriceStep = Number(dataProduct.proPriceStep.replace(/[^0-9.-]+/g,""));
+
+        //Bidder Comment and Seller Comment
+        goodData.isBidderComment = false;
+        goodData.isSellerComment = false;
+        goodData.proHighestPrice = goodData.proCurBidPrice;
+
+        //Product Bidder Quanrtity
+        goodData.proBidQuantity = 0;
 
         return goodData;
     },

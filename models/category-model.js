@@ -156,7 +156,15 @@ async function removeProductFromCatFunc(collection, catParent, catChild) {
   );
 }
 
+async function updateDataFunc(collection, catData){
+  const myQuery = {"_id" : catData._id};
+  delete catData._id;
+  const myUpdate =  {$set : catData};
 
+  await collection.updateOne(myQuery, myUpdate);
+}
+
+//-----------------------------------------//
 export default {
   async findByID(id) {
     try {
@@ -351,4 +359,16 @@ export default {
       await mongoClient.close()
     }
   },
+  async updateData(catData) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('category');
+      await updateDataFunc(collection, catData);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  }
 };

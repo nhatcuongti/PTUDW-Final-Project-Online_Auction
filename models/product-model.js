@@ -556,7 +556,7 @@ async function searchVietnameseFunc(collection, keyword){
     return await collection.aggregate([
       {
         '$search':{
-          'index': 'custom1',
+          'index': 'custom',
           'text': {
             'query': keyword,
             'path': 'proNameEnglish',
@@ -564,6 +564,13 @@ async function searchVietnameseFunc(collection, keyword){
           }
         }
       }]).toArray();
+}
+
+async function updatePriceAndCurrentBidderFunc(collection, productID, currentPrice, userID, highestPrice){
+  const myQuery = {"_id" : new ObjectId(productID)};
+  const myUpdate =  {$set : {curBidderInfo : userID, proCurBidPrice: currentPrice, proHighestPrice: highestPrice}};
+
+  await collection.updateOne(myQuery, myUpdate);
 }
 
 //----------------------------------------------------------------------------------------//
@@ -874,6 +881,18 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       await updateProNameEnglishFunc(collection, product._id, product.proNameEnglish);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updatePriceAndCurrentBidder(productID, currentPrice, userID, highestPrice) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updatePriceAndCurrentBidderFunc(collection, productID, currentPrice, userID, highestPrice);
     } catch (e) {
       console.error(e);
     } finally {

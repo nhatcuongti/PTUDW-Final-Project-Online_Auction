@@ -11,6 +11,7 @@ import productModel from "../models/product-model.js";
 import accountModel from "../models/account-model.js";
 import mailing from "../utils/mailing.js";
 import {authUserWithProduct} from "../middlewares/auth-mdw.js";
+import rollbackProduct from "../utils/rollback-product.js";
 
 const router = express.Router();
 
@@ -169,24 +170,11 @@ const storage = multer.diskStorage({
 
         req.body.index++;
 
-        // if (file.fieldname === 'main-image'){
-        //     cb(null, `main-thumb${ext}`);
-        //     console.log("Create main-thumb.jpg");
-        // }
-        // else if (file.fieldname === 'image1'){
-        //     cb(null, `thumb1${ext}`);
-        //     console.log("Create thumb1.jpg")
-        // }
-        // else{
-        //     cb(null, `thumb2${ext}`);
-        //     console.log("Create thumb2.jpg")
-        // }
     }
 })
 
 const upload = multer({ storage: storage })
 const cpUpload = upload.array("Image", 5);
-// const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
 
 const afterUploadImage = async (req, res, next) => {
     console.log("Raw Data : ")
@@ -197,7 +185,7 @@ const afterUploadImage = async (req, res, next) => {
     next();
 }
 
-router.post("/channel/product/insert", cpUpload, async (req, res) => {
+router.post("/channel/product/insert", cpUpload, afterUploadImage, async (req, res) => {
     //Change folder name
     req.body.index = undefined;
     const oldFolderName = "./public/image";
@@ -369,64 +357,111 @@ router.get("/channel/product/detail/:id/list", authUserWithProduct, async (req, 
 })
 
 router.post("/channel/product/detail/:id/list", authUserWithProduct, async (req, res) => {
+    console.time('test');
     res.locals.XemSanPham.isActive = true;
 
     //Getting user data from bidderHistory
     const productID = req.params.id;
     const userID = req.body.userID;
 
-    await productModel.denyUserOnBidderHistory(productID, userID);
     const productRaw = await productModel.findById(productID);
     const product = productRaw[0];
-    const account = await  accountModel.findByID(userID)
 
 
-    // Gửi mail
-    await mailing.sendEmail(account.email,
-        "Thông báo từ chối ra giá",
-        `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
 
-    //Roll back giá sản phẩm
-    const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
-    let currentPrice = product.proInitalPrice;
-    let bidderWithHighest = bidderHistories[0];
+    const arr = await Promise.all([
+        rollbackProduct.denyBidderOfProduct(product, productID, userID),
+        async function (){
+            // Gửi mail
+            const account = await  accountModel.findByID(userID)
+            await mailing.sendEmail(account.email,
+                "Thông báo từ chối ra giá",
+                `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
 
-    if (bidderHistories.length > 1){
-        let highestUser = null;
-        let secondUser = null;
-        let count = 0;
+            res.redirect(`/seller/channel/product/detail/${productID}/list`)
 
-        for (const bidderHistory of bidderHistories)
-            if (bidderHistory.isDenied !== 1){
-                if (count === 0){
-                    highestUser = bidderHistory;
-                    bidderWithHighest = bidderHistory;
-                    count++;
-                }
-                else{
-                    secondUser = bidderHistory;
-                    break;
-                }
-            }
-
-        if (count > 1){
-
-            if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất
-                currentPrice = secondUser.price + product.proPriceStep;
-            else // Nếu thằng thứ hai tới sau thằng thứ nhất
-                currentPrice = secondUser.price;
         }
-    }
+    ]).then(arr => {
+        res.redirect(`/seller/channel/product/detail/${productID}/list`)
+        console.timeEnd('test');
+
+    })
 
 
-    await productModel.updatePriceProduct(productID, currentPrice);
-
-    //Chuyển người mua cao thứ nhì thành bidder infor
-    await productModel.updateCurrenBidderInfor(productID, bidderWithHighest.userID);
-
-
-    res.redirect(`/seller/channel/product/detail/${productID}/list`)
 })
+
+// router.post("/channel/product/detail/:id/list", authUserWithProduct, async (req, res) => {
+//     console.time('test');
+//     res.locals.XemSanPham.isActive = true;
+//
+//     //Getting user data from bidderHistory
+//     const productID = req.params.id;
+//     const userID = req.body.userID;
+//
+//
+//     const productRaw = await productModel.findById(productID);
+//     const product = productRaw[0];
+//     const account = await  accountModel.findByID(userID)
+//
+//     //Deny user
+//     await productModel.denyUserOnBidderHistory(productID, userID);
+//
+//
+//     //Roll back giá sản phẩm
+//     const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
+//     let currentPrice = product.proInitalPrice;
+//     let highestPrice = product.proHighestPrice;
+//
+//     let bidderWithHighest = bidderHistories[0];
+//
+//     if (bidderHistories.length > 1){
+//         let highestUser = null;
+//         let secondUser = null;
+//         let count = 0;
+//
+//         for (const bidderHistory of bidderHistories)
+//             if (bidderHistory.isDenied !== 1){
+//                 if (count === 0){
+//                     highestUser = bidderHistory;
+//                     bidderWithHighest = bidderHistory;
+//                     count++;
+//                 }
+//                 else{
+//                     secondUser = bidderHistory;
+//                     break;
+//                 }
+//             }
+//
+//         if (count > 1){
+//
+//             if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất
+//                 currentPrice = secondUser.price + product.proPriceStep;
+//             else // Nếu thằng thứ hai tới sau thằng thứ nhất
+//                 currentPrice = secondUser.price;
+//         }
+//     }
+//
+//     if (bidderWithHighest !== undefined)
+//         highestPrice = bidderWithHighest.price;
+//
+//     //Update price and curent
+//     await productModel.updatePriceAndCurrentBidder(productID, currentPrice, bidderWithHighest.userID, highestPrice)
+//
+//     // Gửi mail
+//     await mailing.sendEmail(account.email,
+//         "Thông báo từ chối ra giá",
+//         `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
+//
+//
+//
+//     res.redirect(`/seller/channel/product/detail/${productID}/list`)
+//     console.timeEnd('test');
+//
+//     // const arr = await Promise.all([p1, p2]).then(arr => {
+//     //     res.redirect(`/seller/channel/product/detail/${productID}/list`)
+//     // })
+//
+// })
 
 //API
 router.get("/channel/getCatChild", async (req, res) => {
