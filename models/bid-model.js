@@ -18,8 +18,25 @@ async function insertBidtoHistory(collection, userID, proID, price, curProPrice)
 async function getUserInfo(db, userID) {
     return db.collection("account").findOne({_id: new ObjectId(userID)})
 }
-async function buyNowFunc(collection, userID, proID,proInfo) {
-            let dateNow = new Date()
+async function buyNowFunc(db,collection, userID, proID,proInfo) {
+    const oldBidderMail = proInfo.curBidderInfo[0].email
+    const sellerMail = proInfo.sellerInfo[0].email
+    const curBidderInfo = await getUserInfo(db,userID)
+    const curBidderMail = curBidderInfo.email
+
+    await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
+        `Sản phẩm ` + proInfo.proName + `vừa được mua ngay`);
+
+
+    await mailing.sendEmail(curBidderMail, 'Hệ thống auction online',
+        `Bạn đã mua ngay sản phẩm ` + productInfo.proName + ` thành công.`);
+
+    if(curBidderMail !== oldBidderMail){
+        await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
+            `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác "mua ngay".`);
+    }
+
+    let dateNow = new Date()
     return collection.updateOne({_id: new ObjectId(proID)}, { $set: {
             curBidderInfo: new ObjectId(userID),
             proCurBidPrice: proInfo.proBuyNowPrice,
@@ -29,18 +46,18 @@ async function buyNowFunc(collection, userID, proID,proInfo) {
     })
 }
 
-async function processBidFunc(db,collection, userID, proID, priceString, productInfor) {
+async function processBidFunc(db,collection, userID, proID, priceString, productInfo) {
     const price = parseInt(priceString)
-    const oldHighestPrice = productInfor.proHighestPrice
-    const oldProductPrice = productInfor.proCurBidPrice
+    const oldHighestPrice = productInfo.proHighestPrice
+    const oldProductPrice = productInfo.proCurBidPrice
 
-    const oldBidderMail = productInfor.curBidderInfo[0].email
-    const sellerMail = productInfor.sellerInfo[0].email
-    const curBidderInfor = await getUserInfo(db,userID)
-    const curBidderMail = curBidderInfor.email
+    const oldBidderMail = productInfo.curBidderInfo[0].email
+    const sellerMail = productInfo.sellerInfo[0].email
+    const curBidderInfo = await getUserInfo(db,userID)
+    const curBidderMail = curBidderInfo.email
 
 
-    const proPriceStep = productInfor.proPriceStep
+    const proPriceStep = productInfo.proPriceStep
     let curHighestPrice
     let curProductPrice
     let curBidder
@@ -52,23 +69,23 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
         curBidder = userID
 
         await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
-            `Giá của sản phẩm ` + productInfor.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
+            `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
 
 
         await mailing.sendEmail(curBidderMail, 'Hệ thống auction online',
-            `Bạn đã đấu giá sản phẩm ` + productInfor.proName + ` thành công. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
+            `Bạn đã đấu giá sản phẩm ` + productInfo.proName + ` thành công. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
 
         if(curBidderMail !== oldBidderMail){
             await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
-                `Sản phẩm ` + productInfor.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
+                `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
         }
 
-        if((Math.abs(productInfor.proEndDate - new Date())/(1000*60)) <= 5){
+        if((Math.abs(productInfo.proEndDate - new Date())/(1000*60)) <= 5){
             return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
                     curBidderInfo: new ObjectId(curBidder),
                     proCurBidPrice: curProductPrice,
                     proHighestPrice: curHighestPrice,
-                    proEndDate: new Date(productInfor.proEndDate.getTime() + 10*60*1000)
+                    proEndDate: new Date(productInfo.proEndDate.getTime() + 10*60*1000)
                 }
             })
         }
@@ -83,7 +100,7 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
     else if (price === oldHighestPrice){
         curProductPrice = oldHighestPrice
         await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
-            `Sản phẩm ` + productInfor.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
+            `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
 
         return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
                     proCurBidPrice: curProductPrice
@@ -94,7 +111,7 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
     else if (price < oldHighestPrice && price > oldProductPrice){
         curProductPrice = price;
         await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
-            `Sản phẩm ` + productInfor.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
+            `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
 
         return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
                     proCurBidPrice: curProductPrice
@@ -134,7 +151,7 @@ export default {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('product');
-            return await buyNowFunc(collection, userID, proID,proInfo);
+            return await buyNowFunc(db,collection, userID, proID,proInfo);
         } catch (e) {
             console.error(e);
         } finally {

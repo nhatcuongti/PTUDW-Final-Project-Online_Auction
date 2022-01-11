@@ -52,7 +52,7 @@ router.get('/check-buynow', async function (req, res) {
     const userID = temp[0]._id;
     const proInfo = await product.findById(proID)
     console.log(proInfo)
-    if (proInfo[0].proBuyNowPrice > proInfo[0].proCurBidPrice)
+    if (proInfo[0].proBuyNowPrice > proInfo[0].proCurBidPrice && ((proInfo[0].proBuyNowPrice - proInfo[0].proCurBidPrice) > (proInfo[0].proPriceStep *5)))
         return res.json(true);
     return res.json(false);
 });
