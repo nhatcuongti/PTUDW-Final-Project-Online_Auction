@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Auction</title>
+    {{!--
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    --}}
+    <link type="text/css" rel="stylesheet" href="/public/main/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="/public/main/css/slick.css"/>
+    <link type="text/css" rel="stylesheet" href="/public/main/css/slick-theme.css"/>
+    <link type="text/css" rel="stylesheet" href="/public/main/css/nouislider.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/public/main/css/style.css"/>
     {{{_sections.css}}}
 </head>
+{{!--
 <body>
 <nav class="navbar has-background-grey-light" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
@@ -205,9 +214,168 @@
         </div>
     </div>
 </footer>
+--}}
+<body>
+    <header>
+        <div id="header">
+            <div class="container">
+                <div class="row">
+                    <!-- LOGO -->
+                    <div class="col-md-3">
+                        <div class="header-logo">
+                            <a href="#" class="logo">
+                                <img src="">
+                            </a>
+                        </div>
+                    </div>
+                    <!-- SEARCH BAR -->
+                    <div class="col-md-6">
+                        <div class="header-search">
+                            <form action="/search" method="get">
+                                <select class="input-select" name="with">
+                                    <option value="name">Theo tên</option>
+                                    <option value="category">Theo danh mục</option>
+                                </select>
+                                <input class="input" placeholder="Tìm kiếm sản phẩm" name="keyword">
+                                <button class="search-btn" type="submit">Tìm kiếm</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ACCOUNT -->
+                    <div class="col-md-3 clearfix">
+                        <div class="header-ctn">
+                            <!-- Right menu -->
+                            {{#if auth}}
+                                <div>
+                                    <a href="#">
+                                        <i class="fa fa-heart-o"></i>
+                                        <span>Yêu thích</span>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="#">
+                                        <i class="fa fa-user-o"></i>
+                                        <span>Tài khoản</span>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="#">
+                                        <i class="fa fa-sign-out"></i>
+                                        <span>Đăng xuất</span>
+                                    </a>
+                                </div>
+                            {{else}}
+                                <div>
+                                    <a href="/login">
+                                        <i class="fa fa-sign-in"></i>
+                                        <span>Đăng nhập</span>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="/signup">
+                                        <i class="fa fa-user-plus"></i>
+                                        <span>Đăng ký</span>
+                                    </a>
+                                </div>
+                            {{/if}}
+                            <!-- Menu Toogle -->
+                            <div class="menu-toggle">
+                                <a href="#">
+                                    <i class="fa fa-bars"></i>
+                                    <span>Menu</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- NAVIGATION -->
+    <nav id="navigation">
+        <!-- container -->
+        <div class="container">
+            <!-- responsive-nav -->
+            <div id="responsive-nav">
+                <!-- NAV -->
+                <ul class="main-nav nav navbar-nav">
+                    <li><a href="/">Trang chủ</a></li>
+                    <li><a href="/product">Sản phẩm</a></li>
+                    {{#each this.categories}}
+                        <li><a href="/product?category={{catParent}}">{{catParent}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {{{body}}}
+    <footer id="footer">
+        <!-- top footer -->
+        <div class="section">
+            <!-- container -->
+            <div class="container">
+                <!-- row -->
+                <div class="row">
+                    <div class="col-md-3 col-xs-6">
+                        <div class="footer">
+                            <h3 class="footer-title">Về chúng tôi</h3>
+                            <p></p>
+                            <ul class="footer-links">
+                                <li><a><i class="fa fa-map-marker"></i>Đại học Khoa học tự nhiên</a></li>
+                                <li><a><i class="fa fa-phone"></i>+841-234-5678</a></li>
+                                <li><a><i class="fa fa-envelope-o"></i>fit@hcmus.edu.vn</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-xs-6"></div>
+                    <div class="clearfix visible-xs"></div>
+                    <div class="col-md-3 col-xs-6">
+                        <div class="footer">
+                            <h3 class="footer-title">Dịch vụ</h3>
+                            <ul class="footer-links">
+                                <li><a href="/product">Sản phẩm</a></li>
+                                <li><a href="#">Tài khoản</a></li>
+                                <li><a href="#">Danh sách yêu thích</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- bottom footer -->
+        <div id="bottom-footer" class="section">
+            <div class="container">
+                <!-- row -->
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <ul class="footer-payments">
+                            <li><a><i class="fa fa-cc-visa"></i></a></li>
+                            <li><a><i class="fa fa-cc-paypal"></i></a></li>
+                            <li><a><i class="fa fa-cc-mastercard"></i></a></li>
+                        </ul>
+                        <span class="copyright">
+                            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+{{!--
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+--}}
+<script src="public/main/js/jquery.min.js"></script>
+<script src="public/main/js/bootstrap.min.js"></script>
+<script src="public/main/js/slick.min.js"></script>
+<script src="public/main/js/nouislider.min.js"></script>
+<script src="public/main/js/jquery.zoom.min.js"></script>
+<script src="public/main/js/main.js"></script>
 {{{_sections.js}}}
 </body>
 </html>
