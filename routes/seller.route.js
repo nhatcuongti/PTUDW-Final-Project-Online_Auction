@@ -174,7 +174,7 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage })
-const cpUpload = upload.array("Image", 5);
+const cpUpload = upload.array("Image[]", 5);
 
 const afterUploadImage = async (req, res, next) => {
     console.log("Raw Data : ")
@@ -187,6 +187,7 @@ const afterUploadImage = async (req, res, next) => {
 
 router.post("/channel/product/insert", cpUpload, afterUploadImage, async (req, res) => {
     //Change folder name
+    console.log(req.files);
     req.body.index = undefined;
     const oldFolderName = "./public/image";
     const newFolderName = `./public/${req.body._id}`;
@@ -471,6 +472,17 @@ router.get("/channel/getCatChild", async (req, res) => {
 })
 
 router.post("/channel/updateEndDate", async (req, res) => {
+
+})
+
+router.post("/test", async(req, res) => {
+    console.log("--------------------------");
+    console.log("req.body");
+    console.log(req.body);
+    console.log("---------------------------");
+    console.log("req.files");
+    console.log(req.files);
+    console.log("---------------------------");
 
 })
 export default router;

@@ -34,27 +34,9 @@ function removeVietnameseTones(str) {
     return str;
 }
 
-async function updateProduct(){
-    await productModel.updatePriceProduct("61b05934d39b26209b9b345d", 3000000);
-    await productModel.updateCurrenBidderInfor("61b05934d39b26209b9b345d", new ObjectId("61c047490f45bf6d97b13cc8"));
-}
-
-async function denyUser(){
-    await productModel.denyUserOnBidderHistory("61bff2b3a5f2b58eee620302", "61b9df48a38388efc7a19cf8");
-}
-
-async function sendEmail(){
-    await mailing.sendEmail("nhatcuongti@gmail.com", "test", "send");
-}
-
-
 
 async function testFunc(){
-    await console.time('doSomething')
-    await updateProduct();
-    await denyUser();
-    await sendEmail();
-    await console.timeEnd('doSomething')
+    bidderHistory
 }
 
 async function testFunc1(){

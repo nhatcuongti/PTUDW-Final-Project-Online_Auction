@@ -5,10 +5,12 @@
     <script>
 
         $("#input-fcount-2").fileinput({
-            uploadUrl: "/site/test-upload",
-            upload:false,
+            // uploadUrl: "/site/test-upload",
+            uploadUrl: "/seller/test",
+            uploadAsync: false,
             enableResumableUpload: true,
             allowedFileExtensions: ['jpg', 'png', 'gif','jpeg', 'webp'],
+            allowedFileTypes: ['image'],
             initialPreviewAsData: true,
             maxFileCount: 5,
             minFileCount: 3,
@@ -25,6 +27,10 @@
                 },
             }
         });
+
+        $('#input-fcount-2').on('fileloaded', function (event, file, previewId, index, reader) {
+            console.log(file);
+        })
     </script>
 
 
@@ -419,7 +425,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="subImage" class="h4">Ảnh sản phẩm (Ảnh đầu tiên là ảnh chính)</label>
-                                    <input id="input-fcount-2" name="Image" type="file" multiple="multiple">
+                                    <input id="input-fcount-2" name="Image[]" type="file" multiple>
                                 </div>
                             </div>
 

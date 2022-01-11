@@ -1,0 +1,571 @@
+Index: views/seller/channel_product_detail_listBider.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{{#section 'js'}}\r\n    <script>\r\n        $('.denyUser').on(\"click\", function (e) {\r\n            const userData = $(this).data('id');\r\n            alert(userData);\r\n            $('#userIDInput').val(userData);\r\n            $('form').submit();\r\n        })\r\n    </script>\r\n{{/section}}\r\n\r\n{{#section 'css'}}\r\n    <style>\r\n        #deleteModal{\r\n            z-index: 999999;\r\n        }\r\n    </style>\r\n\r\n{{/section}}\r\n\r\n<form method=\"post\" action=\"/seller/channel/product/detail/{{this.productID}}/list\">\r\n    <input type=\"text\" name=\"userID\" id=\"userIDInput\" hidden>\r\n</form>\r\n\r\n<div class=\"container\">\r\n    <div class=\"row justify-content-between mb-3\">\r\n        <b class=\"h3\">Danh sách bidder đã đấu giá</b>\r\n        <a class=\"btn btn-outline-primary m-0\" href=\"#\" role=\"button\">\r\n            <i class=\"fa fa-backward\" aria-hidden=\"true\"></i>\r\n            Quay lại\r\n        </a>\r\n    </div>\r\n\r\n\r\n    {{#if emptyMsg}}\r\n        <p class=\"text-danger h1\">{{this.emptyMsg}}</p>\r\n    {{else}}\r\n        <div class=\"row\">\r\n            <div class=\"card w-100\">\r\n                <div class=\"card-body\">\r\n                    <table class=\"table table-hover\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th scope=\"col p-0\">#</th>\r\n                            <th scope=\"col\">Thời điểm</th>\r\n                            <th scope=\"col\">Người mua</th>\r\n                            <th scope=\"col\">Giá</th>\r\n                            <th scope=\"col\"></th>\r\n                        </tr>\r\n                        </thead>\r\n\r\n                        <tbody>\r\n\r\n                        {{#each this.bidderHistory}}\r\n                            <tr>\r\n                                <th scope=\"row\">{{@index}}</th>\r\n                                <td>{{format_date dateBid}}</td>\r\n                                {{#each sellerInfo}}\r\n                                    <td>{{ email}}</td>\r\n\r\n                                    <td>{{format_number ../price}}</td>\r\n\r\n\r\n                                    <td class=\"text-right\">\r\n                                        <!--                                    <a class=\"btn btn-outline-danger denyUser\" role=\"button\" data-id=\"{{_id}}\">-->\r\n                                        <!--                                        <i class=\"fa fa-trash mr-2\" aria-hidden=\"true\"></i>-->\r\n                                        <!--                                        Hủy-->\r\n                                        <!--                                    </a>-->\r\n\r\n                                        <button type=\"button\" class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\"#deleteModal\">\r\n                                            <i class=\"fa fa-ban mr-2\" aria-hidden=\"true\"></i>\r\n                                            <span>\r\n                                            Từ chối\r\n                                        </span>\r\n                                        </button>\r\n                                    </td>\r\n\r\n                                    <div class=\"modal fade\" id=\"deleteModal\" tabindex=\"-1\" aria-labelledby=\"deleteModalLabel\" aria-hidden=\"true\">\r\n                                        <div class=\"modal-dialog\">\r\n                                            <div class=\"modal-content\">\r\n                                                <div class=\"modal-header\">\r\n                                                    <h5 class=\"modal-title\" id=\"deleteModalLabel\">Modal title</h5>\r\n                                                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\r\n                                                        <span aria-hidden=\"true\">&times;</span>\r\n                                                    </button>\r\n                                                </div>\r\n                                                <div class=\"modal-body\">\r\n                                                    Bạn có chắc muốn từ chối người mua này không ?\r\n                                                </div>\r\n                                                <div class=\"modal-footer\">\r\n                                                    <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">No</button>\r\n\r\n                                                    <form method=\"post\" action=\"\">\r\n                                                        <input name=\"userID\" value=\"{{_id}}\" hidden>\r\n                                                        <button type=\"submit\" class=\"btn btn-primary\">Yes</button>\r\n                                                    </form>\r\n                                                </div>\r\n                                            </div>\r\n                                        </div>\r\n                                    </div>\r\n                                {{/each}}\r\n\r\n                            </tr>\r\n                        {{/each}}\r\n                        </tbody>\r\n                    </table>\r\n\r\n                </div>\r\n                <div class=\"card-footer text-muted\">\r\n                    <nav class=\"pagination is-right is-rounded is-medium\" role=\"navigation\" aria-label=\"pagination\">\r\n                        {{#if this.prevPage.check}}\r\n                            <a class=\"pagination-previous page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}\">Previous page</a>\r\n                        {{/if}}\r\n\r\n                        {{#if this.nextPage.check}}\r\n                            <a class=\"pagination-next page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}\">Next page</a>\r\n                        {{/if}}\r\n\r\n                        <ul class=\"pagination-list\">\r\n                            {{#if this.prevPage.check}}\r\n                                <li><a class=\"pagination-link page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}\">{{this.prevPage.value}}</a></li>\r\n                            {{/if}}\r\n\r\n                            <li><a style=\"text-decoration:none\" class=\"pagination-link is-current\">{{this.curPage.value}}</a></li>\r\n\r\n                            {{#if this.nextPage.check}}\r\n                                <li><a class=\"pagination-link page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}\">{{this.nextPage.value}}</a></li>\r\n                            {{/if}}\r\n                        </ul>\r\n                    </nav>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    {{/if}}\r\n\r\n</div>\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/views/seller/channel_product_detail_listBider.hbs b/views/seller/channel_product_detail_listBider.hbs
+--- a/views/seller/channel_product_detail_listBider.hbs	(revision 52f54a9c53b9077c25d551e1e3245a1d95abb344)
++++ b/views/seller/channel_product_detail_listBider.hbs	(date 1641878598480)
+@@ -1,26 +1,21 @@
+ {{#section 'js'}}
+     <script>
+-        $('.denyUser').on("click", function (e) {
+-            const userData = $(this).data('id');
+-            alert(userData);
+-            $('#userIDInput').val(userData);
+-            $('form').submit();
+-        })
++
+     </script>
+ {{/section}}
+ 
+ {{#section 'css'}}
+     <style>
+-        #deleteModal{
++        .modal{
+             z-index: 999999;
+         }
+     </style>
+ 
+ {{/section}}
+ 
+-<form method="post" action="/seller/channel/product/detail/{{this.productID}}/list">
+-    <input type="text" name="userID" id="userIDInput" hidden>
+-</form>
++<!--<form method="post" action="/seller/channel/product/detail/{{this.productID}}/list">-->
++<!--    <input type="text" name="userID" id="userIDInput" hidden>-->
++<!--</form>-->
+ 
+ <div class="container">
+     <div class="row justify-content-between mb-3">
+@@ -62,12 +57,8 @@
+ 
+ 
+                                     <td class="text-right">
+-                                        <!--                                    <a class="btn btn-outline-danger denyUser" role="button" data-id="{{_id}}">-->
+-                                        <!--                                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>-->
+-                                        <!--                                        Hủy-->
+-                                        <!--                                    </a>-->
+ 
+-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
++                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{_id}}">
+                                             <i class="fa fa-ban mr-2" aria-hidden="true"></i>
+                                             <span>
+                                             Từ chối
+@@ -75,7 +66,7 @@
+                                         </button>
+                                     </td>
+ 
+-                                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
++                                    <div class="modal fade" id="deleteModal{{_id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                         <div class="modal-dialog">
+                                             <div class="modal-content">
+                                                 <div class="modal-header">
+@@ -92,7 +83,7 @@
+ 
+                                                     <form method="post" action="">
+                                                         <input name="userID" value="{{_id}}" hidden>
+-                                                        <button type="submit" class="btn btn-primary">Yes</button>
++                                                        <button type="submit" class="btn btn-primary" onclick="alert({{_id}})">Yes</button>
+                                                     </form>
+                                                 </div>
+                                             </div>
+Index: testDB.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import productModel from \"./models/product-model.js\";\r\nimport {ObjectId} from \"mongodb\";\r\nimport accountModel from \"./models/account-model.js\";\r\nimport mailing from \"./utils/mailing.js\";\r\n\r\nfunction removeVietnameseTones(str) {\r\n    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,\"a\");\r\n    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,\"e\");\r\n    str = str.replace(/ì|í|ị|ỉ|ĩ/g,\"i\");\r\n    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,\"o\");\r\n    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,\"u\");\r\n    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,\"y\");\r\n    str = str.replace(/đ/g,\"d\");\r\n    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, \"A\");\r\n    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, \"E\");\r\n    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, \"I\");\r\n    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, \"O\");\r\n    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, \"U\");\r\n    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, \"Y\");\r\n    str = str.replace(/Đ/g, \"D\");\r\n    // Some system encode vietnamese combining accent as individual utf-8 characters\r\n    // Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này\r\n    str = str.replace(/\\u0300|\\u0301|\\u0303|\\u0309|\\u0323/g, \"\"); // ̀ ́ ̃ ̉ ̣  huyền, sắc, ngã, hỏi, nặng\r\n    str = str.replace(/\\u02C6|\\u0306|\\u031B/g, \"\"); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư\r\n    // Remove extra spaces\r\n    // Bỏ các khoảng trắng liền nhau\r\n    str = str.replace(/ + /g,\" \");\r\n    str = str.trim();\r\n    // Remove punctuations\r\n    // Bỏ dấu câu, kí tự đặc biệt\r\n    str = str.replace(/!|@|%|\\^|\\*|\\(|\\)|\\+|\\=|\\<|\\>|\\?|\\/|,|\\.|\\:|\\;|\\'|\\\"|\\&|\\#|\\[|\\]|~|\\$|_|`|-|{|}|\\||\\\\/g,\" \");\r\n    return str;\r\n}\r\n\r\nasync function testFunc(){\r\n    const productSearch = await productModel.searchVietnamese(\"Laptop\");\r\n    console.log(productSearch);\r\n}\r\n\r\nawait testFunc();
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/testDB.js b/testDB.js
+--- a/testDB.js	(revision 52f54a9c53b9077c25d551e1e3245a1d95abb344)
++++ b/testDB.js	(date 1641875253821)
+@@ -2,6 +2,8 @@
+ import {ObjectId} from "mongodb";
+ import accountModel from "./models/account-model.js";
+ import mailing from "./utils/mailing.js";
++import modelCategory from "./models/category-model.js";
++import bid from "./routes/bid.js";
+ 
+ function removeVietnameseTones(str) {
+     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a");
+@@ -32,9 +34,45 @@
+     return str;
+ }
+ 
++async function updateProduct(){
++    await productModel.updatePriceProduct("61b05934d39b26209b9b345d", 3000000);
++    await productModel.updateCurrenBidderInfor("61b05934d39b26209b9b345d", new ObjectId("61c047490f45bf6d97b13cc8"));
++}
++
++async function denyUser(){
++    await productModel.denyUserOnBidderHistory("61bff2b3a5f2b58eee620302", "61b9df48a38388efc7a19cf8");
++}
++
++async function sendEmail(){
++    await mailing.sendEmail("nhatcuongti@gmail.com", "test", "send");
++}
++
++
++
+ async function testFunc(){
+-    const productSearch = await productModel.searchVietnamese("Laptop");
+-    console.log(productSearch);
++    await console.time('doSomething')
++    await updateProduct();
++    await denyUser();
++    await sendEmail();
++    await console.timeEnd('doSomething')
++}
++
++async function testFunc1(){
++    const arr = await Promise.all([updateProduct(), denyUser(), sendEmail()]);
++    return arr;
+ }
+ 
+-await testFunc();
+\ No newline at end of file
++async function testDB(){
++    const bidderHistories = await productModel.getBidderHistoryWithProID("61dd0106999ba1487e5c67d1");
++    console.log(bidderHistories[0]);
++}
++
++await testDB();
++
++
++// console.time('test1')
++// testFunc1().then(arr => {
++//     console.log(arr);
++//     console.timeEnd('test1')
++// })
++
+Index: utils/format-product.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {ObjectID} from \"mongodb\";\r\nimport modelCategory from '../models/category-model.js'\r\nimport productModel from \"../models/product-model.js\";\r\n\r\nexport default {\r\n    async formatForInsert(dataProduct, sellerID){\r\n        const goodData = {};\r\n        goodData.proName = dataProduct.proName;\r\n\r\n        goodData.proType = new ObjectID(dataProduct.catParent);\r\n        goodData.catChildType = dataProduct.catChild;\r\n        const catInformation = await modelCategory.findByID(goodData.proType);\r\n        goodData.catParent = catInformation[0].catParent;\r\n        goodData.catChild = catInformation[0].catChild[goodData.catChildType].name;\r\n\r\n        goodData.autoExtend = (dataProduct.autoExtend === 'true');\r\n        if (goodData.autoExtend)\r\n            goodData.isExtend = false;\r\n        goodData.bidderType = (dataProduct.bidderRange === 'true');\r\n\r\n        goodData.proDescription = dataProduct.proDescription;\r\n\r\n        goodData.sellerInfo = new ObjectID(sellerID);\r\n\r\n        goodData.proStartDate = new Date();\r\n        // var in30days = new Date();\r\n        // in30days.setDate(in30days.getDate() + 30);\r\n        goodData.proEndDate = new Date(dataProduct.proEndDate);\r\n        goodData.numberImage = dataProduct.index;\r\n        goodData.proBuyNowPrice = Number(dataProduct.proBuyNowPrice.replace(/[^0-9.-]+/g,\"\"));\r\n        goodData.proCurBidPrice = Number(dataProduct.firstPrice.replace(/[^0-9.-]+/g,\"\"));\r\n        goodData.proInitalPrice = goodData.proCurBidPrice;\r\n        goodData.proPriceStep = Number(dataProduct.proPriceStep.replace(/[^0-9.-]+/g,\"\"));\r\n\r\n        return goodData;\r\n    },\r\n\r\n    formatDate(dataProduct) {\r\n        //Format time\r\n        const date1 = new Date();\r\n        const date2 = dataProduct.proEndDate;\r\n        const diffTime = Math.abs(date2 - date1);\r\n        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));\r\n        if (date2 < date1){\r\n            dataProduct.duration = 'Đã hết hạn'\r\n        }\r\n        else if (diffDays <= 3) {\r\n            dataProduct.duration = `Còn ${diffDays} ngày`;\r\n        }\r\n        else {\r\n            dataProduct.duration = dataProduct.proEndDate.toLocaleString(\"en-GB\");\r\n        }\r\n    },\r\n\r\n    async formatCategory(dataProduct){\r\n        //format category\r\n        const cat = await modelCategory.findByID(dataProduct.proType);\r\n        if (cat != null) {\r\n            const i = dataProduct.catChildType;\r\n            const catName = cat[0].catParent + \" - \" + cat[0].catChild[i];\r\n            dataProduct.catName = catName;\r\n        }\r\n    },\r\n\r\n    findProductWithSellerID(products, sellerID){\r\n        for (let i = products.length - 1; i >= 0; i--)\r\n            if (products[i].sellerInfo.toString() !== sellerID.toString())\r\n                products.splice(i, 1);\r\n\r\n    },\r\n\r\n    async findProductWithStatus(products, status){\r\n        // 1 : Đấu giá thành công ; => Có người mua và đã hết hạn\r\n        // 2 : Đấu giá thất bại ; => Không có người mua và đã hết hạn\r\n        // 3 : Đang được đấu giá ;  => Còn hạn và đã có người đặt\r\n        // 4 : Chưa được đấu giá  => Còn hạn và chưa có người đặt\r\n\r\n        // Kiểm tra những phần tử không phù hợp để loại\r\n        status = +status;\r\n        for (var i = products.length - 1; i >= 0; i--) {\r\n            const product = products[i];\r\n            // Kiểm tra đã hết hạn hay chưa\r\n            const endDate = new Date(product.proEndDate);\r\n            const currentDate = new Date();\r\n            if (endDate - currentDate > 0) { // Nếu còn hạn\r\n                if (status === 1 || status === 2) {\r\n                    const index = products.indexOf(product);\r\n                    products.splice(index, 1);\r\n                    continue;\r\n                }\r\n            } else { // Nếu hết hạn\r\n                if (status === 3 || status === 4) {\r\n                    const index = products.indexOf(product);\r\n                    products.splice(index, 1);\r\n                    continue;\r\n                }\r\n            }\r\n\r\n\r\n            //Kiểm tra có người mua hay không\r\n            // const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);\r\n\r\n            if (product.curBidderInfo === null || product.curBidderInfo === undefined || product.curBidderInfo.length === 0) {// Nếu như không có người mua\r\n                if (status === 1 || status === 3) {\r\n                    const index = products.indexOf(product);\r\n                    products.splice(index, 1);\r\n                    continue;\r\n                }\r\n            } else { // Nếu như có người đặt\r\n                if (status === 2 || status === 4) {\r\n                    const index = products.indexOf(product);\r\n                    products.splice(index, 1);\r\n                    continue;\r\n                }\r\n            }\r\n        }\r\n    },\r\n\r\n    async getStatus(product){\r\n        // 1 : Đấu giá thành công ; => Có người mua và đã hết hạn\r\n        // 2 : Đấu giá thất bại ; => Không có người mua và đã hết hạn\r\n        // 3 : Đang được đấu giá ;  => Còn hạn và đã có người đặt\r\n        // 4 : Chưa được đấu giá  => Còn hạn và chưa có người đặt\r\n\r\n        // Kiểm tra những phần tử không phù hợp để loại\r\n\r\n        // Kiểm tra đã hết hạn hay chưa\r\n        const endDate = new Date(product.proEndDate);\r\n        const currentDate = new Date();\r\n        //Kiểm tra có người mua hay không\r\n        // const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);\r\n\r\n        if (endDate - currentDate <= 0) { // Nếu còn hạn\r\n            if (product.curBidderInfo === null || product.curBidderInfo === undefined || product.curBidderInfo.length === 0)\r\n                return \"<span class='text-danger'>Đấu giá thất bại</span>\"\r\n            else\r\n                return \"<span class='text-success'>Đấu giá thành công</span>\"\r\n        } else { // Nếu hết hạn\r\n            if (product.curBidderInfo === null || product.curBidderInfo === undefined)\r\n                return \"<span class='text-warning'>Chưa được đấu giá</span>\"\r\n            else\r\n                return \"<span class='text-success'>Đang được đấu giá</span>\"\r\n        }\r\n    },\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/utils/format-product.js b/utils/format-product.js
+--- a/utils/format-product.js	(revision 52f54a9c53b9077c25d551e1e3245a1d95abb344)
++++ b/utils/format-product.js	(date 1641871066946)
+@@ -7,24 +7,31 @@
+         const goodData = {};
+         goodData.proName = dataProduct.proName;
+ 
++        //Category
+         goodData.proType = new ObjectID(dataProduct.catParent);
+         goodData.catChildType = dataProduct.catChild;
+         const catInformation = await modelCategory.findByID(goodData.proType);
++        const catData = catInformation[0];
+         goodData.catParent = catInformation[0].catParent;
+         goodData.catChild = catInformation[0].catChild[goodData.catChildType].name;
++        //--Update category
++        catData.quantity += 1;
++        catData.catChild[+goodData.catChildType].quantity += 1;
++        await modelCategory.updateData(catData);
+ 
++
++        //Auto extend and bidderType
+         goodData.autoExtend = (dataProduct.autoExtend === 'true');
+-        if (goodData.autoExtend)
+-            goodData.isExtend = false;
+         goodData.bidderType = (dataProduct.bidderRange === 'true');
+ 
++        //Product Description
+         goodData.proDescription = dataProduct.proDescription;
+ 
++        //Seller infor
+         goodData.sellerInfo = new ObjectID(sellerID);
+ 
++        //Product date
+         goodData.proStartDate = new Date();
+-        // var in30days = new Date();
+-        // in30days.setDate(in30days.getDate() + 30);
+         goodData.proEndDate = new Date(dataProduct.proEndDate);
+         goodData.numberImage = dataProduct.index;
+         goodData.proBuyNowPrice = Number(dataProduct.proBuyNowPrice.replace(/[^0-9.-]+/g,""));
+@@ -32,6 +39,14 @@
+         goodData.proInitalPrice = goodData.proCurBidPrice;
+         goodData.proPriceStep = Number(dataProduct.proPriceStep.replace(/[^0-9.-]+/g,""));
+ 
++        //Bidder Comment and Seller Comment
++        goodData.isBidderComment = false;
++        goodData.isSellerComment = false;
++        goodData.proHighestPrice = goodData.proCurBidPrice;
++
++        //Product Bidder Quanrtity
++        goodData.proBidQuantity = 0;
++
+         return goodData;
+     },
+ 
+Index: routes/seller.route.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import express from 'express';\r\nimport modelProduct from '../models/product-model.js';\r\nimport modelCategory from '../models/category-model.js'\r\nimport multer  from 'multer'\r\nimport formatProduct from '../utils/format-product.js'\r\nimport fs from 'fs'\r\nimport path from 'path'\r\nimport page from \"../utils/page.js\";\r\nimport {ObjectId} from \"mongodb\";\r\nimport productModel from \"../models/product-model.js\";\r\nimport accountModel from \"../models/account-model.js\";\r\nimport mailing from \"../utils/mailing.js\";\r\nimport {authUserWithProduct} from \"../middlewares/auth-mdw.js\";\r\n\r\nconst router = express.Router();\r\n\r\nrouter.get(\"/channel\", (req, res) => {\r\n    res.locals.ThongTinChung.isActive = true;\r\n    res.render(\"./seller/channel\", {\r\n        layout: \"seller.layout.hbs\"\r\n    })\r\n})\r\n\r\nrouter.get(\"/channel/product\", async (req, res) => {\r\n    res.locals.XemSanPham.isActive = true;\r\n    let products = null;\r\n    const categories = await modelCategory.getAll();\r\n\r\n\r\n    //Handle Category\r\n    const catParentFind = req.query.catParent;\r\n    const catChildFind = req.query.catChild;\r\n\r\n    for (const category of categories)\r\n        if (category._id == catParentFind){\r\n            category.isActive = true;\r\n            console.log(category);\r\n            break;\r\n        }\r\n    //Search\r\n    let keyword = req.query.keyword;\r\n    //Taking products with id seller\r\n    const userID = res.locals.user._id;\r\n\r\n\r\n\r\n    //Find offset base on curPage\r\n    const choosenPage = req.query.page;\r\n    let limitProduct = 6;\r\n    let offset = ((+choosenPage - 1) * limitProduct) || 0;\r\n\r\n    // async searchByType(keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {\r\n    console.log(\"keyword : \" + keyword);\r\n\r\n    if (keyword !== undefined)\r\n        products = await productModel.searchByType(keyword, 'name', limitProduct, offset, 'time-descending', catParentFind, catChildFind, userID);\r\n    else{\r\n            if (catParentFind != undefined && catChildFind != undefined)\r\n                products = await modelProduct.findByCategory(catParentFind, catChildFind, userID);\r\n            else if (catParentFind != undefined)\r\n                products = await modelProduct.findByCategoryParent(new ObjectId(catParentFind), undefined, userID);\r\n            else\r\n                products = await modelProduct.getAll(userID);\r\n    }\r\n\r\n    //Find with status product\r\n    let status = req.query.status;\r\n    if (status != undefined )\r\n        await formatProduct.findProductWithStatus(products, status);\r\n\r\n    if (status === \"1\")\r\n        status = \"Đấu giá thành công\"\r\n    else if (status === \"2\")\r\n        status = \"Đấu giá thất bại\"\r\n    else if (status === \"3\")\r\n        status = \"Đang được đấu giá\"\r\n    else if (status === \"4\")\r\n        status = \"Chưa được đấu giá\"\r\n    else\r\n        status = \"Tất cả\"\r\n\r\n    //Handle page\r\n    let nPage = Math.floor((products.length - 1) / 6) + 1;\r\n    let prevPage = {check:true, value : 0};\r\n    let nextPage = {check:true, value : 0};\r\n    let curPage = {check:true, value : 0};\r\n    await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );\r\n\r\n    const numberProduct = products.length;\r\n    products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)\r\n\r\n    const catParentPath = (req.query.catParent !== undefined) ?  `&catParent=${req.query.catParent}` : \"\";\r\n    const catChildPath =  (req.query.catChild !== undefined) ? `&catChild=${req.query.catChild}` : \"\";\r\n    const statusPath = (req.query.status !== undefined) ? `&status=${req.query.status}` : \"\";\r\n    const keywordPath = (req.query.keyword !== undefined) ? `&keyword=${req.query.keyword}` : \"\";\r\n    const pagePath = `?page=${(choosenPage) ? choosenPage : 1}`;\r\n    const initalPagePath = `?page=1`;\r\n\r\n    for (const product of products){\r\n        try{\r\n            const files = fs.readdirSync(`./public/${product._id}/`);\r\n            const mainThumb = files[0];\r\n            product.mainThumb = mainThumb;\r\n        } catch (e) {\r\n            console.log(e)\r\n        }\r\n    }\r\n\r\n    let emptyMsg;\r\n    if (products.length === 0)\r\n        emptyMsg = \"Hiện tại không có sản phẩm nào\"\r\n\r\n    res.render(\"./seller/channel_product\", {\r\n        layout: \"seller.layout.hbs\",\r\n        products,\r\n        categories,\r\n\r\n        status,\r\n        emptyMsg,\r\n\r\n        prevPage,\r\n        nextPage,\r\n        curPage,\r\n\r\n        catParentPath,\r\n        catChildPath,\r\n        statusPath,\r\n        keywordPath,\r\n        pagePath,\r\n        initalPagePath\r\n    })\r\n})\r\n\r\nrouter.get(\"/channel/product/insert\", async (req, res) => {\r\n    res.locals.ThemSanPham.isActive = true;\r\n    const catList = await modelCategory.getAll();\r\n    console.log(catList);\r\n\r\n    res.render(\"./seller/channel_product_insert_2\", {\r\n        layout: \"seller.layout.insert.hbs\",\r\n        catList\r\n    })\r\n\r\n\r\n\r\n})\r\n\r\n//Upload Image\r\nconst storage = multer.diskStorage({\r\n    destination: async function (req, file, cb) {\r\n        const dir = `./public/image`\r\n        if (!fs.existsSync(dir)){\r\n            fs.mkdirSync(dir, {recursive: true});\r\n            console.log(\"Create Folder\");\r\n        }\r\n        cb(null, `public/image`)\r\n    },\r\n    filename: async function (req, file, cb) {\r\n        if (req.body.index === undefined)\r\n            req.body.index = 0;\r\n\r\n        let index = req.body.index;\r\n\r\n        const ext = path.extname(file.originalname);\r\n        if (index === 0)\r\n            cb(null, `main-thumb${ext}`);\r\n        else\r\n            cb(null, `thumb${req.body.index}${ext}`);\r\n\r\n        req.body.index++;\r\n\r\n        // if (file.fieldname === 'main-image'){\r\n        //     cb(null, `main-thumb${ext}`);\r\n        //     console.log(\"Create main-thumb.jpg\");\r\n        // }\r\n        // else if (file.fieldname === 'image1'){\r\n        //     cb(null, `thumb1${ext}`);\r\n        //     console.log(\"Create thumb1.jpg\")\r\n        // }\r\n        // else{\r\n        //     cb(null, `thumb2${ext}`);\r\n        //     console.log(\"Create thumb2.jpg\")\r\n        // }\r\n    }\r\n})\r\n\r\nconst upload = multer({ storage: storage })\r\nconst cpUpload = upload.array(\"Image\", 5);\r\n// const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])\r\n\r\nconst afterUploadImage = async (req, res, next) => {\r\n    console.log(\"Raw Data : \")\r\n    console.log(req.body);\r\n    req.body = await formatProduct.formatForInsert(req.body, res.locals.user._id);\r\n    await modelProduct.insertData(req.body);\r\n    console.log(req.body);\r\n    next();\r\n}\r\n\r\nrouter.post(\"/channel/product/insert\", cpUpload, async (req, res) => {\r\n    //Change folder name\r\n    req.body.index = undefined;\r\n    const oldFolderName = \"./public/image\";\r\n    const newFolderName = `./public/${req.body._id}`;\r\n    fs.rename(oldFolderName, newFolderName, async (err) => {\r\n        if (err){\r\n            console.log(\"Some thing Wrong !!\");\r\n        }\r\n\r\n        await modelProduct.updateDescription(req.body._id, req.body.proDescription);\r\n        res.redirect(`/seller/channel/product/detail/${req.body._id}`);\r\n    });\r\n\r\n})\r\n\r\n\r\nrouter.get(\"/channel/product/insert/review\", (req, res) => {\r\n    res.locals.ThemSanPham.isActive = true;\r\n    res.render(\"./seller/channel_product_insert_review\", {\r\n        layout: \"seller.layout.hbs\"\r\n    })\r\n})\r\n\r\nrouter.get(\"/channel/product/detail/:id\", authUserWithProduct, async function(req, res) {\r\n    const ProID = req.params.id;\r\n    const list =  await modelProduct.findById(ProID);\r\n    const product = list[0];\r\n    await formatProduct.formatCategory(product);\r\n\r\n    const status = await formatProduct.getStatus(product);\r\n    const isSuccess = (status === \"Đấu giá thành công\") ? true : false;\r\n\r\n    const indexImage = [];\r\n    for (let index = 1; index < product.numberImage; index++)\r\n        indexImage.push(index);\r\n\r\n    res.locals.XemSanPham.isActive = true;\r\n    res.locals.XemChiTiet.isActive = true;\r\n    let files = null;\r\n    let mainThumb = null;\r\n    try{\r\n        files = fs.readdirSync(`./public/${product._id}/`);\r\n        mainThumb = files[0];\r\n        files.splice(0, 1);\r\n    }catch(e){\r\n        console.log(e);\r\n    }\r\n\r\n\r\n\r\n    res.render(\"./seller/channel_product_detail\", {\r\n        layout: \"seller.layout.hbs\",\r\n        product,\r\n        status,\r\n        isSuccess,\r\n        files,\r\n        mainThumb\r\n    })\r\n})\r\n\r\nrouter.post(\"/channel/product/detail/:id\", async (req, res) => {\r\n    console.log(req.body);\r\n    const userID = req.body.userID;\r\n    let ProID = req.params.id;\r\n\r\n    let rate = null;\r\n    let comment = \"Người thằng không thanh toán\";\r\n    let isSuccess = false;\r\n\r\n    if (req.body.sellerComment !== undefined){\r\n        comment = req.body.sellerComment;\r\n        isSuccess = true;\r\n    }\r\n\r\n    if (req.body.score === '1') {\r\n        rate = true;\r\n    }\r\n    else if (req.body.score === '0'){\r\n        rate = false;\r\n    }\r\n    else\r\n        rate = false;\r\n\r\n    if (userID != undefined){\r\n        if (!isSuccess)\r\n            await productModel.updateCurrenBidderInfor(ProID, null);\r\n\r\n        // Update lại commnet trong bidderHistory\r\n        const rawData = await accountModel.getCommentWithProID(ProID);\r\n        let commentOfProduct = rawData[0];\r\n        //----TH1 : Nếu như đã có rồi thì update lại thôi\r\n        if (rawData.length != 0){\r\n\r\n\r\n            commentOfProduct.sellerRate = rate;\r\n            commentOfProduct.sellerComment = comment;\r\n\r\n            await accountModel.updateCommentFromProID(commentOfProduct.proID, commentOfProduct);\r\n        }\r\n        //----Th2 : Nếu như chưa có thì phải tổng hợp dữ liệu để thêm vào\r\n        if (rawData.length === 0){\r\n\r\n            commentOfProduct = {};\r\n\r\n            commentOfProduct.proID = new ObjectId(ProID);\r\n            commentOfProduct.bidderComment = \"\";\r\n            commentOfProduct.sellerComment = comment;\r\n            commentOfProduct.bidderRate = false;\r\n            commentOfProduct.sellerRate = rate;\r\n            commentOfProduct.bidderID = new ObjectId(userID);\r\n            commentOfProduct.sellerID = new ObjectId(res.locals.user._id);\r\n\r\n            await accountModel.insertNewComment(commentOfProduct);\r\n        }\r\n    }\r\n    else{\r\n        let Message = req.body.proDescription;\r\n        Message =  `<p class=\"text-danger h3\"> ${new Date().toLocaleString(\"en-GB\")}</p> ${Message}`;\r\n\r\n\r\n        const dataProduct = await modelProduct.findById(ProID);\r\n        let insertedMessage = dataProduct[0].proDescription + Message;\r\n\r\n        console.log(\"Message : \" + req.body.proDescription);\r\n        console.log(\"inserted message : \" + insertedMessage);\r\n\r\n        await modelProduct.updateDescription(new ObjectId(ProID), insertedMessage);\r\n    }\r\n\r\n\r\n    res.redirect(`/seller/channel/product/detail/${ProID}`);\r\n})\r\n\r\nrouter.get(\"/channel/product/detail/:id/list\", authUserWithProduct, async (req, res) => {\r\n    res.locals.XemSanPham.isActive = true;\r\n\r\n    //Getting user data from bidderHistory\r\n    const productID = req.params.id;\r\n    const bidderHistory = await productModel.getBidderHistoryWithProID(productID);\r\n\r\n    //Handle page\r\n    let nPage = Math.floor((bidderHistory.length - 1) / 8) + 1;\r\n    const choosenPage = req.query.page;\r\n    let prevPage = {check:true, value : 0};\r\n    let nextPage = {check:true, value : 0};\r\n    let curPage = {check:true, value : 0};\r\n    await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );\r\n\r\n\r\n    //Find offset base on curPage\r\n    let limitUser = 8;\r\n    let offset = ((+choosenPage - 1) * limitUser) || 0;\r\n    const numberUser = bidderHistory.length;\r\n    bidderHistory.slice(offset, (offset + limitUser  < numberUser) ? offset + limitUser : numberUser)\r\n\r\n    let emptyMsg;\r\n    if (bidderHistory.length === 0)\r\n        emptyMsg = \"Hiện tại chưa có ai đặt sản phẩm của bạn\"\r\n\r\n    res.render(\"./seller/channel_product_detail_listBider\", {\r\n        layout: \"seller.layout.hbs\",\r\n        bidderHistory,\r\n        productID,\r\n        prevPage,\r\n        nextPage,\r\n        curPage,\r\n        emptyMsg\r\n    })\r\n})\r\n\r\nrouter.post(\"/channel/product/detail/:id/list\", authUserWithProduct, async (req, res) => {\r\n    res.locals.XemSanPham.isActive = true;\r\n\r\n    //Getting user data from bidderHistory\r\n    const productID = req.params.id;\r\n    const userID = req.body.userID;\r\n\r\n    await productModel.denyUserOnBidderHistory(productID, userID);\r\n    const productRaw = await productModel.findById(productID);\r\n    const product = productRaw[0];\r\n    const account = await  accountModel.findByID(userID)\r\n\r\n\r\n    // Gửi mail\r\n    await mailing.sendEmail(account.email,\r\n        \"Thông báo từ chối ra giá\",\r\n        `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)\r\n\r\n    //Roll back giá sản phẩm\r\n    const bidderHistories = await productModel.getBidderHistoryWithProID(productID);\r\n    let currentPrice = product.proInitalPrice;\r\n    let bidderWithHighest = bidderHistories[0];\r\n\r\n    if (bidderHistories.length > 1){\r\n        let highestUser = null;\r\n        let secondUser = null;\r\n        let count = 0;\r\n\r\n        for (const bidderHistory of bidderHistories)\r\n            if (bidderHistory.isDenied !== 1){\r\n                if (count === 0){\r\n                    highestUser = bidderHistory;\r\n                    bidderWithHighest = bidderHistory;\r\n                    count++;\r\n                }\r\n                else{\r\n                    secondUser = bidderHistory;\r\n                    break;\r\n                }\r\n            }\r\n\r\n        if (count > 1){\r\n\r\n            if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất\r\n                currentPrice = secondUser.price + product.proPriceStep;\r\n            else // Nếu thằng thứ hai tới sau thằng thứ nhất\r\n                currentPrice = secondUser.price;\r\n        }\r\n    }\r\n\r\n\r\n    await productModel.updatePriceProduct(productID, currentPrice);\r\n\r\n    //Chuyển người mua cao thứ nhì thành bidder infor\r\n    await productModel.updateCurrenBidderInfor(productID, bidderWithHighest.userID);\r\n\r\n\r\n    res.redirect(`/seller/channel/product/detail/${productID}/list`)\r\n})\r\n\r\n//API\r\nrouter.get(\"/channel/getCatChild\", async (req, res) => {\r\n    const id = req.query.catParentID;\r\n    const catChildList = await modelCategory.getCatChild(id);\r\n    res.json(catChildList[0].catChild);\r\n})\r\n\r\nrouter.post(\"/channel/updateEndDate\", async (req, res) => {\r\n\r\n})\r\nexport default router;
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/routes/seller.route.js b/routes/seller.route.js
+--- a/routes/seller.route.js	(revision 52f54a9c53b9077c25d551e1e3245a1d95abb344)
++++ b/routes/seller.route.js	(date 1641877862866)
+@@ -11,6 +11,7 @@
+ import accountModel from "../models/account-model.js";
+ import mailing from "../utils/mailing.js";
+ import {authUserWithProduct} from "../middlewares/auth-mdw.js";
++import rollbackProduct from "../utils/rollback-product.js";
+ 
+ const router = express.Router();
+ 
+@@ -169,24 +170,11 @@
+ 
+         req.body.index++;
+ 
+-        // if (file.fieldname === 'main-image'){
+-        //     cb(null, `main-thumb${ext}`);
+-        //     console.log("Create main-thumb.jpg");
+-        // }
+-        // else if (file.fieldname === 'image1'){
+-        //     cb(null, `thumb1${ext}`);
+-        //     console.log("Create thumb1.jpg")
+-        // }
+-        // else{
+-        //     cb(null, `thumb2${ext}`);
+-        //     console.log("Create thumb2.jpg")
+-        // }
+     }
+ })
+ 
+ const upload = multer({ storage: storage })
+ const cpUpload = upload.array("Image", 5);
+-// const cpUpload = upload.fields([{ name: 'main-image', maxCount: 1 }, { name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }])
+ 
+ const afterUploadImage = async (req, res, next) => {
+     console.log("Raw Data : ")
+@@ -197,7 +185,7 @@
+     next();
+ }
+ 
+-router.post("/channel/product/insert", cpUpload, async (req, res) => {
++router.post("/channel/product/insert", cpUpload, afterUploadImage, async (req, res) => {
+     //Change folder name
+     req.body.index = undefined;
+     const oldFolderName = "./public/image";
+@@ -369,64 +357,111 @@
+ })
+ 
+ router.post("/channel/product/detail/:id/list", authUserWithProduct, async (req, res) => {
++    console.time('test');
+     res.locals.XemSanPham.isActive = true;
+ 
+     //Getting user data from bidderHistory
+     const productID = req.params.id;
+     const userID = req.body.userID;
+ 
+-    await productModel.denyUserOnBidderHistory(productID, userID);
+     const productRaw = await productModel.findById(productID);
+     const product = productRaw[0];
+-    const account = await  accountModel.findByID(userID)
+ 
+ 
+-    // Gửi mail
+-    await mailing.sendEmail(account.email,
+-        "Thông báo từ chối ra giá",
+-        `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
++
++    const arr = await Promise.all([
++        rollbackProduct.denyBidderOfProduct(product, productID, userID),
++        async function (){
++            // Gửi mail
++            const account = await  accountModel.findByID(userID)
++            await mailing.sendEmail(account.email,
++                "Thông báo từ chối ra giá",
++                `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
+ 
+-    //Roll back giá sản phẩm
+-    const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
+-    let currentPrice = product.proInitalPrice;
+-    let bidderWithHighest = bidderHistories[0];
+-
+-    if (bidderHistories.length > 1){
+-        let highestUser = null;
+-        let secondUser = null;
+-        let count = 0;
+-
+-        for (const bidderHistory of bidderHistories)
+-            if (bidderHistory.isDenied !== 1){
+-                if (count === 0){
+-                    highestUser = bidderHistory;
+-                    bidderWithHighest = bidderHistory;
+-                    count++;
+-                }
+-                else{
+-                    secondUser = bidderHistory;
+-                    break;
+-                }
+-            }
+-
+-        if (count > 1){
++            res.redirect(`/seller/channel/product/detail/${productID}/list`)
+ 
+-            if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất
+-                currentPrice = secondUser.price + product.proPriceStep;
+-            else // Nếu thằng thứ hai tới sau thằng thứ nhất
+-                currentPrice = secondUser.price;
+         }
+-    }
+-
+-
+-    await productModel.updatePriceProduct(productID, currentPrice);
+-
+-    //Chuyển người mua cao thứ nhì thành bidder infor
+-    await productModel.updateCurrenBidderInfor(productID, bidderWithHighest.userID);
+-
+-
+-    res.redirect(`/seller/channel/product/detail/${productID}/list`)
++    ]).then(arr => {
++        res.redirect(`/seller/channel/product/detail/${productID}/list`)
++        console.timeEnd('test');
++
++    })
++
++
+ })
++
++// router.post("/channel/product/detail/:id/list", authUserWithProduct, async (req, res) => {
++//     console.time('test');
++//     res.locals.XemSanPham.isActive = true;
++//
++//     //Getting user data from bidderHistory
++//     const productID = req.params.id;
++//     const userID = req.body.userID;
++//
++//
++//     const productRaw = await productModel.findById(productID);
++//     const product = productRaw[0];
++//     const account = await  accountModel.findByID(userID)
++//
++//     //Deny user
++//     await productModel.denyUserOnBidderHistory(productID, userID);
++//
++//
++//     //Roll back giá sản phẩm
++//     const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
++//     let currentPrice = product.proInitalPrice;
++//     let highestPrice = product.proHighestPrice;
++//
++//     let bidderWithHighest = bidderHistories[0];
++//
++//     if (bidderHistories.length > 1){
++//         let highestUser = null;
++//         let secondUser = null;
++//         let count = 0;
++//
++//         for (const bidderHistory of bidderHistories)
++//             if (bidderHistory.isDenied !== 1){
++//                 if (count === 0){
++//                     highestUser = bidderHistory;
++//                     bidderWithHighest = bidderHistory;
++//                     count++;
++//                 }
++//                 else{
++//                     secondUser = bidderHistory;
++//                     break;
++//                 }
++//             }
++//
++//         if (count > 1){
++//
++//             if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất
++//                 currentPrice = secondUser.price + product.proPriceStep;
++//             else // Nếu thằng thứ hai tới sau thằng thứ nhất
++//                 currentPrice = secondUser.price;
++//         }
++//     }
++//
++//     if (bidderWithHighest !== undefined)
++//         highestPrice = bidderWithHighest.price;
++//
++//     //Update price and curent
++//     await productModel.updatePriceAndCurrentBidder(productID, currentPrice, bidderWithHighest.userID, highestPrice)
++//
++//     // Gửi mail
++//     await mailing.sendEmail(account.email,
++//         "Thông báo từ chối ra giá",
++//         `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo sự cố này .`)
++//
++//
++//
++//     res.redirect(`/seller/channel/product/detail/${productID}/list`)
++//     console.timeEnd('test');
++//
++//     // const arr = await Promise.all([p1, p2]).then(arr => {
++//     //     res.redirect(`/seller/channel/product/detail/${productID}/list`)
++//     // })
++//
++// })
+ 
+ //API
+ router.get("/channel/getCatChild", async (req, res) => {
+Index: models/product-model.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import mongoClient from '../utils/db.js'\r\nimport { ObjectId } from \"mongodb\";\r\n\r\n\r\nasync function findTopExpirationFunc(collection, now) {\r\n  return await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'sellerInfo',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'curBidderInfo',\r\n        foreignField: '_id',\r\n        as: 'curBidderInfo'\r\n      }\r\n    },\r\n    {\r\n      $match: {proEndDate:{$gt: now}}\r\n    }\r\n  ]).sort({proEndDate: 1}).limit(5).toArray();\r\n}\r\n\r\nasync function findTopBidFunc(collection, now) {\r\n  return await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'sellerInfo',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'curBidderInfo',\r\n        foreignField: '_id',\r\n        as: 'curBidderInfo'\r\n      }\r\n    },\r\n    {\r\n      $match: {proEndDate:{$gt: now}}\r\n    }\r\n  ]).sort({proBidQuantity: -1}).limit(5).toArray();\r\n}\r\n\r\nasync function findTopPriceFunc(collection, now) {\r\n  return await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'sellerInfo',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'curBidderInfo',\r\n        foreignField: '_id',\r\n        as: 'curBidderInfo'\r\n      }\r\n    },\r\n    {\r\n      $match: {proEndDate:{$gt: now}}\r\n    }\r\n  ]).sort({proCurBidPrice: -1}).limit(5).toArray();\r\n}\r\n\r\nasync function findByIdFunc(collection, id) {\r\n  return await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'sellerInfo',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'curBidderInfo',\r\n        foreignField: '_id',\r\n        as: 'curBidderInfo'\r\n      }\r\n    },\r\n    {\r\n      $match: {_id: new ObjectId(id)}\r\n    }\r\n  ]).toArray();\r\n}\r\n\r\nasync function findByCategoryParentFunc(collection, cat, numberProduct, userID) {\r\n  if (numberProduct === undefined)\r\n    return await collection.find({proType: new ObjectId(cat), sellerInfo: new ObjectId(userID)}).sort({proEndDate : 1}).toArray();\r\n  else\r\n    return await collection.find({catParent: cat}).limit(numberProduct).toArray();\r\n}\r\n\r\n//sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();\r\n\r\nasync function findByCategoryFunc(collection, catID, catChildType, userID) {\r\n  return await collection.find({ proType: catID, catChildType: catChildType, sellerInfo: new ObjectId(userID)}).sort({proEndDate: 1}).toArray();\r\n}\r\n\r\nasync function countTotalSearchProductFunc(collection, keyword, type) {\r\n  if (type === 'name') {\r\n    return await collection.aggregate([\r\n      {\r\n        '$search':{\r\n          'index': 'custom',\r\n          'text': {\r\n            'query': keyword,\r\n            'path': 'proName',\r\n            'fuzzy': {}\r\n          }\r\n        }\r\n      },\r\n      {\r\n        $count: 'total'\r\n      }]).toArray();\r\n  }\r\n  else if (type === 'category') {\r\n    return await collection.aggregate([\r\n      {\r\n        '$search':{\r\n          'index': 'custom',\r\n          'text': {\r\n            'query': keyword,\r\n            'path': ['catParent','catChild'],\r\n            'fuzzy': {}\r\n          }\r\n        }\r\n      },\r\n      {\r\n        $count: 'total'\r\n      }]).toArray();\r\n  }\r\n}\r\n\r\n\r\n\r\nasync function searchByTypeFunc(collection, keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {\r\n  if (type === 'name') {\r\n    if(sort === 'price-ascending'){\r\n        return await collection.aggregate([\r\n          {\r\n            '$search':{\r\n              'index': 'custom',\r\n              'text': {\r\n                'query': keyword,\r\n                'path': 'proName',\r\n                'fuzzy': {}\r\n              }\r\n            }\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'sellerInfo',\r\n              foreignField: '_id',\r\n              as: 'sellerInfo'\r\n            },\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'curBidderInfo',\r\n              foreignField: '_id',\r\n              as: 'curBidderInfo'\r\n            }\r\n          }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();\r\n    }\r\n    else if(sort === 'time-descending'){\r\n      if (catParentFind && catChildFind){\r\n        return await collection.aggregate([\r\n          {\r\n            '$search':{\r\n              'index': 'custom',\r\n              'text': {\r\n                'query': keyword,\r\n                'path': 'proName',\r\n                'fuzzy': {}\r\n              }\r\n            }\r\n          },\r\n          {\r\n            '$match':{\r\n              'proType' : catParentFind,\r\n              'catChildType': catChildFind,\r\n              'sellerInfo': new ObjectId(userID)\r\n            }\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'sellerInfo',\r\n              foreignField: '_id',\r\n              as: 'sellerInfo'\r\n            },\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'curBidderInfo',\r\n              foreignField: '_id',\r\n              as: 'curBidderInfo'\r\n            }\r\n          }]).sort({proCurBidPrice: 1}).toArray();\r\n      }\r\n      else if (catParentFind){\r\n        return await collection.aggregate([\r\n          {\r\n            '$search':{\r\n              'index': 'custom',\r\n              'text': {\r\n                'query': keyword,\r\n                'path': 'proName',\r\n                'fuzzy': {}\r\n              }\r\n            }\r\n          },\r\n          {\r\n            '$match':{\r\n              'proType' : catParentFind,\r\n              'sellerInfo': new ObjectId(userID)\r\n            }\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'sellerInfo',\r\n              foreignField: '_id',\r\n              as: 'sellerInfo'\r\n            },\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'curBidderInfo',\r\n              foreignField: '_id',\r\n              as: 'curBidderInfo'\r\n            }\r\n          }]).sort({proCurBidPrice: 1}).toArray();\r\n      }\r\n      else if (userID){\r\n        return await collection.aggregate([\r\n          {\r\n            '$search':{\r\n              'index': 'custom',\r\n              'text': {\r\n                'query': keyword,\r\n                'path': 'proName',\r\n                'fuzzy': {}\r\n              }\r\n            }\r\n          },\r\n          {\r\n            $match:{\r\n              'sellerInfo': new ObjectId(userID)\r\n            }\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'sellerInfo',\r\n              foreignField: '_id',\r\n              as: 'sellerInfo'\r\n            },\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'curBidderInfo',\r\n              foreignField: '_id',\r\n              as: 'curBidderInfo'\r\n            }\r\n          }]).sort({proEndDate: -1}).toArray();\r\n      }\r\n      else\r\n        return await collection.aggregate([\r\n          {\r\n            '$search':{\r\n              'index': 'custom',\r\n              'text': {\r\n                'query': keyword,\r\n                'path': 'proName',\r\n                'fuzzy': {}\r\n              }\r\n            }\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'sellerInfo',\r\n              foreignField: '_id',\r\n              as: 'sellerInfo'\r\n            },\r\n          },\r\n          {\r\n            $lookup: {\r\n              from: 'account',\r\n              localField: 'curBidderInfo',\r\n              foreignField: '_id',\r\n              as: 'curBidderInfo'\r\n            }\r\n          }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();\r\n    }\r\n  }\r\n  else if (type === 'category') {\r\n    if(sort === 'price-ascending')\r\n      return await collection.aggregate([\r\n        {\r\n          '$search':{\r\n            'index': 'custom',\r\n            'text': {\r\n              'query': keyword,\r\n              'path': ['catParent','catChild'],\r\n              'fuzzy': {}\r\n            }\r\n          }\r\n        },\r\n        {\r\n          $lookup: {\r\n            from: 'account',\r\n            localField: 'sellerInfo',\r\n            foreignField: '_id',\r\n            as: 'sellerInfo'\r\n          },\r\n        },\r\n        {\r\n          $lookup: {\r\n            from: 'account',\r\n            localField: 'curBidderInfo',\r\n            foreignField: '_id',\r\n            as: 'curBidderInfo'\r\n          }\r\n        }]).sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();\r\n    else if(sort === 'time-descending')\r\n      return await collection.aggregate([\r\n        {\r\n          '$search':{\r\n            'index': 'custom',\r\n            'text': {\r\n              'query': keyword,\r\n              'path': ['catParent','catChild'],\r\n              'fuzzy': {}\r\n            }\r\n          }\r\n        },\r\n        {\r\n          $lookup: {\r\n            from: 'account',\r\n            localField: 'sellerInfo',\r\n            foreignField: '_id',\r\n            as: 'sellerInfo'\r\n          },\r\n        },\r\n        {\r\n          $lookup: {\r\n            from: 'account',\r\n            localField: 'curBidderInfo',\r\n            foreignField: '_id',\r\n            as: 'curBidderInfo'\r\n          }\r\n        }]).sort({proEndDate: -1}).skip(offset).limit(limit).toArray();\r\n  }\r\n}\r\n\r\nasync function countTotalProductFunc(collection){\r\n  return await collection.find().count();\r\n}\r\n\r\nasync function getLimitProductFunc(collection, limit, offset){\r\n  return await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'sellerInfo',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'curBidderInfo',\r\n        foreignField: '_id',\r\n        as: 'curBidderInfo'\r\n      }\r\n    }\r\n  ]).skip(offset).limit(limit).toArray()\r\n}\r\n\r\nasync function getAllFunc(collection, userID){\r\n  if (userID != undefined)\r\n    return await collection.find({sellerInfo : new ObjectId(userID)}).sort({proEndDate: 1}).toArray();\r\n  else\r\n    return await collection.find().sort({proEndDate: 1}).toArray();\r\n}\r\n\r\nasync function insertDataFunc(collection, data){\r\n  var idImageInsert;\r\n  await collection.insertOne(data);\r\n  return data._id;\r\n}\r\n\r\nasync function updateDescriptionFunc(collection, ProID, description){\r\n  return await collection.updateMany({_id : ProID}, {$set: {proDescription: description}});\r\n}\r\n\r\nasync function deleteProductFunc(collection, id) {\r\n  return await collection.deleteOne({ _id: id });\r\n}\r\n\r\nasync function countTotalCategoryProductFunc(collection, category) {\r\n  return await collection.find({$or: [{catParent: category }, {catChild: category}]}).count();\r\n}\r\n\r\nasync function getLimitCategoryProductFunc(collection, limit, offset, category) {\r\n  return await collection.find({$or: [{catParent: category }, {catChild: category}]}).skip(offset).limit(limit).toArray();\r\n}\r\n\r\nasync function getExpiredProductFunc(collection, now) {\r\n  return await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'sellerInfo',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'curBidderInfo',\r\n        foreignField: '_id',\r\n        as: 'curBidderInfo'\r\n      }\r\n    },\r\n    {\r\n      $match: {proEndDate:{$lte: now, $gt: new Date(now - 60000)}}\r\n    }\r\n  ]).toArray();\r\n}\r\n\r\nasync function getBidderHistoryWithProIDFunc(collection, proID){\r\n  return await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'userID',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $match: {\r\n        proID:{$eq: new ObjectId(proID)},\r\n        isDenied:{$eq:0}\r\n      }\r\n    }\r\n  ]).sort({\"price\" : -1, \"dateBid\" : -1}).toArray();\r\n}\r\n\r\nasync function denyUserOnBidderHistoryFunc(collection, productID, userID){\r\n  const myQuery = {\"proID\" : new ObjectId(productID), \"userID\" : new ObjectId(userID)};\r\n  const myUpdate =  {$set : {isDenied : 1}};\r\n\r\n  await collection.updateOne(myQuery, myUpdate);\r\n}\r\n\r\nasync function updateCurrenBidderInforFunc(collection, ProID, newUser){\r\n  const myQuery = {\"_id\" : new ObjectId(ProID)};\r\n  const myUpdate =  {$set : {curBidderInfo : newUser}};\r\n\r\n  await collection.updateOne(myQuery, myUpdate);\r\n}\r\n\r\nasync function updatePriceProductFunc(collection, productID, maximumPrice){\r\n  const myQuery = {\"_id\" : new ObjectId(productID)};\r\n  const myUpdate =  {$set : {proCurBidPrice : maximumPrice}};\r\n\r\n  await collection.updateOne(myQuery, myUpdate);\r\n}\r\n\r\nasync function getAutoExtendProductFunc(collection){\r\n\r\n  const myQuery = {autoExtend: true, isExtend: false};\r\n  const products = await collection.aggregate([\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'sellerInfo',\r\n        foreignField: '_id',\r\n        as: 'sellerInfo'\r\n      },\r\n    },\r\n    {\r\n      $lookup: {\r\n        from: 'account',\r\n        localField: 'curBidderInfo',\r\n        foreignField: '_id',\r\n        as: 'curBidderInfo'\r\n      }\r\n    },\r\n    {\r\n      $match: {autoExtend: true, isExtend: false}\r\n    }\r\n  ]).toArray();\r\n  // const products = await collection.find(myQuery).toArray();\r\n\r\n  for (let i =products.length - 1; i>=0; i--) {\r\n    const endDate = products[0].proEndDate.getTime();\r\n    const currentDate = new Date().getTime();\r\n    if (currentDate > endDate) {\r\n      products.splice(i, 1);\r\n      continue;\r\n    }\r\n\r\n    const diffTime = Math.abs(currentDate - endDate);\r\n    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));\r\n    const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));\r\n    if (diffMinutes > 5 || products[0].isExtend || diffHours > 1)\r\n      products.splice(i, 1);\r\n      continue;\r\n  }\r\n\r\n  return products;\r\n}\r\n\r\nasync function updateProEndDateFunc(collection, proID, newDate){\r\n  const myQuery = {\"_id\" : new ObjectId(proID)};\r\n  const myUpdate =  {$set : {proEndDate : newDate, isExtend : true}};\r\n\r\n  await collection.updateOne(myQuery, myUpdate);\r\n}\r\n\r\nasync function updateProNameEnglishFunc(collection, proID, proNameEnglish){\r\n  const myQuery = {\"_id\" : new ObjectId(proID)};\r\n  const myUpdate =  {$set : {proNameEnglish : proNameEnglish}};\r\n\r\n  await collection.updateOne(myQuery, myUpdate);\r\n}\r\n\r\nasync function searchVietnameseFunc(collection, keyword){\r\n    return await collection.aggregate([\r\n      {\r\n        '$search':{\r\n          'index': 'custom1',\r\n          'text': {\r\n            'query': keyword,\r\n            'path': 'proNameEnglish',\r\n            'fuzzy': {}\r\n          }\r\n        }\r\n      }]).toArray();\r\n}\r\n\r\n//----------------------------------------------------------------------------------------//\r\nexport default {\r\n  async findTopExpiration(now) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await findTopExpirationFunc(collection, now);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async findTopBid(now) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await findTopBidFunc(collection, now);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async findTopPrice(now) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await findTopPriceFunc(collection, now);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async findById(id) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await findByIdFunc(collection, id);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async findByCategoryParent(cat, numberProduct, userID) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await findByCategoryParentFunc(collection, cat, numberProduct, userID);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async findByCategory(catID, catChildType, userID){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      const id = new ObjectId(catID);\r\n      return await findByCategoryFunc(collection, id, catChildType, userID);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async countTotalSearchProduct(keyword, type) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await countTotalSearchProductFunc(collection, keyword, type);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async searchByType(keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      // async function searchByTypeFunc(collection, keyword, type, limit, offset, sort, catParentFind, catChildFind, userID) {\r\n\r\n      const result = await searchByTypeFunc(collection, keyword, type, limit, offset, sort, catParentFind, catChildFind, userID);\r\n      return result;\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async searchVietnamese(keyword){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n\r\n      const result = await searchVietnameseFunc(collection, keyword);\r\n      return result;\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  }\r\n  ,\r\n  async countTotalProduct() {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      const result = await countTotalProductFunc(collection);\r\n      return result;\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async getLimitProduct(limit, offset) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      const result = await getLimitProductFunc(collection, limit, offset);\r\n      return result;\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async deleteProduct(proId) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      const id = new ObjectId(proId);\r\n      return await deleteProductFunc(collection, id);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async getAll(userID) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await getAllFunc(collection, userID);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n\r\n  async insertData(data){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await insertDataFunc(collection, data);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n\r\n  async updateDescription(ProID, description){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await updateDescriptionFunc(collection, ProID, description);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async countTotalCategoryProduct(category) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await countTotalCategoryProductFunc(collection, category);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async getLimitCategoryProduct(limit, offset, category) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await getLimitCategoryProductFunc(collection, limit, offset, category);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async getExpiredProduct(now) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await getExpiredProductFunc(collection, now);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async getBidderHistoryWithProID(proID) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('bidderHistory');\r\n      return await getBidderHistoryWithProIDFunc(collection, proID);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async denyUserOnBidderHistory(productID, userID) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('bidderHistory');\r\n      await denyUserOnBidderHistoryFunc(collection, productID, userID);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async updateCurrenBidderInfor(ProID, newUser) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      await updateCurrenBidderInforFunc(collection, ProID, newUser);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async updatePriceProduct(productID, maximumPrice) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      await updatePriceProductFunc(collection, productID, maximumPrice);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async getAutoExtendProduct() {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      return await getAutoExtendProductFunc(collection);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async updateProEndDate(proID, newDate) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      await updateProEndDateFunc(collection, proID, newDate);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async updateProNameEnglish(product) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('product');\r\n      await updateProNameEnglishFunc(collection, product._id, product.proNameEnglish);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  }\r\n};
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/models/product-model.js b/models/product-model.js
+--- a/models/product-model.js	(revision 52f54a9c53b9077c25d551e1e3245a1d95abb344)
++++ b/models/product-model.js	(date 1641875464325)
+@@ -556,7 +556,7 @@
+     return await collection.aggregate([
+       {
+         '$search':{
+-          'index': 'custom1',
++          'index': 'custom',
+           'text': {
+             'query': keyword,
+             'path': 'proNameEnglish',
+@@ -566,6 +566,13 @@
+       }]).toArray();
+ }
+ 
++async function updatePriceAndCurrentBidderFunc(collection, productID, currentPrice, userID, highestPrice){
++  const myQuery = {"_id" : new ObjectId(productID)};
++  const myUpdate =  {$set : {curBidderInfo : userID, proCurBidPrice: currentPrice, proHighestPrice: highestPrice}};
++
++  await collection.updateOne(myQuery, myUpdate);
++}
++
+ //----------------------------------------------------------------------------------------//
+ export default {
+   async findTopExpiration(now) {
+@@ -878,6 +885,18 @@
+       console.error(e);
+     } finally {
+       await mongoClient.close()
++    }
++  },
++  async updatePriceAndCurrentBidder(productID, currentPrice, userID, highestPrice) {
++    try {
++      await mongoClient.connect();
++      const db = mongoClient.db('onlineauction');
++      const collection = db.collection('product');
++      await updatePriceAndCurrentBidderFunc(collection, productID, currentPrice, userID, highestPrice);
++    } catch (e) {
++      console.error(e);
++    } finally {
++      await mongoClient.close()
+     }
+   }
+ };
+\ No newline at end of file
+Index: utils/rollback-product.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/utils/rollback-product.js b/utils/rollback-product.js
+new file mode 100644
+--- /dev/null	(date 1641878012240)
++++ b/utils/rollback-product.js	(date 1641878012240)
+@@ -0,0 +1,51 @@
++import productModel from "../models/product-model.js";
++import accountModel from "../models/account-model.js";
++
++export default{
++    async denyBidderOfProduct(product, productID, userID){
++        //Deny user
++        await productModel.denyUserOnBidderHistory(productID, userID);
++        console.log("User ID : " + userID);
++
++
++        //Roll back giá sản phẩm
++        const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
++        let currentPrice = product.proInitalPrice;
++        let highestPrice = product.proHighestPrice;
++
++        let bidderWithHighest = bidderHistories[0];
++
++        if (bidderHistories.length > 1){
++            let highestUser = null;
++            let secondUser = null;
++            let count = 0;
++
++            for (const bidderHistory of bidderHistories)
++                if (bidderHistory.isDenied !== 1){
++                    if (count === 0){
++                        highestUser = bidderHistory;
++                        bidderWithHighest = bidderHistory;
++                        count++;
++                    }
++                    else{
++                        secondUser = bidderHistory;
++                        break;
++                    }
++                }
++
++            if (count > 1){
++
++                if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất
++                    currentPrice = secondUser.price + product.proPriceStep;
++                else // Nếu thằng thứ hai tới sau thằng thứ nhất
++                    currentPrice = secondUser.price;
++            }
++        }
++
++        if (bidderWithHighest !== undefined)
++            highestPrice = bidderWithHighest.price;
++
++        //Update price and curent
++        await productModel.updatePriceAndCurrentBidder(productID, currentPrice, bidderWithHighest.userID, highestPrice)
++    }
++}
+\ No newline at end of file
+Index: models/category-model.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import mongoClient from '../utils/db.js'\r\nimport { ObjectId } from \"mongodb\";\r\n\r\nasync function findByIDFunc(collection, id) {\r\n  return await collection.find({ _id: id }).toArray();\r\n}\r\n\r\nasync function countProduct(collection) {\r\n  return await collection.count();\r\n}\r\n\r\nasync function getAllFunc(collection){\r\n  return await collection.find().toArray();\r\n}\r\n\r\nasync function getCatParentFunc(collection){\r\n  return await collection.distinct('catParentName');\r\n}\r\n\r\nasync function getCatChildFunc(collection, id){\r\n  return await collection.find({_id : new ObjectId(id)}).toArray();\r\n}\r\n\r\n\r\nasync function insertDataFunc(collection, data){\r\n  await collection.insertOne(data);\r\n}\r\n\r\nasync function insertCatParentFunc(collection, name) {\r\n  const result = await collection.find({catParent:{$regex: new RegExp(`^${name}$`),$options: 'i'}}).toArray();\r\n  if (result.length === 0)\r\n    return await collection.insertOne({\r\n      catParent: name,\r\n      quantity: 0,\r\n      catChild: []\r\n    });\r\n  return {};\r\n}\r\n\r\nasync function insertCatChildFunc(collection, catParentId, name) {\r\n  const result = await collection.find({\r\n    _id:new ObjectId(catParentId),\r\n    catChild:{$elemMatch:{\r\n        name:{$regex: new RegExp(`^${name}$`),$options: 'i'}\r\n    }}}).toArray();\r\n  if (result.length === 0)\r\n      return await collection.updateOne(\r\n          {_id :new ObjectId(catParentId)},\r\n          {$push:{catChild: {\r\n              _id: new ObjectId(),\r\n              name,\r\n              quantity: 0\r\n          }}}\r\n      );\r\n  return {};\r\n}\r\n\r\nasync function deleteCatChildFunc(collection, catParentId, catChildId) {\r\n  const result = await collection.find({\r\n    _id:new ObjectId(catParentId),\r\n    catChild:{$elemMatch:{\r\n        _id: new ObjectId(catChildId),\r\n        quantity: 0\r\n      }}}).toArray();\r\n  if (result.length !== 0)\r\n    return await collection.updateOne(\r\n        { _id : new ObjectId(catParentId)},\r\n        { $pull: {catChild: {_id:new ObjectId(catChildId)}}}\r\n    );\r\n  return {};\r\n}\r\n\r\nasync function editCatChildFunc(collection, catParentId, catChildId, name) {\r\n  const result = await collection.find({\r\n    _id:new ObjectId(catParentId),\r\n    catChild:{$elemMatch:{\r\n        name:{$regex: new RegExp(`^${name}$`),$options: 'i'}\r\n      }}}).toArray();\r\n  if (result.length === 0)\r\n    return await collection.findOneAndUpdate({\r\n          _id: new ObjectId(catParentId),\r\n          'catChild._id': new ObjectId(catChildId)},\r\n        {$set: {'catChild.$.name': name}}\r\n    );\r\n  return {};\r\n}\r\n\r\nasync function editCatParentFunc(collection, catParentId, name) {\r\n  const result = await collection.find({catParent:{$regex: new RegExp(`^${name}$`),$options: 'i'}}).toArray();\r\n  if (result.length === 0)\r\n    return await collection.findOneAndUpdate({\r\n          _id: new ObjectId(catParentId)},\r\n        {$set: {catParent: name}}\r\n    );\r\n  return {};\r\n}\r\n\r\nasync function deleteCatParentFunc(collection, catParentId) {\r\n  const result = await collection.findOneAndDelete({\r\n    _id: new ObjectId(catParentId),\r\n    quantity: 0\r\n  });\r\n  if (result.value === null)\r\n    return {};\r\n  return result;\r\n}\r\n\r\nasync function countTotalCategoryFunc(collection, keyword) {\r\n  if(keyword) {\r\n    const result = await collection.aggregate([\r\n      {\r\n        '$search':{\r\n          'index': 'custom2',\r\n          'text': {\r\n            'query': keyword,\r\n            'path': ['catParent', 'catChild.name'],\r\n            'fuzzy': {}\r\n          }\r\n        }\r\n      },\r\n      {\r\n        $count: 'total'\r\n      }]).toArray();\r\n    if(result.length === 0)\r\n      return 0;\r\n    return result[0].total;\r\n  }\r\n  else\r\n    return await collection.find().count();\r\n}\r\n\r\nasync function getLimitCategoryFunc(collection, limit, offset, keyword) {\r\n  if(keyword) {\r\n    return await collection.aggregate([\r\n      {\r\n        '$search':{\r\n          'index': 'custom2',\r\n          'text': {\r\n            'query': keyword,\r\n            'path': ['catParent', 'catChild.name'],\r\n            'fuzzy': {}\r\n          }\r\n        }\r\n      }]).skip(offset).limit(limit).toArray();\r\n  }\r\n  else\r\n    return await collection.find().skip(offset).limit(limit).toArray()\r\n}\r\n\r\nasync function removeProductFromCatFunc(collection, catParent, catChild) {\r\n  return await collection.findOneAndUpdate({\r\n        catParent: catParent,\r\n        'catChild.name': catChild},\r\n      {$inc: {quantity: -1, 'catChild.$.quantity': -1}}\r\n      //{$set: {'catChild.$.quantity': 10}}\r\n  );\r\n}\r\n\r\n\r\nexport default {\r\n  async findByID(id) {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db =  mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      const cat =  await findByIDFunc(collection, id);\r\n\r\n      let prevPage = null;\r\n      let nextPage = null;\r\n      let curPage = null;\r\n\r\n      if (cat.length === 0)\r\n        return null;\r\n\r\n      return cat;\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n\r\n  async countProduct() {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await countProduct(collection);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n\r\n  async getAll() {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await getAllFunc(collection);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n\r\n  async getCatParent() {\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await getCatParentFunc(collection);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n\r\n  async getCatChild(id){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await getCatChildFunc(collection, id);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async insertData(data){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      await insertDataFunc(collection, data);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async insertCatParent(name){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await insertCatParentFunc(collection, name);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async insertCatChild(catParentId, name){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await insertCatChildFunc(collection, catParentId, name);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async deleteCatChild(catParentId, catChildId){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await deleteCatChildFunc(collection, catParentId, catChildId);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async editCatChild(catParentId, catChildId, name){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await editCatChildFunc(collection, catParentId, catChildId, name);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async editCatParent(catParentId, name){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await editCatParentFunc(collection, catParentId, name);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async deleteCatParent(catParentId){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await deleteCatParentFunc(collection, catParentId);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async countTotalCategory(keyword){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await countTotalCategoryFunc(collection, keyword);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async getLimitCategory(limit, offset, keyword){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await getLimitCategoryFunc(collection, limit, offset, keyword);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n  async removeProductFromCat(catParent, catChild){\r\n    try {\r\n      await mongoClient.connect();\r\n      const db = mongoClient.db('onlineauction');\r\n      const collection = db.collection('category');\r\n      return await removeProductFromCatFunc(collection, catParent, catChild);\r\n    } catch (e) {\r\n      console.error(e);\r\n    } finally {\r\n      await mongoClient.close()\r\n    }\r\n  },\r\n};
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/models/category-model.js b/models/category-model.js
+--- a/models/category-model.js	(revision 52f54a9c53b9077c25d551e1e3245a1d95abb344)
++++ b/models/category-model.js	(date 1641870864471)
+@@ -156,7 +156,15 @@
+   );
+ }
+ 
++async function updateDataFunc(collection, catData){
++  const myQuery = {"_id" : catData._id};
++  delete catData._id;
++  const myUpdate =  {$set : catData};
+ 
++  await collection.updateOne(myQuery, myUpdate);
++}
++
++//-----------------------------------------//
+ export default {
+   async findByID(id) {
+     try {
+@@ -351,4 +359,16 @@
+       await mongoClient.close()
+     }
+   },
++  async updateData(catData) {
++    try {
++      await mongoClient.connect();
++      const db = mongoClient.db('onlineauction');
++      const collection = db.collection('category');
++      await updateDataFunc(collection, catData);
++    } catch (e) {
++      console.error(e);
++    } finally {
++      await mongoClient.close()
++    }
++  }
+ };
+\ No newline at end of file
