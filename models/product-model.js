@@ -456,17 +456,31 @@ async function getExpiredProductFunc(collection, now) {
 async function getBidderHistoryWithProIDFunc(collection, proID){
   return await collection.aggregate([
     {
-      $lookup: {
-        from: 'account',
-        localField: 'userID',
-        foreignField: '_id',
-        as: 'sellerInfo'
-      },
-    },
-    {
       $match: {
         proID:{$eq: new ObjectId(proID)},
         isDenied:{$eq:0}
+      }
+    },
+    {
+      $sort: {
+        "price" : -1,
+        "dateBid" : -1
+      }
+    },
+    {
+      $group: {
+        _id: "$userID",
+        "price":{$first:"$price"},
+        "dateBid":{$first:"$dateBid"},
+        "isDenied":{$first:"$isDenied"}
+      }
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'bidderInfo'
       }
     }
   ]).sort({"price" : -1, "dateBid" : -1}).toArray();
@@ -476,7 +490,7 @@ async function denyUserOnBidderHistoryFunc(collection, productID, userID){
   const myQuery = {"proID" : new ObjectId(productID), "userID" : new ObjectId(userID)};
   const myUpdate =  {$set : {isDenied : 1}};
 
-  await collection.updateOne(myQuery, myUpdate);
+  await collection.updateMany(myQuery, myUpdate);
 }
 
 async function updateCurrenBidderInforFunc(collection, ProID, newUser){

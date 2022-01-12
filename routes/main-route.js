@@ -47,10 +47,7 @@ router.get('/product/:id', async function (req, res) {
             historyList,
             files,
             mainThumb,
-<<<<<<< Updated upstream
-=======
             isOutOfDate
->>>>>>> Stashed changes
         });
     }
 });

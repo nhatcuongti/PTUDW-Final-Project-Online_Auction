@@ -29,12 +29,12 @@ export default{
                     }
                     else{
                         secondUser = bidderHistory;
+                        count++;
                         break;
                     }
                 }
 
             if (count > 1){
-
                 if (secondUser.dateBid < highestUser.dateBid) // Nếu thằng thứ hai tới trước thằng thứ nhất
                     currentPrice = secondUser.price + product.proPriceStep;
                 else // Nếu thằng thứ hai tới sau thằng thứ nhất
@@ -46,6 +46,6 @@ export default{
             highestPrice = bidderWithHighest.price;
 
         //Update price and curent
-        await productModel.updatePriceAndCurrentBidder(productID, currentPrice, bidderWithHighest.userID, highestPrice)
+        await productModel.updatePriceAndCurrentBidder(productID, currentPrice, bidderWithHighest.bidderInfo[0]._id, highestPrice)
     }
 }

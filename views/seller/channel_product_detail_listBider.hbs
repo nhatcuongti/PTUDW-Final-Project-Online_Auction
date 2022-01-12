@@ -50,20 +50,26 @@
                             <tr>
                                 <th scope="row">{{@index}}</th>
                                 <td>{{format_date dateBid}}</td>
-                                {{#each sellerInfo}}
+                                {{#each bidderInfo}}
                                     <td>{{ email}}</td>
 
                                     <td>{{format_number ../price}}</td>
 
 
                                     <td class="text-right">
-
                                         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{_id}}">
                                             <i class="fa fa-ban mr-2" aria-hidden="true"></i>
                                             <span>
-                                            Từ chối
-                                        </span>
+                                                Từ chối
+                                            </span>
                                         </button>
+
+                                        <a type="button" class="btn btn-outline-primary" href="#">
+                                            <i class="fa fa-eye mr-2" aria-hidden="true"></i>
+                                            <span>
+                                                Xem đánh giá
+                                            </span>
+                                        </a>
                                     </td>
 
                                     <div class="modal fade" id="deleteModal{{_id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -100,22 +106,22 @@
                 <div class="card-footer text-muted">
                     <nav class="pagination is-right is-rounded is-medium" role="navigation" aria-label="pagination">
                         {{#if this.prevPage.check}}
-                            <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">Previous page</a>
+                            <a class="pagination-previous page-link" style="text-decoration:none" href="/seller/channel/product/detail/{{this.productID}}/list/?page={{this.prevPage.value}}">Previous page</a>
                         {{/if}}
 
                         {{#if this.nextPage.check}}
-                            <a class="pagination-next page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">Next page</a>
+                            <a class="pagination-next page-link" style="text-decoration:none" href="/seller/channel/product/detail/{{this.productID}}/list/?page={{this.nextPage.value}}">Next page</a>
                         {{/if}}
 
                         <ul class="pagination-list">
                             {{#if this.prevPage.check}}
-                                <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/detail/{{this.productID}}/list/?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
                             {{/if}}
 
                             <li><a style="text-decoration:none" class="pagination-link is-current">{{this.curPage.value}}</a></li>
 
                             {{#if this.nextPage.check}}
-                                <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/{{this.productID}}/list/?page={{this.nextPage.value}}">{{this.nextPage.value}}</a></li>
+                                <li><a class="pagination-link page-link" style="text-decoration:none" href="/seller/channel/product/detail/{{this.productID}}/list/?page={{this.nextPage.value}}">{{this.nextPage.value}}</a></li>
                             {{/if}}
                         </ul>
                     </nav>
