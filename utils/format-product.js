@@ -29,6 +29,7 @@ export default {
 
         //Seller infor
         goodData.sellerInfo = new ObjectID(sellerID);
+        goodData.curBidderInfo = null;
 
         //Product date
         goodData.proStartDate = new Date();

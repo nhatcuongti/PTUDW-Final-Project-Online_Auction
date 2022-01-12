@@ -991,5 +991,17 @@ export default {
     } finally {
       await mongoClient.close()
     }
+  },
+  async updateTest() {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateCatChildFunc(collection)
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
   }
 };

@@ -8,8 +8,7 @@ import bid from "./routes/bid.js";
 
 
 async function testFunc(){
-    const data = await accountModel.getCommentOfSeller(new ObjectId("61be966d0b93276ccd0da00f"));
-    console.log(data[0]);
+    await productModel.updateTest();
 }
 
 await testFunc();
