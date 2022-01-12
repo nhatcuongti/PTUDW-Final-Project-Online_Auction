@@ -6,9 +6,18 @@
 {{/section}}
 {{#section 'css'}}
     <style>
-        .body{
-            height: 100% !important;
+        .row {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display:         flex;
+            flex-wrap: wrap;
         }
+        .row > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+
     </style>
 {{/section}}
 <div class="container-fluid" style="height: max-content">

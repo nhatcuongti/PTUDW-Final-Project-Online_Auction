@@ -4,9 +4,25 @@
 
     </script>
 {{/section}}
+{{#section 'css'}}
+    <style>
+        .row {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display:         flex;
+            flex-wrap: wrap;
+        }
+        .row > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+
+    </style>
+{{/section}}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-3 has-background-grey-lighter" style="background: #1b1e21; height: 100vh">
+        <div class="col-sm-3 has-background-grey-lighter" style="background: #1b1e21; min-height: max-content">
             <ul class="nav flex-column">
                 <div class="h3 text-center ml-auto mr-auto p-4" style="color: #FFFFFF">Lịch sử đấu giá</div>
                 <hr class="navbar-divider">

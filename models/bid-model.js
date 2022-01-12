@@ -28,6 +28,17 @@ async function buyNowFunc(db,collection, userID, proID,proInfo) {
     const curBidderInfo = await getUserInfo(db,userID)
     const curBidderMail = curBidderInfo.email
 
+    let dateNow = new Date()
+    await collection.findOneAndUpdate({_id: new ObjectId(proID)}, { $set: {
+            curBidderInfo: new ObjectId(userID),
+            proCurBidPrice: proInfo.proBuyNowPrice,
+            proHighestPrice: proInfo.proBuyNowPrice,
+            proEndDate: new Date(dateNow.getTime() - 1000),
+            proBidQuantity:  proInfo.proBidQuantity + 1
+
+        }
+    })
+
     await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
         `Sản phẩm ` + proInfo.proName + `vừa được mua ngay`);
 
@@ -41,16 +52,7 @@ async function buyNowFunc(db,collection, userID, proID,proInfo) {
             `Sản phẩm ` + proInfo.proName + ` mà bạn đấu giá đã bị người khác "mua ngay".`);
     }
 
-    let dateNow = new Date()
-    return collection.updateOne({_id: new ObjectId(proID)}, { $set: {
-            curBidderInfo: new ObjectId(userID),
-            proCurBidPrice: proInfo.proBuyNowPrice,
-            proHighestPrice: proInfo.proBuyNowPrice,
-            proEndDate: new Date(dateNow.getTime() - 1000),
-            proBidQuantity:  proInfo.proBidQuantity + 1
-
-        }
-    })
+    return
 }
 
 async function processBidFunc(db,collection, userID, proID, priceString, productInfo) {
@@ -77,6 +79,26 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
         curHighestPrice = price
         curBidder = userID
 
+        if((Math.abs(productInfo.proEndDate - new Date())/(1000*60)) <= 5){
+            await collection.findOneAndUpdate({_id: new ObjectId(proID)}, { $set: {
+                    curBidderInfo: new ObjectId(curBidder),
+                    proCurBidPrice: curProductPrice,
+                    proHighestPrice: curHighestPrice,
+                    proEndDate: new Date(productInfo.proEndDate.getTime() + 10*60*1000),
+                    proBidQuantity:  productInfo.proBidQuantity + 1
+                }
+            })
+        }
+        else{
+        await collection.findOneAndUpdate({_id: new ObjectId(proID)}, { $set: {
+                curBidderInfo: new ObjectId(curBidder),
+                proCurBidPrice: curProductPrice,
+                proHighestPrice: curHighestPrice,
+                proBidQuantity:  productInfo.proBidQuantity + 1
+            }
+        })
+        }
+
         await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
             `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
 
@@ -88,48 +110,32 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
             await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
                 `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
         }
-
-        if((Math.abs(productInfo.proEndDate - new Date())/(1000*60)) <= 5){
-            return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
-                    curBidderInfo: new ObjectId(curBidder),
-                    proCurBidPrice: curProductPrice,
-                    proHighestPrice: curHighestPrice,
-                    proEndDate: new Date(productInfo.proEndDate.getTime() + 10*60*1000),
-                    proBidQuantity:  productInfo.proBidQuantity + 1
-                }
-            })
-        }
-        return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
-                    curBidderInfo: new ObjectId(curBidder),
-                    proCurBidPrice: curProductPrice,
-                    proHighestPrice: curHighestPrice,
-                    proBidQuantity:  productInfo.proBidQuantity + 1
-                }
-        })
+        return
 
     }
     else if (price === oldHighestPrice){
         curProductPrice = oldHighestPrice
-        await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
-            `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
 
-        return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
+        await collection.findOneAndUpdate({_id: new ObjectId(proID)}, { $set: {
                     proCurBidPrice: curProductPrice,
                     proBidQuantity:  productInfo.proBidQuantity + 1
                 }
         })
-
+        await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
+            `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
+        return
     }
     else if (price < oldHighestPrice && price > oldProductPrice){
         curProductPrice = price;
-        await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
-            `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
 
-        return await collection.updateOne({_id: new ObjectId(proID)}, { $set: {
+        await collection.findOneAndUpdate({_id: new ObjectId(proID)}, { $set: {
                     proCurBidPrice: curProductPrice,
                     proBidQuantity:  productInfo.proBidQuantity + 1
                 }
         })
+        await mailing.sendEmail(sellerMail, 'Hệ thống auction online',
+            `Giá của sản phẩm ` + productInfo.proName + `vừa được cập nhật lên thành `+ curProductPrice.toString() + `vnđ`);
+        return
     }
     return
 }

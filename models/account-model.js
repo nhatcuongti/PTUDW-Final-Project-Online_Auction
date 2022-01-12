@@ -319,7 +319,7 @@ export default {
         list.forEach(function (e) {
             let check =0;
             for(var i =0; i < listTemp.length; i++){
-                if(e.proID.toString === listTemp.proID.toString){
+                if(e.proID.toString() === listTemp[i].proID.toString()){
                     check = 1;
                     break
                 }
