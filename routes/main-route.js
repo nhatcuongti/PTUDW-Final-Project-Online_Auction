@@ -220,6 +220,8 @@ router.get('/search', async function (req, res) {
     });
 });
 router.get('/signup', function (req, res) {
+    if (req.session.auth === true)
+        return res.redirect(req.headers.referer || '/');
     res.render('signup', {
         layout: 'navbar.hbs',
     });
@@ -247,6 +249,8 @@ router.get('/verify/:random/:id', async function (req, res) {
 });
 
 router.get('/login', async function (req, res) {
+    if (req.session.auth === true)
+        return res.redirect(req.headers.referer || '/');
     res.render('signin', {
         layout: 'navbar.hbs',
     });
@@ -286,6 +290,8 @@ router.get('/account', async function (req, res) {
 });
 
 router.get('/forget-password', async function (req, res) {
+    if (req.session.auth === true)
+        return res.redirect(req.headers.referer || '/');
     res.render('forget-password-1', {
         layout: 'navbar.hbs',
     });
@@ -295,10 +301,12 @@ router.post('/forget-password', async function (req, res) {
     const result = await entryModel.checkAccount(req.body.email);
     const id = result[0]._id;
     await mailing.sendEmail(req.body.email, 'Quên mật khẩu', `Bạn đã yêu cầu thay đổi mật khẩu, xin vui lòng truy cập vào đường link ở bên dưới để tiến hành thay đổi mật khẩu:\nhttp://localhost:3000/change/${randomstring.generate(70)}/${id.toString()}\nXin cảm ơn.`);
-    res.redirect('/');
+    res.redirect('/login');
 });
 
 router.get('/change/:random/:id', async function (req, res) {
+    if (req.session.auth === true)
+        return res.redirect(req.headers.referer || '/');
     res.render('forget-password-2', {
         id: req.params.id,
         layout: 'navbar.hbs',

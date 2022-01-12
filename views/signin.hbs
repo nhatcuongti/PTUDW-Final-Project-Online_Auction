@@ -1,3 +1,4 @@
+{{!--
 {{#section 'css'}}
     <style>
         #footer {
@@ -7,7 +8,9 @@
         }
     </style>
 {{/section}}
+--}}
 
+{{!--
 <div class="row">
     <div class="col-4"></div>
     <div class="col-4">
@@ -44,3 +47,38 @@
     </div>
 </div>
 <p>&nbsp;</p>
+--}}
+
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="/public/login/undraw_remotely_2j6y.svg" alt="Image" class="img-fluid">
+            </div>
+            <div class="col-md-6 contents">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="mb-4">
+                            <h3>Đăng nhập</h3>
+                        </div>
+                        <form action="/login" method="post">
+                            <div class="form-group first">
+                                <label for="username">Email</label>
+                                <input type="email" class="form-control" id="username" name="email" autofocus required>
+                            </div>
+                            <div class="form-group last mb-4">
+                                <label for="password">Mật khẩu</label>
+                                <input type="password" class="form-control" id="password" name="pass" required>
+                            </div>
+                            <div class="d-flex mb-5 align-items-center">
+                                <span class="ml-auto"><a href="/forget-password" class="forgot-pass text-decoration-none">Quên mật khẩu?</a></span>
+                            </div>
+                            <input type="submit" value="Đăng nhập" class="btn btn-block btn-danger">
+                            <span class="d-block text-left my-4 text-muted">Chưa tạo tài khoản? <a href="/signup" class="text-decoration-none text-info">Tạo tài khoản</a></span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
