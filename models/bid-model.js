@@ -58,7 +58,9 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
     const oldHighestPrice = productInfo.proHighestPrice
     const oldProductPrice = productInfo.proCurBidPrice
 
-    const oldBidderMail = productInfo.curBidderInfo[0].email
+    let oldBidderMail
+    if(productInfo.curBidderInfo.length !== 0)
+        oldBidderMail = productInfo.curBidderInfo[0].email
     const sellerMail = productInfo.sellerInfo[0].email
     const curBidderInfo = await getUserInfo(db,userID)
     const curBidderMail = curBidderInfo.email
@@ -82,7 +84,7 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
         await mailing.sendEmail(curBidderMail, 'Hệ thống auction online',
             `Bạn đã đấu giá sản phẩm ` + productInfo.proName + ` thành công. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
 
-        if(curBidderMail !== oldBidderMail){
+        if(curBidderMail !== oldBidderMail && productInfo.curBidderInfo.length !== 0){
             await mailing.sendEmail(oldBidderMail, 'Hệ thống auction online',
                 `Sản phẩm ` + productInfo.proName + ` mà bạn đấu giá đã bị người khác đấu giá cao hơn. Giá hiện tại sản phẩm `+ curProductPrice.toString() + `vnđ`);
         }
