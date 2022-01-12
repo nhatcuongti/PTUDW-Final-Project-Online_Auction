@@ -16,6 +16,11 @@
             width: 100%;
             height: 100%;
         }
+        .product {
+            margin: 0 auto; /* Added */
+            float: none; /* Added */
+            margin-bottom: 10px; /* Added */
+        }
     </style>
 {{/section}}
 
@@ -25,22 +30,22 @@
 
 <p><h1 class="display-4 text-center"> Danh sách yêu thích</h1></p>
 <p class="container-fluid">
+
     {{#each this.product}}
         {{#each details}}
-                    <div class="card mb-2 ml-auto mr-auto" style="width: 70vw">
+            <div class="d-flex justify-content-center">
+                    <div class="product mb-2 ml-auto mr-auto border" style="width: 70vw">
                         <div class="row no-gutters">
                             <div class="col-md-4">
                                 <img src="/public/{{_id}}/main-thumb.jpg" class="card-img" alt="...">
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-7">
                                 <div class="card-body h-50">
                                     <div class="d-flex">
-                                        <div class="card-title h5"><strong>{{proName}}</strong></div>
-                                        <div class="flex-fill">
-                                            <a data-id="{{_id}}" class="delItem" id="delItem" href="#">
-                                                <i class="fa fa-times float-right" aria-hidden="true"></i>
-                                            </a>
-                                        </div>
+                                        <span class="h5 product-name"><strong>{{proName}}</strong></span>
+                                        <span class="flex-fill">
+
+                                        </span>
                                     </div>
                                     <p class="card-text">Giá hiện tại: {{format_number proCurBidPrice}}VND.</p>
                                     <p class="card-text mt-2">Ngày hết hạn: {{proEndDate}}</p>
@@ -49,11 +54,18 @@
                                     <a class="d-flex flex-row-reverse p-3 h-100 w-100" href="/product/{{_id}}"><button class="d-flex flex-column align-self-end btn btn-primary is-rounded" aria-hidden="true">Xem sản phẩm</button> </a>
                                 </div>
                             </div>
+                            <div class="col-sm-1 d-flex flex-row-reverse">
+                                <a data-id="{{_id}}" class="delItem" id="delItem" href="#">
+                                    <i class="fa fa-times float-right" aria-hidden="true"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
+            </div>
         {{/each}}
     {{else}}
         <hr class="navbar-divider">
         <div class="h4 text-center mt-5 mb-5">Hiện tại bạn chưa có sản phẩm yêu thích nào</div>
     {{/each}}
+    </div>
 </p>
