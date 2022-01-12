@@ -161,14 +161,15 @@
                                         <img src="/public/{{_id}}/{{mainThumb}}" alt="">
                                         {{#if check}}
                                             <div class="product-label">
-                                                <span class="new">NEW</span>
+                                                <span class="new">Mới</span>
                                             </div>
                                         {{/if}}
                                     </div>
                                     <div class="product-body">
                                         <p class="product-category">{{catChild}}</p>
                                         <h3 class="product-name"><a href="/product/{{_id}}">{{proName}}</a></h3>
-                                        <h4 class="product-price">Giá đấu: {{format_number proCurBidPrice}} VNĐ</h4>
+                                        <h4 class="product-price">{{format_number proCurBidPrice}} VNĐ</h4>
+                                        <h4 class="product-price">Mua ngay: {{format_number buyNowPrice}} VNĐ</h4>
                                         <div class="product-details">
                                             {{#each curBidderInfo}}
                                                 <p> Người đặt hiện tại: {{email}} </p>
@@ -178,7 +179,7 @@
                                             <p> Số lượt ra giá: {{proBidQuantity}}</p>
                                         </div>
                                         <div class="product-btns">
-                                            {{#if this.auth}}
+                                            {{#if ../this.auth}}
                                                 <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                             {{/if}}
                                             <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
@@ -203,7 +204,7 @@
             <!-- section title -->
             <div class="col-md-12">
                 <div class="section-title">
-                    <h3 class="title">Sản phẩm nhiều lượt ra giá nhất</h3>
+                    <h3 class="title">Sản phẩm hiện có nhiều lượt ra giá nhất</h3>
                 </div>
             </div>
             <!-- Products tab & slick -->
@@ -220,14 +221,15 @@
                                             <img src="/public/{{_id}}/{{mainThumb}}" alt="">
                                             {{#if check}}
                                                 <div class="product-label">
-                                                    <span class="new">NEW</span>
+                                                    <span class="new">Mới</span>
                                                 </div>
                                             {{/if}}
                                         </div>
                                         <div class="product-body">
                                             <p class="product-category">{{catChild}}</p>
                                             <h3 class="product-name"><a href="/product/{{_id}}">{{proName}}</a></h3>
-                                            <h4 class="product-price">Giá đấu: {{format_number proCurBidPrice}} VNĐ</h4>
+                                            <h4 class="product-price">{{format_number proCurBidPrice}} VNĐ</h4>
+                                            <h4 class="product-price">Mua ngay: {{format_number buyNowPrice}} VNĐ</h4>
                                             <div class="product-details">
                                                 {{#each curBidderInfo}}
                                                     <p> Người đặt hiện tại: {{email}} </p>
@@ -237,7 +239,7 @@
                                                 <p> Số lượt ra giá: {{proBidQuantity}}</p>
                                             </div>
                                             <div class="product-btns">
-                                                {{#if this.auth}}
+                                                {{#if ../this.auth}}
                                                     <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                                 {{/if}}
                                                 <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
@@ -279,14 +281,15 @@
                                             <img src="/public/{{_id}}/{{mainThumb}}" alt="">
                                             {{#if check}}
                                                 <div class="product-label">
-                                                    <span class="new">NEW</span>
+                                                    <span class="new">Mới</span>
                                                 </div>
                                             {{/if}}
                                         </div>
                                         <div class="product-body">
                                             <p class="product-category">{{catChild}}</p>
                                             <h3 class="product-name"><a href="/product/{{_id}}">{{proName}}</a></h3>
-                                            <h4 class="product-price">Giá đấu: {{format_number proCurBidPrice}} VNĐ</h4>
+                                            <h4 class="product-price">{{format_number proCurBidPrice}} VNĐ</h4>
+                                            <h4 class="product-price">Mua ngay: {{format_number buyNowPrice}} VNĐ</h4>
                                             <div class="product-details">
                                                 {{#each curBidderInfo}}
                                                     <p> Người đặt hiện tại: {{email}} </p>
@@ -296,7 +299,7 @@
                                                 <p> Số lượt ra giá: {{proBidQuantity}}</p>
                                             </div>
                                             <div class="product-btns">
-                                                {{#if this.auth}}
+                                                {{#if ../this.auth}}
                                                     <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                                 {{/if}}
                                                 <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>

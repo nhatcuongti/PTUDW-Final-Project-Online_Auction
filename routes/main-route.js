@@ -41,6 +41,22 @@ router.get('/product/:id', async function (req, res) {
         res.redirect('/');
     else {
         const listSimilarity = await productModel.findByCategoryParent(proInfo[0].catParent, 5);
+        for (const item of listSimilarity) {
+            item.time = (item.proEndDate - new Date()) / (1000 * 60 * 60);
+            item.check = (new Date() - item.proStartDate) / (1000 * 60) <= 30 && (new Date() - item.proStartDate) / (1000 * 60) > 0;
+            item.proStartDate = moment(item.proStartDate).format('DD/MM/YYYY');
+            if (item.time <= 0)
+                item.check1 = true;
+            else
+                item.check1 = false;
+            try{
+                const files = fs.readdirSync(`./public/${item._id}/`);
+                const mainThumb = files[0];
+                item.mainThumb = mainThumb;
+            } catch(e){
+                console.log(e)
+            }
+        }
         res.render('detail', {
             proInfo,
             listSimilarity,

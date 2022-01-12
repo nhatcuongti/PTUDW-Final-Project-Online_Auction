@@ -1,12 +1,10 @@
 {{#section 'js'}}
     <script>
-
         $('.addItemFavorite').on('click', function (e){
             const id = $(this).data('id');
             $('#txtProID').val(id);
             $('#formAddFavorite').submit();
         });
-
         $('.buyNow').on('click', function (e){
             const id = $(this).data('id');
             $.getJSON(`/bid/check-buynow?id=${id}`, function (data) {
@@ -23,21 +21,16 @@
 
                 }
             });
-
         });
-
     </script>
 {{/section}}
 {{#section 'css'}}
     <style>
-
         body {
             padding-right: 0px !important;
         }
-
         .modal-backdrop {
             z-index: -1;
-
         }
     </style>
 {{/section}}
@@ -50,6 +43,7 @@
 </form>
 
 {{#each this.proInfo}}
+    {{!--
     <div class="row">
         <div class="col-1"></div>
         <div class="col-5">
@@ -139,7 +133,7 @@
           </div>
         </div>
     </div>
-    {{!--
+    {{!
     <div class="row justify-content-center">
         {{#each ../listSimilarity}}
             <div class = "col-2">
@@ -162,7 +156,7 @@
             </div>
         {{/each}}
     </div>
-    --}}
+    -}}
     <div class="container-fluid">
         <div class="row mt-3 d-flex justify-content-center">
             {{#each ../listSimilarity}}
@@ -182,8 +176,185 @@
             {{/each}}
         </div>
     </div>
+    --}}
+    <div class="section">
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
+                <!-- Product main img -->
+                <div class="col-md-5 col-md-push-1">
+                    <div id="product-main-img">
+                        <div class="product-preview">
+                            <img src="/public/{{_id}}/{{../mainThumb}}" alt="">
+                        </div>
+                        {{#each ../files}}
+                            <div class="product-preview">
+                                <img src="/public/{{../_id}}/{{this}}" alt="">
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+
+                <!-- Product thumb imgs -->
+                <div class="col-md-2  col-md-pull-5">
+                    <div id="product-imgs">
+                    </div>
+                </div>
+
+                <!-- Product details -->
+                <div class="col-md-5">
+                    <div class="product-details">
+                        <h2 class="product-name">{{proName}}</h2>
+                        <div>
+                            <h3 class="product-price">{{format_number proCurBidPrice}} VNĐ</h3>
+                            {{#if ../isOutOfDate}}
+                                <span class="product-available">Hết hàng</span>
+                            {{/if}}
+                        </div>
+                        {{#each sellerInfo}}
+                            <p>Người bán: {{email}}</p>
+                        {{/each}}
+                        {{#each curBidderInfo}}
+                            <p>Người giữ hiện tại: {{email}}</p>
+                        {{/each}}
+                        <form>
+                            <div class="add-to-cart">
+                                <div class="qty-label">
+                                    Giá:
+                                    <div class="input-number">
+                                        <input type="number">
+                                    </div>
+                                </div>
+                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đấu giá</button>
+                            </div>
+                        </form>
+                        <div>
+                            <h3 class="product-price">Mua ngay: {{format_number buyNowPrice}} VNĐ</h3>
+                        </div>
+                        <form>
+                            <div class="add-to-cart">
+                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đặt mua</button>
+                            </div>
+                        </form>
+                        <ul class="product-btns">
+                            {{#if ../auth}}
+                                <li><a href=""><i class="fa fa-heart-o"></i>Thêm vào yêu thích</a></li>
+                            {{/if}}
+                        </ul>
+                        <ul class="product-links">
+                            <li>Danh mục:</li>
+                            <li><a href="/product?category={{catParent}}">{{catParent}}</a></li>
+                            <li><a href="/product?category={{catChild}}">{{catChild}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Product tab -->
+                <div class="col-md-12">
+                    <div id="product-tab">
+                        <!-- product tab nav -->
+                        <ul class="tab-nav">
+                            <li class="active"><a data-toggle="tab" href="#tab1">Mô tả</a></li>
+                            {{!--
+                            <li><a data-toggle="tab" href="#tab2">Details</a></li>
+                            --}}
+                        </ul>
+                        <!-- product tab content -->
+                        <div class="tab-content">
+                            <!-- tab1  -->
+                            <div id="tab1" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p>{{{proDescription}}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- tab2  -->
+                            {{!--
+                            <div id="tab2" class="tab-pane fade in">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
+                <!-- section title -->
+                <div class="col-md-12">
+                    <div class="section-title">
+                        <h3 class="title">Sản phẩm liên quan</h3>
+                    </div>
+                </div>
+                <!-- Products tab & slick -->
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="products-tabs">
+                            <!-- tab -->
+                            <div id="tab3" class="tab-pane fade in active">
+                                <div class="products-slick" data-nav="#slick-nav-3">
+                                    <!-- product -->
+                                    {{#each ../listSimilarity}}
+                                        <div class="product">
+                                            <div class="product-img">
+                                                <img src="/public/{{_id}}/{{mainThumb}}" alt="">
+                                                <div class="product-label">
+                                                {{#if check}}
+                                                    <span class="new">Mới</span>
+                                                {{/if}}
+                                                {{#if check1}}
+                                                    <span class="sale">Hết hạn</span>
+                                                {{/if}}
+                                                </div>
+                                            </div>
+                                            <div class="product-body">
+                                                <p class="product-category">{{catChild}}</p>
+                                                <h3 class="product-name"><a href="/product/{{_id}}">{{proName}}</a></h3>
+                                                <h4 class="product-price">{{format_number proCurBidPrice}}</h4>
+                                                <div class="product-details">
+                                                    {{#each curBidderInfo}}
+                                                        <p> Người đặt hiện tại: {{email}} </p>
+                                                    {{/each}}
+                                                    <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
+                                                    {{#if check1}}
+                                                    {{else}}
+                                                        <p> Thời gian còn lại: {{format_number time}} giờ</p>
+                                                    {{/if}}
+                                                    <p> Số lượt ra giá: {{proBidQuantity}}</p>
+                                                </div>
+                                                <div class="product-btns">
+                                                    {{#if ../../this.auth}}
+                                                        <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                                    {{/if}}
+                                                    <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                <div id="slick-nav-3" class="products-slick-nav"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {{/each}}
 
+
+{{!--
 <div class="modal fade has-background-grey-lighter" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -222,3 +393,4 @@
         </div>
     </div>
 </div>
+--}}
