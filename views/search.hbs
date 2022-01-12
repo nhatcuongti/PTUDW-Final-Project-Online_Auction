@@ -316,7 +316,7 @@
                     {{#if this.curPage.check}}
                         {{#each this.listResult}}
                             <div class="col-md-4 col-xs-6">
-                                <div class="product" style="height: 600px;">
+                                <div class="product" style="height: 620px;">
                                     <div class="product-img">
                                         <img src="/public/{{_id}}/{{mainThumb}}" alt="">
                                         <div class="product-label">
@@ -331,7 +331,8 @@
                                     <div class="product-body">
                                         <p class="product-category">{{catChild}}</p>
                                         <h3 class="product-name"><a href="/product/{{_id}}">{{proName}}</a></h3>
-                                        <h4 class="product-price">{{format_number proCurBidPrice}}</h4>
+                                        <h4 class="product-price">{{format_number proCurBidPrice}} VNĐ</h4>
+                                        <h4 class="product-price">Mua ngay: {{format_number proBuyNowPrice}} VNĐ</h4>
                                         <div class="product-details">
                                             {{#each curBidderInfo}}
                                                 <p> Người đặt hiện tại: {{email}} </p>
@@ -344,7 +345,7 @@
                                             <p> Số lượt ra giá: {{proBidQuantity}}</p>
                                         </div>
                                         <div class="product-btns">
-                                            {{#if ../../this.auth}}
+                                            {{#if ../this.auth}}
                                                 <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                             {{/if}}
                                             <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
