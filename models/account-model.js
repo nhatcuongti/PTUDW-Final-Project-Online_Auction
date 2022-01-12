@@ -246,6 +246,20 @@ async function sendUpgradeSellerFunc(collection, userID) {
     // })
 }
 
+async function getCommentOfSellerFunc(collection, userID){
+    return await collection.aggregate([
+        { $match: { sellerID: userID } },
+        { $lookup:
+                {
+                    from: 'product',
+                    localField: 'proID',
+                    foreignField: '_id',
+                    as: 'details'
+                }
+        }
+    ]).toArray();
+}
+
 // >>>>>>> Stashed changes
 export default {
     async findByID(userID){
@@ -608,9 +622,21 @@ export default {
         } finally {
             await mongoClient.close()
         }
-    }
+    },
 // =======
 // >>>>>>> Stashed changes
+    async getCommentOfSeller(userID) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('comment');
+            return await getCommentOfSellerFunc(collection, userID);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    }
 }
 
 

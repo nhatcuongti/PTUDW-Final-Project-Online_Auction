@@ -1,0 +1,586 @@
+Index: routes/seller.route.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import express from 'express';\r\nimport modelProduct from '../models/product-model.js';\r\nimport modelCategory from '../models/category-model.js'\r\nimport multer  from 'multer'\r\nimport formatProduct from '../utils/format-product.js'\r\nimport fs from 'fs'\r\nimport path from 'path'\r\nimport page from \"../utils/page.js\";\r\nimport {ObjectId} from \"mongodb\";\r\nimport productModel from \"../models/product-model.js\";\r\nimport accountModel from \"../models/account-model.js\";\r\nimport mailing from \"../utils/mailing.js\";\r\nimport {authUserWithProduct} from \"../middlewares/auth-mdw.js\";\r\nimport rollbackProduct from \"../utils/rollback-product.js\";\r\n\r\nconst router = express.Router();\r\n\r\nrouter.get(\"/channel\", async (req, res) => {\r\n    res.locals.ThongTinChung.isActive = true;\r\n    const userID =  res.locals.user._id;\r\n    const products = await modelProduct.getAll(userID);\r\n\r\n    //San pham thanh cong\r\n    let productCopy = [...products];\r\n    await formatProduct.findProductWithStatus(productCopy, \"1\");\r\n    const numberSuccess = productCopy.length;\r\n\r\n    let totalRevenue = 0;\r\n    for (const product of productCopy)\r\n        totalRevenue += product.proCurBidPrice;\r\n\r\n    //San pham thất bại\r\n    productCopy = [...products];\r\n    await formatProduct.findProductWithStatus(productCopy, \"2\");\r\n    const numberFail = productCopy.length;\r\n\r\n    //Sản phẩm chưa có người đặt\r\n    productCopy = [...products];\r\n    await formatProduct.findProductWithStatus(productCopy, \"4\");\r\n    const numberNoneBidder = productCopy.length;\r\n\r\n\r\n\r\n    res.render(\"./seller/channel\", {\r\n        layout: \"seller.layout.hbs\",\r\n        numberSuccess,\r\n        totalRevenue,\r\n        numberFail,\r\n        numberNoneBidder\r\n    })\r\n})\r\n\r\nrouter.get(\"/channel/product\", async (req, res) => {\r\n    res.locals.XemSanPham.isActive = true;\r\n    let products = null;\r\n    const categories = await modelCategory.getAll();\r\n\r\n\r\n    //Handle Category\r\n    const catParentFind = req.query.catParent;\r\n    const catChildFind = req.query.catChild;\r\n\r\n    for (const category of categories)\r\n        if (category._id == catParentFind){\r\n            category.isActive = true;\r\n            if (catChildFind !== undefined)\r\n                category.catChild[+catChildFind].isActive = true;\r\n            break;\r\n        }\r\n    //Search\r\n    let keyword = req.query.keyword;\r\n    //Taking products with id seller\r\n    const userID = res.locals.user._id;\r\n\r\n\r\n\r\n    //Find offset base on curPage\r\n    const choosenPage = req.query.page;\r\n    let limitProduct = 6;\r\n    let offset = ((+choosenPage - 1) * limitProduct) || 0;\r\n\r\n    //select\r\n    const select = req.query.select;\r\n    let searchWith = \"\";\r\n    if (select === \"1\")\r\n        searchWith = \"\"\r\n\r\n    if (keyword !== undefined)\r\n        products = await productModel.searchByType(keyword, 'name', limitProduct, offset, 'time-descending', catParentFind, catChildFind, userID);\r\n    else{\r\n            if (catParentFind != undefined && catChildFind != undefined)\r\n                products = await modelProduct.findByCategory(catParentFind, catChildFind, userID);\r\n            else if (catParentFind != undefined)\r\n                products = await modelProduct.findByCategoryParent(new ObjectId(catParentFind), undefined, userID);\r\n            else\r\n                products = await modelProduct.getAll(userID);\r\n    }\r\n\r\n    //Find with status product\r\n    let status = req.query.status;\r\n    if (status != undefined )\r\n        await formatProduct.findProductWithStatus(products, status);\r\n\r\n    if (status === \"1\")\r\n        status = \"Đấu giá thành công\"\r\n    else if (status === \"2\")\r\n        status = \"Đấu giá thất bại\"\r\n    else if (status === \"3\")\r\n        status = \"Đang được đấu giá\"\r\n    else if (status === \"4\")\r\n        status = \"Chưa được đấu giá\"\r\n    else\r\n        status = \"Tất cả\"\r\n\r\n    //Handle page\r\n    let nPage = Math.floor((products.length - 1) / 6) + 1;\r\n    let prevPage = {check:true, value : 0};\r\n    let nextPage = {check:true, value : 0};\r\n    let curPage = {check:true, value : 0};\r\n    await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );\r\n\r\n    const numberProduct = products.length;\r\n    products = products.slice(offset, (offset + limitProduct  < numberProduct) ? offset + limitProduct : numberProduct)\r\n\r\n    const catParentPath = (req.query.catParent !== undefined) ?  `&catParent=${req.query.catParent}` : \"\";\r\n    const catChildPath =  (req.query.catChild !== undefined) ? `&catChild=${req.query.catChild}` : \"\";\r\n    const statusPath = (req.query.status !== undefined) ? `&status=${req.query.status}` : \"\";\r\n    const keywordPath = (req.query.keyword !== undefined) ? `&keyword=${req.query.keyword}` : \"\";\r\n    const pagePath = `?page=${(choosenPage) ? choosenPage : 1}`;\r\n    const initalPagePath = `?page=1`;\r\n\r\n    for (const product of products){\r\n        try{\r\n            const files = fs.readdirSync(`./public/${product._id}/`);\r\n            const mainThumb = files[0];\r\n            product.mainThumb = mainThumb;\r\n        } catch (e) {\r\n            console.log(e)\r\n        }\r\n    }\r\n\r\n    let emptyMsg;\r\n    if (products.length === 0)\r\n        emptyMsg = \"Hiện tại không có sản phẩm nào\"\r\n\r\n    res.render(\"./seller/channel_product\", {\r\n        layout: \"seller.layout.hbs\",\r\n        products,\r\n        categories,\r\n\r\n        status,\r\n        emptyMsg,\r\n\r\n        prevPage,\r\n        nextPage,\r\n        curPage,\r\n\r\n        catParentPath,\r\n        catChildPath,\r\n        statusPath,\r\n        keywordPath,\r\n        pagePath,\r\n        initalPagePath\r\n    })\r\n})\r\n\r\nrouter.get(\"/channel/product/insert\", async (req, res) => {\r\n    res.locals.ThemSanPham.isActive = true;\r\n    const catList = await modelCategory.getAll();\r\n    console.log(catList);\r\n\r\n    res.render(\"./seller/channel_product_insert_2\", {\r\n        layout: \"seller.layout.insert.hbs\",\r\n        catList\r\n    })\r\n\r\n\r\n\r\n})\r\n\r\n//Upload Image\r\nconst storage = multer.diskStorage({\r\n    destination: async function (req, file, cb) {\r\n        const dir = `./public/image`\r\n        if (!fs.existsSync(dir)){\r\n            fs.mkdirSync(dir, {recursive: true});\r\n            console.log(\"Create Folder\");\r\n        }\r\n        cb(null, `public/image`)\r\n    },\r\n    filename: async function (req, file, cb) {\r\n        if (req.body.index === undefined)\r\n            req.body.index = 0;\r\n\r\n        let index = req.body.index;\r\n\r\n        const ext = path.extname(file.originalname);\r\n        if (index === 0)\r\n            cb(null, `main-thumb${ext}`);\r\n        else\r\n            cb(null, `thumb${req.body.index}${ext}`);\r\n\r\n        req.body.index++;\r\n\r\n    }\r\n})\r\n\r\nconst upload = multer({ storage: storage })\r\nconst cpUpload = upload.array(\"Image[]\", 5);\r\n\r\nconst afterUploadImage = async (req, res, next) => {\r\n    console.log(\"Raw Data : \")\r\n    console.log(req.body);\r\n\r\n    req.body = await formatProduct.formatForInsert(req.body, res.locals.user._id);\r\n    await modelProduct.insertData(req.body);\r\n    console.log(req.body);\r\n    next();\r\n}\r\n\r\nrouter.post(\"/channel/product/insert\", cpUpload, afterUploadImage, async (req, res) => {\r\n    //Change folder name\r\n\r\n    req.body.index = undefined;\r\n    const oldFolderName = \"./public/image\";\r\n    const newFolderName = `./public/${req.body._id}`;\r\n    fs.rename(oldFolderName, newFolderName, async (err) => {\r\n        if (err){\r\n            console.log(\"Some thing Wrong !!\");\r\n        }\r\n\r\n        await modelProduct.updateDescription(req.body._id, req.body.proDescription);\r\n        res.redirect(`/seller/channel/product/detail/${req.body._id}`);\r\n    });\r\n\r\n})\r\n\r\n\r\nrouter.get(\"/channel/product/insert/review\", (req, res) => {\r\n    res.locals.ThemSanPham.isActive = true;\r\n    res.render(\"./seller/channel_product_insert_review\", {\r\n        layout: \"seller.layout.hbs\"\r\n    })\r\n})\r\n\r\nrouter.get(\"/channel/product/detail/:id\", authUserWithProduct, async function(req, res) {\r\n    const ProID = req.params.id;\r\n    const list =  await modelProduct.findById(ProID);\r\n    const product = list[0];\r\n    await formatProduct.formatCategory(product);\r\n\r\n    const status = await formatProduct.getStatus(product);\r\n    const isSuccess = (status === \"<span class='text-success'>Đấu giá thành công</span>\") ? true : false;\r\n\r\n\r\n    res.locals.XemSanPham.isActive = true;\r\n    res.locals.XemChiTiet.isActive = true;\r\n    let files = null;\r\n    let mainThumb = null;\r\n    try{\r\n        files = fs.readdirSync(`./public/${product._id}/`);\r\n        mainThumb = files[0];\r\n        files.splice(0, 1);\r\n    }catch(e){\r\n        console.log(e);\r\n    }\r\n\r\n\r\n\r\n    res.render(\"./seller/channel_product_detail\", {\r\n        layout: \"seller.layout.hbs\",\r\n        product,\r\n        status,\r\n        isSuccess,\r\n        files,\r\n        mainThumb\r\n    })\r\n})\r\n\r\nrouter.post(\"/channel/product/detail/:id\", async (req, res) => {\r\n    console.time(\"postTime\")\r\n    console.log(req.body);\r\n    const userID = req.body.userID;\r\n    let ProID = req.params.id;\r\n\r\n    let rate = null;\r\n    let comment = \"Người thằng không thanh toán\";\r\n    let isSuccess = false;\r\n\r\n    if (req.body.sellerComment !== undefined){\r\n        comment = req.body.sellerComment;\r\n        isSuccess = true;\r\n    }\r\n\r\n    if (req.body.score === '1') {\r\n        rate = true;\r\n    }\r\n    else if (req.body.score === '0'){\r\n        rate = false;\r\n    }\r\n    else\r\n        rate = false;\r\n\r\n    if (userID != undefined){\r\n        // if (!isSuccess)\r\n        //     await productModel.updateCurrenBidderInfor(ProID, null);\r\n        const updateProduct = {};\r\n        if (!isSuccess)\r\n            updateProduct.cancelTransaction = true;\r\n\r\n        updateProduct.isSellerComment = true;\r\n\r\n        await productModel.updateProduct(ProID, updateProduct);\r\n\r\n        // await productModel.updateSellerComment(ProID, true);\r\n\r\n        // Update lại commnet trong bidderHistory\r\n        const rawData = await accountModel.getCommentWithProID(ProID);\r\n        let commentOfProduct = rawData[0];\r\n        //----TH1 : Nếu như đã có rồi thì update lại thôi\r\n        if (rawData.length != 0){\r\n\r\n\r\n            commentOfProduct.sellerRate = rate;\r\n            commentOfProduct.sellerComment = comment;\r\n\r\n            await accountModel.updateCommentFromProID(commentOfProduct.proID, commentOfProduct);\r\n        }\r\n        //----Th2 : Nếu như chưa có thì phải tổng hợp dữ liệu để thêm vào\r\n        if (rawData.length === 0){\r\n\r\n            commentOfProduct = {};\r\n\r\n            commentOfProduct.proID = new ObjectId(ProID);\r\n            commentOfProduct.bidderComment = \"\";\r\n            commentOfProduct.sellerComment = comment;\r\n            commentOfProduct.bidderRate = false;\r\n            commentOfProduct.sellerRate = rate;\r\n            commentOfProduct.bidderID = new ObjectId(userID);\r\n            commentOfProduct.sellerID = new ObjectId(res.locals.user._id);\r\n\r\n            await accountModel.insertNewComment(commentOfProduct);\r\n        }\r\n    }\r\n    else{\r\n        let Message = req.body.proDescription;\r\n        Message =  `<p class=\"text-danger h3\"> ${new Date().toLocaleString(\"en-GB\")}</p> ${Message}`;\r\n\r\n\r\n        const dataProduct = await modelProduct.findById(ProID);\r\n        let insertedMessage = dataProduct[0].proDescription + Message;\r\n\r\n        console.log(\"Message : \" + req.body.proDescription);\r\n        console.log(\"inserted message : \" + insertedMessage);\r\n\r\n        await modelProduct.updateDescription(new ObjectId(ProID), insertedMessage);\r\n    }\r\n\r\n    console.timeEnd(\"postTime\")\r\n    res.redirect(`/seller/channel/product/detail/${ProID}`);\r\n\r\n})\r\n\r\nrouter.get(\"/channel/product/detail/:id/list\", authUserWithProduct, async (req, res) => {\r\n    res.locals.XemSanPham.isActive = true;\r\n\r\n    //Getting user data from bidderHistory\r\n    const productID = req.params.id;\r\n    let bidderHistory = await productModel.getBidderHistoryWithProID(productID);\r\n\r\n    //Handle page\r\n    let nPage = Math.floor((bidderHistory.length - 1) / 8) + 1;\r\n    const choosenPage = req.query.page;\r\n    let prevPage = {check:true, value : 0};\r\n    let nextPage = {check:true, value : 0};\r\n    let curPage = {check:true, value : 0};\r\n    await page.handlePage(prevPage, curPage, nextPage, choosenPage, nPage );\r\n\r\n\r\n    //Find offset base on curPage\r\n    let limitUser = 8;\r\n    let offset = ((+choosenPage - 1) * limitUser) || 0;\r\n    const numberUser = bidderHistory.length;\r\n    bidderHistory = bidderHistory.slice(offset, (offset + limitUser  < numberUser) ? offset + limitUser : numberUser)\r\n\r\n    let emptyMsg;\r\n    if (bidderHistory.length === 0)\r\n        emptyMsg = \"Hiện tại chưa có ai đặt sản phẩm của bạn\"\r\n\r\n    res.render(\"./seller/channel_product_detail_listBider\", {\r\n        layout: \"seller.layout.hbs\",\r\n        bidderHistory,\r\n        productID,\r\n        prevPage,\r\n        nextPage,\r\n        curPage,\r\n        emptyMsg\r\n    })\r\n})\r\n\r\nrouter.post(\"/channel/product/detail/:id/list\", authUserWithProduct, async (req, res) => {\r\n    console.time('test');\r\n    res.locals.XemSanPham.isActive = true;\r\n\r\n    //Getting user data from bidderHistory\r\n    const productID = req.params.id;\r\n    const userID = req.body.userID;\r\n\r\n    const productRaw = await productModel.findById(productID);\r\n    const product = productRaw[0];\r\n\r\n\r\n\r\n    const arr = await Promise.all([\r\n        rollbackProduct.denyBidderOfProduct(product, productID, userID),\r\n        async function (){\r\n            // Gửi mail\r\n            const account = await  accountModel.findByID(userID)\r\n            await mailing.sendEmail(account.email,\r\n                \"Thông báo từ chối ra giá\",\r\n                `Sản phẩm ${product.proName} mà bạn đã đặt mua hiện tại đã bị người bán từ chối ra giá . ` + `Chúng tôi rất tiếc khi phải thông báo việc này .`)\r\n\r\n            res.redirect(`/seller/channel/product/detail/${productID}/list`)\r\n\r\n        }\r\n    ]).then(arr => {\r\n        res.redirect(`/seller/channel/product/detail/${productID}/list`)\r\n        console.timeEnd('test');\r\n\r\n    })\r\n\r\n\r\n})\r\n\r\nrouter.get(\"\", async (req, res) => {\r\n    res.locals.DanhGia.isActive = true;\r\n\r\n})\r\n\r\n//API\r\nrouter.get(\"/channel/getCatChild\", async (req, res) => {\r\n    const id = req.query.catParentID;\r\n    const catChildList = await modelCategory.getCatChild(id);\r\n    res.json(catChildList[0].catChild);\r\n})\r\n\r\nrouter.post(\"/channel/updateEndDate\", async (req, res) => {\r\n\r\n})\r\n\r\nrouter.post(\"/test\", async(req, res) => {\r\n    console.log(\"--------------------------\");\r\n    console.log(\"req.body\");\r\n    console.log(req.body);\r\n    console.log(\"---------------------------\");\r\n    console.log(\"req.files\");\r\n    console.log(req.files);\r\n    console.log(\"---------------------------\");\r\n\r\n})\r\nexport default router;
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/routes/seller.route.js b/routes/seller.route.js
+--- a/routes/seller.route.js	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/routes/seller.route.js	(date 1641981054098)
+@@ -12,6 +12,7 @@
+ import mailing from "../utils/mailing.js";
+ import {authUserWithProduct} from "../middlewares/auth-mdw.js";
+ import rollbackProduct from "../utils/rollback-product.js";
++import account from "../models/account-model.js";
+ 
+ const router = express.Router();
+ 
+@@ -173,9 +174,6 @@
+         layout: "seller.layout.insert.hbs",
+         catList
+     })
+-
+-
+-
+ })
+ 
+ //Upload Image
+@@ -222,8 +220,11 @@
+     //Change folder name
+ 
+     req.body.index = undefined;
++
+     const oldFolderName = "./public/image";
++
+     const newFolderName = `./public/${req.body._id}`;
++
+     fs.rename(oldFolderName, newFolderName, async (err) => {
+         if (err){
+             console.log("Some thing Wrong !!");
+@@ -432,8 +433,66 @@
+ 
+ })
+ 
+-router.get("", async (req, res) => {
++router.get("/evaluate/:id", async (req, res) => {
+     res.locals.DanhGia.isActive = true;
++    const id = req.params.id;
++    const userID = new ObjectId(id);
++    // let list = account.getCommentFromeSeller(await account.showAllComment(userID))
++    // const countList = Object.keys(list).length
++    // const countGoodComment = account.countGoodComment(list)
++    // let likeRate = 0;
++    // let dislikeRate = 0;
++    // if(countList != 0){
++    //     likeRate = Math.round(countGoodComment*1000.0/countList)/10
++    //     dislikeRate = Math.round((100 - likeRate)*10)/10
++    // }
++    // console.log(countList)
++    let commentList = await account.getCommentOfSeller(userID);
++    for (let i = commentList.length - 1; i >= 0; i--){
++        if (!commentList[i].details[0].isBidderComment )
++            commentList.splice(i, 1);
++        else{
++            try{
++                const files = fs.readdirSync(`./public/${commentList[i].details[0]._id}/`);
++                const mainThumb = files[0];
++                commentList[i].details[0].mainThumb = mainThumb;
++            } catch(e){
++                console.log(e);
++            }
++
++        }
++    }
++
++    const countList = commentList.length;
++    let likeRate = 0;
++    let dislikeRate = 0;
++    for (const comment of commentList){
++        if (comment.bidderRate)
++            likeRate++;
++        else
++            dislikeRate++;
++    }
++
++
++
++
++    //List comment cua seller
++    //Tên Product
++    //Nội dung Comment tu Bidder
++    //Đánh giá của Bidder: bidderRate
++
++    res.render('viewAccountBidder/comment-from-seller', {
++        layout: "seller.layout.hbs",
++        product: commentList,
++        //--Product
++        //  --details
++        //    --ProName
++        //    --ProID
++        //  --bidderRate
++        total: countList,
++        likeRate: likeRate,
++        dislikeRate: dislikeRate
++    });
+ 
+ })
+ 
+Index: routes/account.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import express from 'express';\r\nimport account from \"../models/account-model.js\";\r\nimport auth from \"../middlewares/auth-mdw.js\";\r\nimport product from \"../models/product-model.js\";\r\nimport * as Console from \"console\";\r\nimport moment from \"moment/moment.js\";\r\nimport entryModel from \"../models/entry-model.js\";\r\nimport bcrypt from \"bcryptjs\";\r\n\r\nconst router = express.Router();\r\n\r\nrouter.get('/favorite', auth ,async function (req, res) {\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    let list = await account.showFavoriteList(userID)\r\n    list = list.reverse()\r\n    console.log(list)\r\n    for(let i = 0; i< list.length; i++){\r\n        list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')\r\n    }\r\n    res.render('viewAccountBidder/favorite', {\r\n        product: list\r\n    });\r\n});\r\n\r\nrouter.post('/favorite',  async function (req, res) {\r\n    const proID = req.body.id;\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    await account.deleteOneFavorite(userID, proID);\r\n    res.redirect('back')\r\n});\r\n\r\nrouter.post('/favorite/add',  async function (req, res) {\r\n    const proID = req.body.id;\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    await account.addOneFavorite(userID, proID);\r\n    res.redirect('back');\r\n});\r\n\r\n\r\n\r\nrouter.get('/auction-history',auth,  async function (req, res) {\r\n    // let list = account.findAll();\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    let list = await account.showBidderHistory(userID)\r\n    //console.log(list);\r\n    list = account.getProductsOnAuction(list)\r\n    list.sort((a, b) => b.dateBid - a.dateBid);\r\n    list = account.removeDuplicatesHistory(list)\r\n    for(let i = 0; i< list.length; i++){\r\n        list[i].dateBid = moment(list[i].dateBid).format('DD/MM/YYYY HH:mm')\r\n        list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')\r\n        if(list[i].details[0].curBidderInfo.toString() === userID)\r\n            list[i].details[0].curBidderInfo = true\r\n        else\r\n            list[i].details[0].curBidderInfo = false\r\n    }\r\n\r\n    res.render('viewAccountBidder/viewHistory/auction-history',{\r\n            product: list\r\n        }\r\n    );\r\n});\r\nrouter.get('/auction-already-history', auth ,async function (req, res) {\r\n\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    let list = await account.showBidderHistory(userID)\r\n    console.log(account.getSuccessfulAuction(userID, list))\r\n    list = account.getSuccessfulAuction(userID, list)\r\n    list.sort((a, b) => b.dateBid - a.dateBid);\r\n    for(let i = 0; i< list.length; i++){\r\n        list[i].dateBid = moment(list[i].dateBid).format('DD/MM/YYYY HH:mm')\r\n        list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')\r\n    }\r\n    res.render('viewAccountBidder/viewHistory/auction-already-history',{\r\n        product: list\r\n    });\r\n});\r\n\r\nrouter.get('/auction-already-comment',auth  ,async function (req, res) {\r\n    let item = await product.findById(req.query.id);\r\n    res.render('viewAccountBidder/viewHistory/auction-already-comment', {\r\n        product: item\r\n    });\r\n});\r\nrouter.post('/auction-already-comment',auth  ,async function (req, res) {\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    const productDetail = await product.findById(req.body.proID)\r\n    console.log(req.body)\r\n    if(req.body.rate === 'true')\r\n        var rate = true;\r\n    else\r\n        rate = false\r\n    console.log(rate)\r\n    await account.bidderComment(userID, req.body.proID, productDetail[0],rate, req.body.textArea);\r\n    res.redirect('/user/auction-already-history');\r\n});\r\n\r\nrouter.get('/update-profile', auth, async function (req, res) {\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    console.log(userID)\r\n    const bidderInfor = await account.getInforBidderAccount(userID)\r\n    console.log(bidderInfor)\r\n    res.render('viewAccountBidder/viewProfile/update-profile',{\r\n        data: [bidderInfor]\r\n    });\r\n});\r\n\r\nrouter.post('/update-profile', auth, async function (req, res) {\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    const newName = req.body.name\r\n    const newAddress = req.body.address\r\n    await account.updateBidderInfor(userID, newName, newAddress)\r\n    res.redirect('back')\r\n});\r\n\r\nrouter.get('/change-password', auth, function (req, res) {\r\n    res.render('viewAccountBidder/viewProfile/change-password');\r\n});\r\nrouter.post('/change-password',  async function (req, res) {\r\n    var salt = bcrypt.genSaltSync(10);\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    await account.updateBidderPass(userID, bcrypt.hashSync(req.body.newPass, salt))\r\n    res.redirect('back');\r\n});\r\nrouter.get('/comment-from-seller', auth, async function (req, res) {\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    let list = account.getCommentFromeSeller(await account.showAllComment(userID))\r\n    const countList = Object.keys(list).length\r\n    const countGoodComment = account.countGoodComment(list)\r\n    let likeRate = 0;\r\n    let dislikeRate = 0;\r\n    if(countList != 0){\r\n        likeRate = Math.round(countGoodComment*1000.0/countList)/10\r\n        dislikeRate = Math.round((100 - likeRate)*10)/10\r\n    }\r\n    console.log(countList)\r\n    res.render('viewAccountBidder/comment-from-seller', {\r\n        product: list,\r\n        total: countList,\r\n        likeRate: likeRate,\r\n        dislikeRate: dislikeRate\r\n    });\r\n});\r\n\r\nrouter.get('/account/', async function (req, res) {\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    const bidder = await account.getInforBidderAccount(userID)\r\n    const pass = bidder.pass\r\n\r\n    console.log(await bcrypt.compareSync(req.query.pass, pass))\r\n    if (await bcrypt.compare(req.query.pass, pass))\r\n        return res.json(true);\r\n    return res.json(false);\r\n});\r\nrouter.get('/upgrade/', async function (req, res) {\r\n    const temp = req.session.user;\r\n    const userID = temp[0]._id;\r\n    if(await account.sendUpgradingSeller(userID))\r\n        return res.json(true);\r\n    return res.json(false);\r\n});\r\n\r\n\r\nexport default router;
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/routes/account.js b/routes/account.js
+--- a/routes/account.js	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/routes/account.js	(date 1641981593886)
+@@ -6,6 +6,8 @@
+ import moment from "moment/moment.js";
+ import entryModel from "../models/entry-model.js";
+ import bcrypt from "bcryptjs";
++import {ObjectId} from "mongodb";
++import fs from "fs";
+ 
+ const router = express.Router();
+ 
+@@ -131,9 +133,10 @@
+     await account.updateBidderPass(userID, bcrypt.hashSync(req.body.newPass, salt))
+     res.redirect('back');
+ });
+-router.get('/comment-from-seller', auth, async function (req, res) {
+-    const temp = req.session.user;
+-    const userID = temp[0]._id;
++router.get('/comment-from-seller/:id', auth, async function (req, res) {
++    // const temp = req.session.user;
++    const id = req.params.id;
++    const userID = new ObjectId(id);
+     let list = account.getCommentFromeSeller(await account.showAllComment(userID))
+     const countList = Object.keys(list).length
+     const countGoodComment = account.countGoodComment(list)
+@@ -151,6 +154,59 @@
+         dislikeRate: dislikeRate
+     });
+ });
++
++router.get("/comment-from-bidder/:id", async (req, res) => {
++    res.locals.DanhGia.isActive = true;
++    const id = req.params.id;
++    const userID = new ObjectId(id);
++
++    let commentList = await account.getCommentOfSeller(userID);
++    for (let i = commentList.length - 1; i >= 0; i--){
++        if (!commentList[i].details[0].isBidderComment )
++            commentList.splice(i, 1);
++        else{
++            try{
++                const files = fs.readdirSync(`./public/${commentList[i].details[0]._id}/`);
++                const mainThumb = files[0];
++                commentList[i].details[0].mainThumb = mainThumb;
++            } catch(e){
++                console.log(e);
++            }
++
++        }
++    }
++
++    const countList = commentList.length;
++    let likeRate = 0;
++    let dislikeRate = 0;
++    for (const comment of commentList){
++        if (comment.bidderRate)
++            likeRate++;
++        else
++            dislikeRate++;
++    }
++
++
++
++
++    //List comment cua seller
++    //Tên Product
++    //Nội dung Comment tu Bidder
++    //Đánh giá của Bidder: bidderRate
++
++    res.render('viewAccountBidder/comment-from-seller', {
++        product: commentList,
++        //--Product
++        //  --details
++        //    --ProName
++        //    --ProID
++        //  --bidderRate
++        total: countList,
++        likeRate: likeRate,
++        dislikeRate: dislikeRate
++    });
++
++})
+ 
+ router.get('/account/', async function (req, res) {
+     const temp = req.session.user;
+Index: middlewares/auth-mdw.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import productModel from \"../models/product-model.js\";\r\nimport {ObjectID} from \"mongodb\";\r\n\r\nexport default function auth(req, res, next) {\r\n    if (req.session.auth === false) {\r\n        req.session.retUrl = req.originalUrl;\r\n        return res.redirect('/login');\r\n    }\r\n    next();\r\n};\r\n\r\nexport function authAdmin(req, res, next) {\r\n    if (req.session.auth === false) {\r\n        req.session.retUrl = req.originalUrl;\r\n        return res.redirect('/login');\r\n    }\r\n    if (res.locals.adminRole === false)\r\n        return res.redirect('/');\r\n    next();\r\n};\r\n\r\nexport function authSeller(req, res, next) {\r\n    if (req.session.auth === false) {\r\n        req.session.retUrl = req.originalUrl;\r\n        return res.redirect('/login');\r\n    }\r\n    if (res.locals.sellerRole === false)\r\n        return res.redirect('/');\r\n    next();\r\n};\r\n\r\nexport async function authUserWithProduct(req, res, next) {\r\n    const user = req.session.user[0]._id;\r\n    const proId = req.params.id;\r\n    const product = await productModel.findById(proId);\r\n    console.log(user);\r\n    if (product.length === 0 || product[0].sellerInfo.length === 0)\r\n        return res.redirect(\"/\");\r\n\r\n    if (product[0].sellerInfo[0]._id.toString() ===  user.toString())\r\n        return next();\r\n\r\n    return res.redirect('/login');\r\n};
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/middlewares/auth-mdw.js b/middlewares/auth-mdw.js
+--- a/middlewares/auth-mdw.js	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/middlewares/auth-mdw.js	(date 1641978362635)
+@@ -26,6 +26,7 @@
+     }
+     if (res.locals.sellerRole === false)
+         return res.redirect('/');
++
+     next();
+ };
+ 
+Index: views/layouts/seller.layout.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <title>Home</title>\r\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css\" integrity=\"sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn\" crossorigin=\"anonymous\">\r\n    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css\">\r\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css\">\r\n    <style>\r\n        .card-footer{\r\n            background-color: #fff;\r\n            border-radius: 50px !important;\r\n            margin: 5px;\r\n        }\r\n    </style>\r\n\r\n    {{{_sections.css}}}\r\n</head>\r\n<body>\r\n    <nav class=\"navbar has-background-grey-light \"  role=\"navigation\" aria-label=\"main navigation\">\r\n        <div class=\"navbar-brand\">\r\n            <a class=\"navbar-item\" href=\"/\">\r\n                <img src=\"https://bulma.io/images/bulma-logo.png\" width=\"112\" height=\"28\">\r\n            </a>\r\n            <a role=\"button\" class=\"navbar-burger\" aria-label=\"menu\" aria-expanded=\"false\">\r\n                <span aria-hidden=\"true\"></span>\r\n                <span aria-hidden=\"true\"></span>\r\n                <span aria-hidden=\"true\"></span>\r\n            </a>\r\n        </div>\r\n        <div class=\"navbar-menu\">\r\n            <div class=\"navbar-start\">\r\n\r\n                <a href=\"/seller/channel\" class=\"navbar-item text-decoration-none\">\r\n                    Kênh người bán\r\n                </a>\r\n\r\n                {{#if XemSanPham.isActive}}\r\n                    <span class=\"navbar-item\"> > </span>\r\n                    <a href=\"/seller/channel/product\" class=\"navbar-item text-decoration-none\">\r\n                        Xem sản phẩm\r\n                    </a>\r\n                    {{#if XemChiTiet.isActive}}\r\n                        <span class=\"navbar-item\"> > </span>\r\n                        <p href=\"/seller/channel/product\" class=\"navbar-item text-decoration-none\">\r\n                            Xem Chi Tiết\r\n                        </p>\r\n                    {{/if}}\r\n                {{else if ThemSanPham.isActive}}\r\n\r\n                    <span class=\"navbar-item\"> > </span>\r\n                    <a href=\"/seller/channel/product/insert\" class=\"navbar-item text-decoration-none\">\r\n                        Thêm Sản phẩm\r\n                    </a>\r\n                {{/if}}\r\n\r\n\r\n            </div>\r\n            <div class=\"navbar-end\">\r\n                <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                    <div href=\"#\" class=\"navbar-link\">\r\n                        <i class=\"fa fa-user-circle fa-3x\" aria-hidden=\"true\"></i>\r\n                        <p class=\"ml-3\">\r\n                            {{user.name}}\r\n                        </p>\r\n                    </div>\r\n\r\n                    <div class=\"navbar-dropdown\">\r\n                        <a class=\"navbar-item text-decoration-none\" href=\"/user/update-profile\">\r\n                            <i class=\"fa fa-user fa-2x mr-2\" aria-hidden=\"true\"></i>\r\n                            Thông tin cá nhân\r\n                        </a>\r\n                        <a class=\"navbar-item text-decoration-none\">\r\n                            <i class=\"fa fa-cube fa-2x mr-1\" aria-hidden=\"true\"></i>\r\n                            Kênh Người bán\r\n                        </a>\r\n                        <hr class=\"navbar-divider\">\r\n                        <form id=\"formLogout\" action=\"/account/logout\" method=\"post\"></form>\r\n                        <a class=\"navbar-item text-decoration-none\" href=\"javascript: $('#formLogout').submit();\">\r\n                            <i class=\"fa fa-sign-out fa-2x mr-2\" aria-hidden=\"true\"></i>\r\n                            Đăng xuất\r\n                        </a>\r\n                    </div>\r\n\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n    <section>\r\n        <div class=\"row\">\r\n            <div class=\"col-md-3 has-background-grey-light pt-6 min-vh-100\">\r\n                <aside class=\"menu\">\r\n                    <ul class=\"menu-list h4 mb-5\">\r\n                        <a class=\"menu-label {{#if ThongTinChung.isActive}}is-active{{/if}}\" href=\"/seller/channel\">\r\n                            <i class=\"fa fa-tachometer fa-2x \" aria-hidden=\"true\"></i>\r\n                            Thông Tin Chung\r\n                        </a>\r\n                    </ul>\r\n\r\n                    <ul class=\"menu-list h4 mb-5\">\r\n                        <li>\r\n                            <a class=\"menu-label\" href=\"/seller/channel/product\">\r\n                                <i class=\"fa fa-cube fa-2x\" aria-hidden=\"true\"></i>\r\n                                Quản lý Sản Phẩm\r\n                            </a>\r\n                            <ul>\r\n                                <li><a class=\"{{#if XemSanPham.isActive}}is-active{{/if}}\" href=\"/seller/channel/product\">Xem Sản phẩm</a></li>\r\n                                <li><a class=\"{{#if ThemSanPham.isActive}}is-active{{/if}}\" href=\"/seller/channel/product/insert\">Thêm Sản Phẩm</a></li>\r\n                            </ul>\r\n                        </li>\r\n                    </ul>\r\n\r\n                    <ul class=\"menu-list h4 mb-5\">\r\n                        <a class=\"menu-label {{#if DanhGia.isActive}}is-active{{/if}}\" href=\"/seller/channel\">\r\n                            <i class=\"fa fa-users fa-2x \" aria-hidden=\"true\"></i>\r\n                            Đánh giá của người mua\r\n                        </a>\r\n                    </ul>\r\n\r\n                </aside>\r\n            </div>\r\n\r\n            <div class=\"col-md-9\">\r\n                {{{body}}}\r\n            </div>\r\n        </div>\r\n    </section>\r\n\r\n    <script src=\"https://code.jquery.com/jquery-3.6.0.min.js\" crossorigin=\"anonymous\"></script>\r\n    <script src=\"https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js\" integrity=\"sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN\" crossorigin=\"anonymous\"></script>\r\n    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js\" integrity=\"sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2\" crossorigin=\"anonymous\"></script>\r\n    {{{_sections.js}}}\r\n</body>\r\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/views/layouts/seller.layout.hbs b/views/layouts/seller.layout.hbs
+--- a/views/layouts/seller.layout.hbs	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/views/layouts/seller.layout.hbs	(date 1641981330455)
+@@ -112,7 +112,7 @@
+                     </ul>
+ 
+                     <ul class="menu-list h4 mb-5">
+-                        <a class="menu-label {{#if DanhGia.isActive}}is-active{{/if}}" href="/seller/channel">
++                        <a class="menu-label {{#if DanhGia.isActive}}is-active{{/if}}" href="/user/comment-from-bidder/{{sellerID}}">
+                             <i class="fa fa-users fa-2x " aria-hidden="true"></i>
+                             Đánh giá của người mua
+                         </a>
+Index: testDB.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import productModel from \"./models/product-model.js\";\r\nimport {ObjectId} from \"mongodb\";\r\nimport accountModel from \"./models/account-model.js\";\r\nimport mailing from \"./utils/mailing.js\";\r\nimport modelCategory from \"./models/category-model.js\";\r\nimport bid from \"./routes/bid.js\";\r\n\r\n\r\n\r\nasync function testFunc(){\r\n    const data = await productModel.updateSellerComment(\"61dd56be195a3566089d33a4\", false);\r\n}\r\n\r\nawait testFunc();\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/testDB.js b/testDB.js
+--- a/testDB.js	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/testDB.js	(date 1641979757040)
+@@ -8,7 +8,8 @@
+ 
+ 
+ async function testFunc(){
+-    const data = await productModel.updateSellerComment("61dd56be195a3566089d33a4", false);
++    const data = await accountModel.getCommentOfSeller(new ObjectId("61be966d0b93276ccd0da00f"));
++    console.log(data[0]);
+ }
+ 
+ await testFunc();
+Index: views/seller/channel_product_detail_listBider.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{{#section 'js'}}\r\n    <script>\r\n\r\n    </script>\r\n{{/section}}\r\n\r\n{{#section 'css'}}\r\n    <style>\r\n        .modal{\r\n            z-index: 999999;\r\n        }\r\n    </style>\r\n\r\n{{/section}}\r\n\r\n<!--<form method=\"post\" action=\"/seller/channel/product/detail/{{this.productID}}/list\">-->\r\n<!--    <input type=\"text\" name=\"userID\" id=\"userIDInput\" hidden>-->\r\n<!--</form>-->\r\n\r\n<div class=\"container\">\r\n    <div class=\"row justify-content-between my-5\">\r\n        <b class=\"h3\">Danh sách bidder đã đấu giá</b>\r\n        <a class=\"btn btn-outline-primary m-0\" href=\"/seller/channel/product/detail/{{this.productID}}\" role=\"button\">\r\n            <i class=\"fa fa-backward\" aria-hidden=\"true\"></i>\r\n            Quay lại\r\n        </a>\r\n    </div>\r\n\r\n\r\n    {{#if emptyMsg}}\r\n        <p class=\"text-danger h1\">{{this.emptyMsg}}</p>\r\n    {{else}}\r\n        <div class=\"row\">\r\n            <div class=\"card w-100\">\r\n                <div class=\"card-body\">\r\n                    <table class=\"table table-hover\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th scope=\"col p-0\">#</th>\r\n                            <th scope=\"col\">Thời điểm</th>\r\n                            <th scope=\"col\">Người mua</th>\r\n                            <th scope=\"col\">Giá</th>\r\n                            <th scope=\"col\"></th>\r\n                        </tr>\r\n                        </thead>\r\n\r\n                        <tbody>\r\n\r\n                        {{#each this.bidderHistory}}\r\n                            <tr>\r\n                                <th scope=\"row\">{{@index}}</th>\r\n                                <td>{{format_date dateBid}}</td>\r\n                                {{#each bidderInfo}}\r\n                                    <td>{{ email}}</td>\r\n\r\n                                    <td>{{format_number ../price}}</td>\r\n\r\n\r\n                                    <td class=\"text-right\">\r\n                                        <button type=\"button\" class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\"#deleteModal{{_id}}\">\r\n                                            <i class=\"fa fa-ban mr-2\" aria-hidden=\"true\"></i>\r\n                                            <span>\r\n                                                Từ chối\r\n                                            </span>\r\n                                        </button>\r\n\r\n                                        <a type=\"button\" class=\"btn btn-outline-primary\" href=\"#\">\r\n                                            <i class=\"fa fa-eye mr-2\" aria-hidden=\"true\"></i>\r\n                                            <span>\r\n                                                Xem đánh giá\r\n                                            </span>\r\n                                        </a>\r\n                                    </td>\r\n\r\n                                    <div class=\"modal fade\" id=\"deleteModal{{_id}}\" tabindex=\"-1\" aria-labelledby=\"deleteModalLabel\" aria-hidden=\"true\">\r\n                                        <div class=\"modal-dialog\">\r\n                                            <div class=\"modal-content\">\r\n                                                <div class=\"modal-header\">\r\n                                                    <h5 class=\"modal-title\" id=\"deleteModalLabel\">Modal title</h5>\r\n                                                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\r\n                                                        <span aria-hidden=\"true\">&times;</span>\r\n                                                    </button>\r\n                                                </div>\r\n                                                <div class=\"modal-body\">\r\n                                                    Bạn có chắc muốn từ chối người mua này không ?\r\n                                                </div>\r\n                                                <div class=\"modal-footer\">\r\n                                                    <button type=\"button\" class=\"btn\" data-dismiss=\"modal\">No</button>\r\n\r\n                                                    <form method=\"post\" action=\"\">\r\n                                                        <input name=\"userID\" value=\"{{_id}}\" hidden>\r\n                                                        <button type=\"submit\" class=\"btn btn-primary\" onclick=\"alert({{_id}})\">Yes</button>\r\n                                                    </form>\r\n                                                </div>\r\n                                            </div>\r\n                                        </div>\r\n                                    </div>\r\n                                {{/each}}\r\n\r\n                            </tr>\r\n                        {{/each}}\r\n                        </tbody>\r\n                    </table>\r\n\r\n                </div>\r\n                <div class=\"card-footer text-muted\">\r\n                    <nav class=\"pagination is-right is-rounded is-medium\" role=\"navigation\" aria-label=\"pagination\">\r\n                        {{#if this.prevPage.check}}\r\n                            <a class=\"pagination-previous page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/detail/{{this.productID}}/list/?page={{this.prevPage.value}}\">Previous page</a>\r\n                        {{/if}}\r\n\r\n                        {{#if this.nextPage.check}}\r\n                            <a class=\"pagination-next page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/detail/{{this.productID}}/list/?page={{this.nextPage.value}}\">Next page</a>\r\n                        {{/if}}\r\n\r\n                        <ul class=\"pagination-list\">\r\n                            {{#if this.prevPage.check}}\r\n                                <li><a class=\"pagination-link page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/detail/{{this.productID}}/list/?page={{this.prevPage.value}}\">{{this.prevPage.value}}</a></li>\r\n                            {{/if}}\r\n\r\n                            <li><a style=\"text-decoration:none\" class=\"pagination-link is-current\">{{this.curPage.value}}</a></li>\r\n\r\n                            {{#if this.nextPage.check}}\r\n                                <li><a class=\"pagination-link page-link\" style=\"text-decoration:none\" href=\"/seller/channel/product/detail/{{this.productID}}/list/?page={{this.nextPage.value}}\">{{this.nextPage.value}}</a></li>\r\n                            {{/if}}\r\n                        </ul>\r\n                    </nav>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    {{/if}}\r\n\r\n</div>\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/views/seller/channel_product_detail_listBider.hbs b/views/seller/channel_product_detail_listBider.hbs
+--- a/views/seller/channel_product_detail_listBider.hbs	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/views/seller/channel_product_detail_listBider.hbs	(date 1641974945273)
+@@ -64,7 +64,7 @@
+                                             </span>
+                                         </button>
+ 
+-                                        <a type="button" class="btn btn-outline-primary" href="#">
++                                        <a type="button" class="btn btn-outline-primary" href="/user/comment-from-seller/{{_id}}">
+                                             <i class="fa fa-eye mr-2" aria-hidden="true"></i>
+                                             <span>
+                                                 Xem đánh giá
+Index: middlewares/local.mdw.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import categoryModel from '../models/category-model.js'\r\n\r\nexport default function (app) {\r\n    app.use(async function (req, res, next) {\r\n        // res.locals.lcCategories[1].isActive = 1;\r\n        res.locals.ThongTinChung = {isActive:false};\r\n        res.locals.XemSanPham = {isActive:false};\r\n        res.locals.ThemSanPham = {isActive:false};\r\n        res.locals.XemChiTiet = {isActive:false};\r\n        res.locals.DanhGia = {isActive:false};\r\n        next();\r\n    });\r\n    app.use(async function (req, res, next) {\r\n        res.locals.bidderRole = false;\r\n        res.locals.sellerRole = false;\r\n        res.locals.adminRole = false;\r\n        if (typeof (req.session.auth) === 'undefined')\r\n            req.session.auth = false;\r\n        res.locals.auth = req.session.auth;\r\n        if(typeof (req.session.user) !== 'undefined' && req.session.user !== null ){\r\n            const user = req.session.user[0];\r\n            res.locals.user = user;\r\n            if(user.role === 'bidder')\r\n                res.locals.bidderRole = true;\r\n            else if(user.role === 'seller')\r\n                res.locals.sellerRole = true;\r\n            else\r\n                res.locals.adminRole = true;\r\n        }\r\n        else\r\n            res.locals.user = req.session.user;\r\n        next();\r\n    });\r\n    app.use(async function (req, res, next) {\r\n        res.locals.categories = await categoryModel.getAll();\r\n        next();\r\n    });\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/middlewares/local.mdw.js b/middlewares/local.mdw.js
+--- a/middlewares/local.mdw.js	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/middlewares/local.mdw.js	(date 1641978543999)
+@@ -20,6 +20,9 @@
+         if(typeof (req.session.user) !== 'undefined' && req.session.user !== null ){
+             const user = req.session.user[0];
+             res.locals.user = user;
++
++            res.locals.sellerID = user._id;
++
+             if(user.role === 'bidder')
+                 res.locals.bidderRole = true;
+             else if(user.role === 'seller')
+@@ -29,6 +32,7 @@
+         }
+         else
+             res.locals.user = req.session.user;
++
+         next();
+     });
+     app.use(async function (req, res, next) {
+Index: views/layouts/seller.layout.insert.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <title>Home</title>\r\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css\" integrity=\"sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn\" crossorigin=\"anonymous\">\r\n    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css\">\r\n    <style>\r\n        .card-footer{\r\n            background-color: #fff;\r\n            border-radius: 50px !important;\r\n            margin: 5px;\r\n        }\r\n        .dropdown-item:hover{\r\n            cursor: pointer;\r\n        }\r\n        ul{\r\n            list-style-type: none;\r\n        }\r\n    </style>\r\n\r\n    {{{_sections.css}}}\r\n</head>\r\n<body>\r\n<nav class=\"navbar navbar-expand-md navbar-light bg-light\">\r\n    <div class=\"navbar-brand\">\r\n        <a class=\"navbar-brand\" href=\"#\">\r\n            <img src=\"https://bulma.io/images/bulma-logo.png\" width=\"112\" height=\"28\">\r\n        </a>\r\n    </div>\r\n\r\n    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\r\n        <span class=\"navbar-toggler-icon\"></span>\r\n    </button>\r\n\r\n    <div class=\"collapse navbar-collapse row\" id=\"navbarSupportedContent\">\r\n        <div class=\"col-6\">\r\n            <ul class=\"navbar-nav ml-5\">\r\n                <a href=\"/seller/channel\" class=\"navbar-item text-decoration-none\">\r\n                    Kênh người bán\r\n                </a>\r\n\r\n                {{#if XemSanPham.isActive}}\r\n                    <span class=\"navbar-item\"> > </span>\r\n                    <a href=\"/seller/channel/product\" class=\"navbar-item text-decoration-none\">\r\n                        Xem sản phẩm\r\n                    </a>\r\n                    {{#if XemChiTiet.isActive}}\r\n                        <span class=\"navbar-item\"> > </span>\r\n                        <p href=\"/seller/channel/product\" class=\"navbar-item text-decoration-none\">\r\n                            Xem Chi Tiết\r\n                        </p>\r\n                    {{/if}}\r\n                {{else if ThemSanPham.isActive}}\r\n\r\n                    <span class=\"navbar-item\"> > </span>\r\n                    <a href=\"/seller/channel/product/insert\" class=\"navbar-item text-decoration-none\">\r\n                        Thêm Sản phẩm\r\n                    </a>\r\n                {{/if}}\r\n            </ul>\r\n        </div>\r\n        <div class=\"col-6\">\r\n            <ul class=\"navbar-nav  \">\r\n                <li class=\"nav-item dropdown w-100 row justify-content-end \">\r\n                    <a class=\"nav-link dropdown-toggle active ml-auto\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\" aria-expanded=\"false\">\r\n                        <i class=\"fa fa-user-circle fa-3x\" aria-hidden=\"true\"></i>\r\n                        <b class=\"ml-3 h3\">\r\n                            {{user.name}}\r\n                        </b>\r\n                    </a>\r\n                    <div class=\"dropdown-menu dropdown-menu-right \" aria-labelledby=\"navbarDropdown\">\r\n                        <a class=\"dropdown-item text-decoration-none\">\r\n                            <i class=\"fa fa-user fa-2x mr-2\" aria-hidden=\"true\"></i>\r\n                            Thông tin cá nhân\r\n                        </a>\r\n                        <a class=\"dropdown-item text-decoration-none\">\r\n                            <i class=\"fa fa-cube fa-2x mr-1\" aria-hidden=\"true\"></i>\r\n                            Kênh Người bán\r\n                        </a>\r\n                        <hr class=\"dropdown-divider\">\r\n                        <a class=\"dropdown-item text-decoration-none\">\r\n                            <i class=\"fa fa-sign-out fa-2x mr-2\" aria-hidden=\"true\"></i>\r\n                            Đăng xuất\r\n                        </a>\r\n                    </div>\r\n                </li>\r\n            </ul>\r\n        </div>\r\n\r\n    </div>\r\n</nav>\r\n\r\n<section>\r\n    <div class=\"row\">\r\n        <div class=\"col-sm-3 pt-6 min-vh-100\" style=\"background-color: #bdc3c7\">\r\n            <aside class=\"menu \" >\r\n                <ul class=\"menu-list h4 mb-5\">\r\n                    <a class=\"text-decoration-none menu-label {{#if ThongTinChung.isActive}}is-active{{/if}}\" href=\"/seller/channel\">\r\n                        <i class=\"fa fa-tachometer fa-2x \" aria-hidden=\"true\"></i>\r\n                        Thông Tin Chung\r\n                    </a>\r\n                </ul>\r\n\r\n                <ul class=\"menu-list h4 mb-5\">\r\n                    <li>\r\n                        <a class=\"text-decoration-none menu-label\" href=\"/seller/channel/product\">\r\n                            <i class=\"fa fa-users fa-2x\" aria-hidden=\"true\"></i>\r\n                            Quản lý Sản Phẩm\r\n                        </a>\r\n                        <ul class=\"mt-3\">\r\n                            <li><a class=\"text-decoration-none {{#if XemSanPham.isActive}}is-active{{/if}}\" href=\"/seller/channel/product\">Xem Sản phẩm</a></li>\r\n                            <li class=\"mt-2\"><a class=\"text-decoration-none {{#if ThemSanPham.isActive}}is-active{{/if}}\" href=\"/seller/channel/product/insert\">Thêm Sản Phẩm</a></li>\r\n                        </ul>\r\n                    </li>\r\n\r\n                </ul>\r\n\r\n            </aside>\r\n        </div>\r\n\r\n        <div class=\"col-sm-9\">\r\n            {{{body}}}\r\n        </div>\r\n    </div>\r\n</section>\r\n\r\n<script src=\"https://code.jquery.com/jquery-3.6.0.min.js\" crossorigin=\"anonymous\"></script>\r\n<script src=\"https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js\" integrity=\"sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN\" crossorigin=\"anonymous\"></script>\r\n<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js\" integrity=\"sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2\" crossorigin=\"anonymous\"></script>\r\n{{{_sections.js}}}\r\n</body>\r\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/views/layouts/seller.layout.insert.hbs b/views/layouts/seller.layout.insert.hbs
+--- a/views/layouts/seller.layout.insert.hbs	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/views/layouts/seller.layout.insert.hbs	(date 1641978309733)
+@@ -17,12 +17,34 @@
+         ul{
+             list-style-type: none;
+         }
++        body{
++            color: #4a4a4a;
++            font-size: 1em;
++            font-weight: 400;
++            line-height: 1.5;
++        }
++        aside a{
++            color: #4a4a4a;
++            font-size: 1em;
++            font-weight: 400;
++            line-height: 1.5;
++            display: block;
++            padding: 10px;
++
++        }
++
++        nav a{
++            color: #4a4a4a;
++            font-size: 1em;
++            font-weight: 400;
++            line-height: 1.5;
++        }
+     </style>
+ 
+     {{{_sections.css}}}
+ </head>
+ <body>
+-<nav class="navbar navbar-expand-md navbar-light bg-light">
++<nav class="navbar navbar-expand-md " style="background-color: #b5b5b5;">
+     <div class="navbar-brand">
+         <a class="navbar-brand" href="#">
+             <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+@@ -42,7 +64,7 @@
+ 
+                 {{#if XemSanPham.isActive}}
+                     <span class="navbar-item"> > </span>
+-                    <a href="/seller/channel/product" class="navbar-item text-decoration-none">
++                    <a href="/seller/channel/product" class="navbar-item text-decoration-none" >
+                         Xem sản phẩm
+                     </a>
+                     {{#if XemChiTiet.isActive}}
+@@ -70,16 +92,16 @@
+                         </b>
+                     </a>
+                     <div class="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdown">
+-                        <a class="dropdown-item text-decoration-none">
++                        <a class="dropdown-item text-decoration-none" href="/user/update-profile">
+                             <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
+                             Thông tin cá nhân
+                         </a>
+-                        <a class="dropdown-item text-decoration-none">
++                        <a class="dropdown-item text-decoration-none" >
+                             <i class="fa fa-cube fa-2x mr-1" aria-hidden="true"></i>
+                             Kênh Người bán
+                         </a>
+                         <hr class="dropdown-divider">
+-                        <a class="dropdown-item text-decoration-none">
++                        <a class="dropdown-item text-decoration-none"  href="javascript: $('#formLogout').submit();">
+                             <i class="fa fa-sign-out fa-2x mr-2" aria-hidden="true"></i>
+                             Đăng xuất
+                         </a>
+@@ -93,27 +115,33 @@
+ 
+ <section>
+     <div class="row">
+-        <div class="col-sm-3 pt-6 min-vh-100" style="background-color: #bdc3c7">
+-            <aside class="menu " >
+-                <ul class="menu-list h4 mb-5">
++        <div class="col-sm-3 pt-6 min-vh-100" style="background-color: #b5b5b5">
++            <aside class="menu  p-3"  >
++                <ul class="menu-list h4 mb-5 pl-2 mt-5">
+                     <a class="text-decoration-none menu-label {{#if ThongTinChung.isActive}}is-active{{/if}}" href="/seller/channel">
+                         <i class="fa fa-tachometer fa-2x " aria-hidden="true"></i>
+                         Thông Tin Chung
+                     </a>
+                 </ul>
+ 
+-                <ul class="menu-list h4 mb-5">
+-                    <li>
+-                        <a class="text-decoration-none menu-label" href="/seller/channel/product">
+-                            <i class="fa fa-users fa-2x" aria-hidden="true"></i>
++                <ul class="menu-list h4 mb-5 pl-2 ">
++                    <li >
++                        <a class="text-decoration-none menu-label " href="/seller/channel/product">
++                            <i class="fa fa-cube fa-2x" aria-hidden="true"></i>
+                             Quản lý Sản Phẩm
+                         </a>
+-                        <ul class="mt-3">
++                        <ul class="mt-3" style="border-left: 1px solid #FFFFFF">
+                             <li><a class="text-decoration-none {{#if XemSanPham.isActive}}is-active{{/if}}" href="/seller/channel/product">Xem Sản phẩm</a></li>
+-                            <li class="mt-2"><a class="text-decoration-none {{#if ThemSanPham.isActive}}is-active{{/if}}" href="/seller/channel/product/insert">Thêm Sản Phẩm</a></li>
++                            <li class="mt-2"><a class="text-decoration-none w-100" style="background-color: #485fc7; color: #FFFFFF" href="/seller/channel/product/insert">Thêm Sản Phẩm</a></li>
+                         </ul>
+                     </li>
++                </ul>
+ 
++                <ul class="menu-list h4 mb-5 pl-2">
++                    <a class="menu-label {{#if DanhGia.isActive}}is-active{{/if}}" href="/seller/evaluate/{{sellerID}}">
++                        <i class="fa fa-users fa-2x " aria-hidden="true"></i>
++                        Đánh giá của người mua
++                    </a>
+                 </ul>
+ 
+             </aside>
+Index: views/viewAccountBidder/comment-from-seller.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{{#section 'js'}}\r\n    <script>\r\n        $('#homePageNavbar').hide();\r\n\r\n    </script>\r\n{{/section}}\r\n<div class=\"container-fluid\">\r\n    <div class=\"row\">\r\n        <div class=\"col-sm-3 has-background-grey-lighter\">\r\n            <ul class=\"nav flex-column\">\r\n                <div class=\"h4 text-center ml-auto mr-auto p-4\">Hồ sơ</div>\r\n                <li class=\"nav-item\">\r\n                    <div class=\"h6 text-center\">Điểm đánh giá: {{this.total}}</div>\r\n                </li>\r\n                <li class=\"nav-item\">\r\n                    <div class=\"h6 text-center\">Đánh giá tích cực: {{this.likeRate}}%</div>\r\n                </li>\r\n                <li class=\"nav-item\">\r\n                    <div class=\"h6 text-center\">Đánh giá tiêu cực: {{this.dislikeRate}}%</div>\r\n                </li>\r\n            </ul>\r\n        </div>\r\n        <div class=\"col-sm-9\">\r\n            {{#each this.product}}\r\n                {{#each details}}\r\n                <div class=\"card mb-2 ml-auto mr-auto\" style=\"width: 70vw;\">\r\n                    <div class=\"row no-gutters\">\r\n                        <div class=\"col-md-2\">\r\n                            <img src=\"...\" class=\"card-img\" alt=\"...\">\r\n                        </div>\r\n                        <div class=\"col-md-9\">\r\n                            <div class=\"card-body\">\r\n                                <h5 class=\"card-title\"><strong>{{proName}}</strong></h5>\r\n                {{/each}}\r\n\r\n                                <p class=\"card-text\">Nội dung: {{sellerComment}}</p>\r\n<!--                                <div class=\"d-flex\">-->\r\n<!--                                    <p class=\"card-text\"><small class=\"text-muted\">sellerRate</small></p>-->\r\n<!--&lt;!&ndash;                                    <div class=\"flex-fill\"><a href=\"#\"><button class=\"btn btn-primary float-right\" aria-hidden=\"true\">Nhận xét</button></a></div>&ndash;&gt;-->\r\n<!--                                </div>-->\r\n                            </div>\r\n                        </div>\r\n                        {{#if sellerRate}}\r\n                            <div class=\"col-md-1\">\r\n                                <i class=\"fa fa-thumbs-o-up fa-4x mt-lg-3\" aria-hidden=\"true\"></i>\r\n                            </div>\r\n                            {{else}}\r\n                            <div class=\"col-md-1\">\r\n                                <i class=\"fa fa-thumbs-o-down fa-4x mt-lg-3\" aria-hidden=\"true\"></i>\r\n                            </div>\r\n                        {{/if}}\r\n\r\n                    </div>\r\n                </div>\r\n                {{else}}\r\n                <p class=\"h4 text-center mt-5\">Chưa có đánh giá nào từ người bán</p>\r\n            {{/each}}\r\n        </div>\r\n\r\n    </div>\r\n</div>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/views/viewAccountBidder/comment-from-seller.hbs b/views/viewAccountBidder/comment-from-seller.hbs
+--- a/views/viewAccountBidder/comment-from-seller.hbs	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/views/viewAccountBidder/comment-from-seller.hbs	(date 1641981080745)
+@@ -4,7 +4,7 @@
+ 
+     </script>
+ {{/section}}
+-<div class="container-fluid">
++<div class="container-fluid min-vh-100">
+     <div class="row">
+         <div class="col-sm-3 has-background-grey-lighter">
+             <ul class="nav flex-column">
+@@ -26,7 +26,7 @@
+                 <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
+                     <div class="row no-gutters">
+                         <div class="col-md-2">
+-                            <img src="..." class="card-img" alt="...">
++                            <img src="/public/{{_id}}/{{mainThumb}}" class="card-img" alt="...">
+                         </div>
+                         <div class="col-md-9">
+                             <div class="card-body">
+@@ -44,7 +44,7 @@
+                             <div class="col-md-1">
+                                 <i class="fa fa-thumbs-o-up fa-4x mt-lg-3" aria-hidden="true"></i>
+                             </div>
+-                            {{else}}
++                        {{else}}
+                             <div class="col-md-1">
+                                 <i class="fa fa-thumbs-o-down fa-4x mt-lg-3" aria-hidden="true"></i>
+                             </div>
+Index: models/account-model.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import mongoClient from '../utils/db.js'\r\nimport { ObjectId } from \"mongodb\";\r\nimport productMD from \"./product-model.js\";\r\n\r\nconst list = [\r\n    {productID: 0, name: 'bàn gỗ 1fffffffffffffffffffffffff'},\r\n    {productID: 1, name: 'bàn gỗ 2'},\r\n    {productID: 2, name: 'bàn gỗ 3'},\r\n    {productID: 3, name: 'bàn gỗ 4'},\r\n];\r\n\r\nasync function findByIDFunc(collection, userID,proID){\r\n    return collection.findOne({userID: new ObjectId(userID), proID: new ObjectId(proID)})\r\n}\r\n\r\nasync function showFavoriteListFunc(collection, id) {\r\n    return await collection.aggregate([\r\n        { $match: { userID: new ObjectId(id) } },\r\n        { $lookup:\r\n                {\r\n                    from: 'product',\r\n                    localField: 'proID',\r\n                    foreignField: '_id',\r\n                    as: 'details'\r\n                }\r\n        }\r\n    ]).toArray();\r\n}\r\n\r\nasync function showBidderHistoryFunc(collection, id) {\r\n    // let time = moment().format();\r\n    return await collection.aggregate([\r\n        { $match: { userID: new ObjectId(id) } },\r\n        { $lookup:\r\n                {\r\n                    from: 'product',\r\n                    localField: 'proID',\r\n                    foreignField: '_id',\r\n                    as: 'details'\r\n                }\r\n        }\r\n    ]).toArray();\r\n}\r\n\r\nasync function showAllCommentFunc(collection, id) {\r\n    // let time = moment().format();\r\n    return await collection.aggregate([\r\n        { $match: { bidderID: id } },\r\n        { $lookup:\r\n                {\r\n                    from: 'product',\r\n                    localField: 'proID',\r\n                    foreignField: '_id',\r\n                    as: 'details'\r\n                }\r\n        }\r\n    ]).toArray();\r\n}\r\n\r\nasync function getCommentWithProIDFunc(collection, ProID) {\r\n    // let time = moment().format();\r\n    return await collection.aggregate([\r\n        { $match: { \"proID\": new ObjectId(ProID) } }\r\n    ]).toArray();\r\n}\r\n\r\n\r\n// async function showFavoriteListFunc(collection, id) {\r\n//     let userFavorite = await collection.find({userID: id},{}).toArray();\r\n//     userFavorite.list\r\n// }\r\n\r\nasync function deleteOneFavoriteFunc(collection, userID, proID) {\r\n    return collection.findOneAndDelete({userID: new ObjectId(userID),proID: new ObjectId(proID)})\r\n}\r\n\r\nasync function addOneFavoriteFunc(collection, userID, proID) {\r\n    return collection.insertOne({userID: new ObjectId(userID),proID: new ObjectId(proID)})\r\n}\r\n\r\nasync function bidderCommentFunc(dbo,collection, userID, proID, productDetail,rate, comment) {\r\n    if(productDetail.isBidderComment)\r\n        return\r\n    const check = await collection.findOne({proID: proID});\r\n    if(check === null) {\r\n        dbo.collection('product').findOneAndUpdate({_id: new ObjectId(proID)}, {$set: {isBidderComment: true}})\r\n        return collection.insertOne({\r\n            proID: new ObjectId(proID),\r\n            bidderComment: comment,\r\n            sellerComment: \"\",\r\n            bidderRate: rate,\r\n            sellerRate: false,\r\n            bidderID: userID,\r\n            sellerID: productDetail.sellerInfo\r\n        })\r\n    }\r\n    else{\r\n        dbo.collection('product').updateOne({_id: new ObjectId(proID)}, {$set: {isBidderComment: true}})\r\n        return collection.updateOne({proID: new ObjectId(proID)}, {$set: {bidderComment: comment, bidderRate: rate}})\r\n    }\r\n}\r\n\r\nasync function countTotalAccountFunc(collection, role, keyword) {\r\n    if(role)\r\n        return await collection.find({role: role}).count();\r\n    else if(keyword) {\r\n        const result = await collection.aggregate([\r\n            {\r\n                '$search':{\r\n                    'index': 'custom1',\r\n                    'text': {\r\n                        'query': keyword,\r\n                        'path': 'email',\r\n                        'fuzzy': {}\r\n                    }\r\n                }\r\n            },\r\n            {\r\n                $count: 'total'\r\n            }]).toArray();\r\n        if(result.length === 0)\r\n            return 0;\r\n        return result[0].total;\r\n    }\r\n    else\r\n        return await collection.find().count();\r\n}\r\n\r\nasync function getLimitAccountFunc(collection, limit, offset, role, keyword) {\r\n    if(role)\r\n        return await collection.find({role: role}).skip(offset).limit(limit).toArray()\r\n    else if(keyword) {\r\n        return await collection.aggregate([\r\n            {\r\n                '$search':{\r\n                    'index': 'custom1',\r\n                    'text': {\r\n                        'query': keyword,\r\n                        'path': 'email',\r\n                        'fuzzy': {}\r\n                    }\r\n                }\r\n            }]).skip(offset).limit(limit).toArray();\r\n    }\r\n    else\r\n        return await collection.find().skip(offset).limit(limit).toArray()\r\n}\r\n\r\nasync function lockAccountFunc(collection, id) {\r\n    await collection.updateOne({_id: new ObjectId(id)}, {$set: {verified: false}});\r\n}\r\n\r\nasync function downgradeAccountFunc(collection, id) {\r\n    await collection.updateOne({_id: new ObjectId(id)}, {$set: {role: 'bidder'}});\r\n}\r\n\r\nasync function unlockAccountFunc(collection, id) {\r\n    await collection.updateOne({_id: new ObjectId(id)}, {$set: {verified: true}});\r\n}\r\n\r\nasync function getLimitUpgradeListFunc(collection, limit, offset) {\r\n    return await collection.aggregate([\r\n        {\r\n            $lookup: {\r\n                from: 'account',\r\n                localField: 'userId',\r\n                foreignField: '_id',\r\n                as: 'info'\r\n            }\r\n        }\r\n    ]).toArray();\r\n}\r\n\r\nasync function countTotalUpgradeListFunc(collection) {\r\n    return await collection.find().count();\r\n}\r\n\r\nasync function upgradeAccountFunc(collection, id) {\r\n    await collection.updateOne({_id: new ObjectId(id)}, {$set: {role: 'seller'}});\r\n}\r\n\r\nasync function deleteUpgradeRequestFunc(collection, id) {\r\n    return await collection.findOneAndDelete({userId: new ObjectId(id)});\r\n}\r\n\r\nasync function deleteAccountFunc(collection, id) {\r\n    return await collection.findOneAndDelete({_id: new ObjectId(id)});\r\n}\r\n\r\n// <<<<<<< Updated upstream\r\nasync function updateCommentFromProID(collection, proID, commentData){\r\n    const myQuery = { proID : proID};\r\n    const newValues = { $set:\r\n            {\r\n                bidderComment: commentData.bidderComment,\r\n                sellerComment: commentData.sellerComment,\r\n                bidderRate: commentData.bidderRate,\r\n                sellerRate: commentData.sellerRate,\r\n                bidderID: commentData.bidderID,\r\n                sellerID: commentData.sellerID\r\n            }\r\n    };\r\n    await collection.updateOne(myQuery, newValues);\r\n}\r\n\r\nasync function insertNewCommentFunc(collection, commentOfProduct){\r\n    await collection.insertOne(commentOfProduct);\r\n}\r\n\r\n// =======\r\nasync function getInforBidderAccountFunc(collection, id) {\r\n    return await collection.findOne({_id: new ObjectId(id)});\r\n}\r\n\r\nasync function updateBidderInforFunc(collection, userID, newName, newAddress) {\r\n\r\n    return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {name: newName, address: newAddress}})\r\n}\r\nasync function updateBidderPassFunc(collection, userID, newPass) {\r\n    return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {pass: newPass}})\r\n}\r\nasync function findByUserIDFunc(collection, userID){\r\n    return await collection.findOne({_id :  new ObjectId(userID)});\r\n}\r\n\r\nasync function sendUpgradeSellerFunc(collection, userID) {\r\n    const isDuplicate = await collection.findOne({userID: new ObjectId(userID)})\r\n    console.log(isDuplicate)\r\n    if(isDuplicate === null){\r\n        await collection.insertOne({\r\n                userID: new ObjectId(userID),\r\n                date: new Date()\r\n            })\r\n        return true\r\n    }\r\n    else\r\n        return false\r\n\r\n    // return collection.insertOne({\r\n    //     dateBid: new Date(),\r\n    //     price: price,\r\n    //     curProPrice: curProPrice.toString(),\r\n    //     userID: new ObjectId(userID),\r\n    //     proID: new ObjectId(proID),\r\n    //     isDenied: 0\r\n    // })\r\n}\r\n\r\n// >>>>>>> Stashed changes\r\nexport default {\r\n    async findByID(userID){\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await findByUserIDFunc(collection, userID);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async showFavoriteList(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('favoriteList');\r\n            return await showFavoriteListFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    getProductsOnAuction (list){\r\n        let listTemp = [];\r\n        console.log(list)\r\n        list.forEach(function (e) {\r\n            if(e.details.length !== 0){\r\n                let date = new Date()\r\n                if(e.details[0].proEndDate.getTime() > date.getTime())\r\n                    listTemp.push(e)\r\n            }\r\n\r\n        })\r\n        return listTemp;\r\n    },\r\n    getSuccessfulAuction(userID,list){\r\n        let listTemp = [];\r\n        console.log(list)\r\n        list.forEach(function (e) {\r\n            if(e.details.length != 0){\r\n                var date = new Date()\r\n                if( e.details[0].proEndDate.getTime() <= date.getTime()&& e.details[0].curBidderInfo.toString() ===  userID)\r\n                    listTemp.push(e)\r\n\r\n            }\r\n\r\n        })\r\n        return listTemp;\r\n    },\r\n    removeDuplicatesHistory(list){\r\n        let listTemp = [];\r\n        console.log(list)\r\n        list.forEach(function (e) {\r\n            let check =0;\r\n            for(var i =0; i < listTemp.length; i++){\r\n                if(e.proID.toString === listTemp.proID.toString){\r\n                    check = 1;\r\n                    break\r\n                }\r\n            }\r\n            if(check === 0)\r\n                listTemp.push(e)\r\n        })\r\n        return listTemp;\r\n    },\r\n    async deleteOneFavorite(userID, proID) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('favoriteList');\r\n            await deleteOneFavoriteFunc(collection, userID, proID);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async addOneFavorite(userID, proID) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('favoriteList');\r\n            const check = await findByIDFunc(collection, userID, proID);\r\n            console.log(check)\r\n            if(check  === null ){\r\n                await addOneFavoriteFunc(collection, userID, proID);\r\n            };\r\n\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async showBidderHistory(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('bidderHistory');\r\n            // await collection.deleteMany({})\r\n            return await showBidderHistoryFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close();\r\n        }\r\n    },\r\n    async getInforBidderAccount(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await getInforBidderAccountFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close();\r\n        }\r\n    },\r\n    async updateBidderInfor(id, newName, newAddress) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await updateBidderInforFunc(collection, id, newName, newAddress);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close();\r\n        }\r\n    },\r\n    async updateBidderPass(id, newPass) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await updateBidderPassFunc(collection, id, newPass);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close();\r\n        }\r\n    },\r\n    async bidderComment(userID, proID,productDetail,rate,comment ) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('comment');\r\n            await bidderCommentFunc(db,collection,userID, proID,productDetail,rate,comment);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async showAllComment(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('comment');\r\n            return await showAllCommentFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async getCommentWithProID(ProID) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('comment');\r\n            return await getCommentWithProIDFunc(collection, ProID);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    getCommentFromeSeller(list) {\r\n        var commentFromeSellerList = []\r\n        list.forEach(function (e){\r\n            if(e.details[0].isSellerComment)\r\n                commentFromeSellerList.push(e)\r\n        })\r\n        return commentFromeSellerList;\r\n    },\r\n    countGoodComment(list) {\r\n        var countGoodComment = 0\r\n        list.forEach(function (e){\r\n            if(e.sellerRate)\r\n                countGoodComment++\r\n        })\r\n        return countGoodComment;\r\n    },\r\n    async countTotalAccount(role, keyword) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await countTotalAccountFunc(collection, role, keyword);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async getLimitAccount(limit, offset, role, keyword) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await getLimitAccountFunc(collection, limit, offset, role, keyword);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async lockAccount(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await lockAccountFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async downgradeAccount(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await downgradeAccountFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async unlockAccount(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await unlockAccountFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async getLimitUpgradeList(limit, offset) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('updateList');\r\n            return await getLimitUpgradeListFunc(collection, limit, offset);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async countTotalUpgradeList() {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('updateList');\r\n            return await countTotalUpgradeListFunc(collection);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async upgradeAccount(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await upgradeAccountFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async deleteUpgradeRequest(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('updateList');\r\n            return await deleteUpgradeRequestFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async deleteAccount(id) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('account');\r\n            return await deleteAccountFunc(collection, id);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n// <<<<<<< Updated upstream\r\n    async updateCommentFromProID(proID, commentData) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('comment');\r\n            return await updateCommentFromProID(collection, proID, commentData);\r\n\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    // =======\r\n\r\n// >>>>>>> Stashed changes\r\n// <<<<<<< Updated upstream\r\n    async insertNewComment(commentOfProduct) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('comment');\r\n            return await insertNewCommentFunc(collection, commentOfProduct);\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    },\r\n    async sendUpgradingSeller(userID) {\r\n        try {\r\n            await mongoClient.connect();\r\n            const db = mongoClient.db('onlineauction');\r\n            const collection = db.collection('updateList');\r\n            if(await sendUpgradeSellerFunc(collection, userID))\r\n                return true\r\n            return false\r\n        } catch (e) {\r\n            console.error(e);\r\n        } finally {\r\n            await mongoClient.close()\r\n        }\r\n    }\r\n// =======\r\n// >>>>>>> Stashed changes\r\n}\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/models/account-model.js b/models/account-model.js
+--- a/models/account-model.js	(revision 6f0ef61f33170393f84046cf849b8814b1966584)
++++ b/models/account-model.js	(date 1641979701278)
+@@ -246,6 +246,20 @@
+     // })
+ }
+ 
++async function getCommentOfSellerFunc(collection, userID){
++    return await collection.aggregate([
++        { $match: { sellerID: userID } },
++        { $lookup:
++                {
++                    from: 'product',
++                    localField: 'proID',
++                    foreignField: '_id',
++                    as: 'details'
++                }
++        }
++    ]).toArray();
++}
++
+ // >>>>>>> Stashed changes
+ export default {
+     async findByID(userID){
+@@ -608,9 +622,21 @@
+         } finally {
+             await mongoClient.close()
+         }
+-    }
++    },
+ // =======
+ // >>>>>>> Stashed changes
++    async getCommentOfSeller(userID) {
++        try {
++            await mongoClient.connect();
++            const db = mongoClient.db('onlineauction');
++            const collection = db.collection('comment');
++            return await getCommentOfSellerFunc(collection, userID);
++        } catch (e) {
++            console.error(e);
++        } finally {
++            await mongoClient.close()
++        }
++    }
+ }
+ 
+ 
+Index: views/viewAccountBidder/comment-from-bidder.hbs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/views/viewAccountBidder/comment-from-bidder.hbs b/views/viewAccountBidder/comment-from-bidder.hbs
+new file mode 100644
+--- /dev/null	(date 1641981128615)
++++ b/views/viewAccountBidder/comment-from-bidder.hbs	(date 1641981128615)
+@@ -0,0 +1,61 @@
++{{#section 'js'}}
++    <script>
++        $('#homePageNavbar').hide();
++
++    </script>
++{{/section}}
++<div class="container-fluid min-vh-100">
++    <div class="row">
++        <div class="col-sm-3 has-background-grey-lighter">
++            <ul class="nav flex-column">
++                <div class="h4 text-center ml-auto mr-auto p-4">Hồ sơ</div>
++                <li class="nav-item">
++                    <div class="h6 text-center">Điểm đánh giá: {{this.total}}</div>
++                </li>
++                <li class="nav-item">
++                    <div class="h6 text-center">Đánh giá tích cực: {{this.likeRate}}%</div>
++                </li>
++                <li class="nav-item">
++                    <div class="h6 text-center">Đánh giá tiêu cực: {{this.dislikeRate}}%</div>
++                </li>
++            </ul>
++        </div>
++        <div class="col-sm-9">
++            {{#each this.product}}
++                {{#each details}}
++                <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
++                    <div class="row no-gutters">
++                        <div class="col-md-2">
++                            <img src="/public/{{_id}}/{{mainThumb}}" class="card-img" alt="...">
++                        </div>
++                        <div class="col-md-9">
++                            <div class="card-body">
++                                <h5 class="card-title"><strong>{{proName}}</strong></h5>
++                {{/each}}
++
++                                <p class="card-text">Nội dung: {{bidderComment}}</p>
++<!--                                <div class="d-flex">-->
++<!--                                    <p class="card-text"><small class="text-muted">sellerRate</small></p>-->
++<!--&lt;!&ndash;                                    <div class="flex-fill"><a href="#"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a></div>&ndash;&gt;-->
++<!--                                </div>-->
++                            </div>
++                        </div>
++                        {{#if bidderRate}}
++                            <div class="col-md-1">
++                                <i class="fa fa-thumbs-o-up fa-4x mt-lg-3" aria-hidden="true"></i>
++                            </div>
++                        {{else}}
++                            <div class="col-md-1">
++                                <i class="fa fa-thumbs-o-down fa-4x mt-lg-3" aria-hidden="true"></i>
++                            </div>
++                        {{/if}}
++
++                    </div>
++                </div>
++                {{else}}
++                <p class="h4 text-center mt-5">Chưa có đánh giá nào từ người bán</p>
++            {{/each}}
++        </div>
++
++    </div>
++</div>
+\ No newline at end of file

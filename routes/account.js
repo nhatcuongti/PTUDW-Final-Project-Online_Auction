@@ -6,6 +6,8 @@ import * as Console from "console";
 import moment from "moment/moment.js";
 import entryModel from "../models/entry-model.js";
 import bcrypt from "bcryptjs";
+import {ObjectId} from "mongodb";
+import fs from "fs";
 
 const router = express.Router();
 
@@ -131,9 +133,10 @@ router.post('/change-password',  async function (req, res) {
     await account.updateBidderPass(userID, bcrypt.hashSync(req.body.newPass, salt))
     res.redirect('back');
 });
-router.get('/comment-from-seller', auth, async function (req, res) {
-    const temp = req.session.user;
-    const userID = temp[0]._id;
+router.get('/comment-from-seller/:id', auth, async function (req, res) {
+    // const temp = req.session.user;
+    const id = req.params.id;
+    const userID = new ObjectId(id);
     let list = account.getCommentFromeSeller(await account.showAllComment(userID))
     const countList = Object.keys(list).length
     const countGoodComment = account.countGoodComment(list)
@@ -151,6 +154,59 @@ router.get('/comment-from-seller', auth, async function (req, res) {
         dislikeRate: dislikeRate
     });
 });
+
+router.get("/comment-from-bidder/:id", async (req, res) => {
+    res.locals.DanhGia.isActive = true;
+    const id = req.params.id;
+    const userID = new ObjectId(id);
+
+    let commentList = await account.getCommentOfSeller(userID);
+    for (let i = commentList.length - 1; i >= 0; i--){
+        if (!commentList[i].details[0].isBidderComment )
+            commentList.splice(i, 1);
+        else{
+            try{
+                const files = fs.readdirSync(`./public/${commentList[i].details[0]._id}/`);
+                const mainThumb = files[0];
+                commentList[i].details[0].mainThumb = mainThumb;
+            } catch(e){
+                console.log(e);
+            }
+
+        }
+    }
+
+    const countList = commentList.length;
+    let likeRate = 0;
+    let dislikeRate = 0;
+    for (const comment of commentList){
+        if (comment.bidderRate)
+            likeRate++;
+        else
+            dislikeRate++;
+    }
+
+
+
+
+    //List comment cua seller
+    //Tên Product
+    //Nội dung Comment tu Bidder
+    //Đánh giá của Bidder: bidderRate
+
+    res.render('viewAccountBidder/comment-from-seller', {
+        product: commentList,
+        //--Product
+        //  --details
+        //    --ProName
+        //    --ProID
+        //  --bidderRate
+        total: countList,
+        likeRate: likeRate,
+        dislikeRate: dislikeRate
+    });
+
+})
 
 router.get('/account/', async function (req, res) {
     const temp = req.session.user;

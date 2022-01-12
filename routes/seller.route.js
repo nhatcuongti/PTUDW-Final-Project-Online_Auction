@@ -12,6 +12,7 @@ import accountModel from "../models/account-model.js";
 import mailing from "../utils/mailing.js";
 import {authUserWithProduct} from "../middlewares/auth-mdw.js";
 import rollbackProduct from "../utils/rollback-product.js";
+import account from "../models/account-model.js";
 
 const router = express.Router();
 
@@ -173,9 +174,6 @@ router.get("/channel/product/insert", async (req, res) => {
         layout: "seller.layout.insert.hbs",
         catList
     })
-
-
-
 })
 
 //Upload Image
@@ -222,8 +220,11 @@ router.post("/channel/product/insert", cpUpload, afterUploadImage, async (req, r
     //Change folder name
 
     req.body.index = undefined;
+
     const oldFolderName = "./public/image";
+
     const newFolderName = `./public/${req.body._id}`;
+
     fs.rename(oldFolderName, newFolderName, async (err) => {
         if (err){
             console.log("Some thing Wrong !!");
@@ -432,8 +433,66 @@ router.post("/channel/product/detail/:id/list", authUserWithProduct, async (req,
 
 })
 
-router.get("", async (req, res) => {
+router.get("/evaluate/:id", async (req, res) => {
     res.locals.DanhGia.isActive = true;
+    const id = req.params.id;
+    const userID = new ObjectId(id);
+    // let list = account.getCommentFromeSeller(await account.showAllComment(userID))
+    // const countList = Object.keys(list).length
+    // const countGoodComment = account.countGoodComment(list)
+    // let likeRate = 0;
+    // let dislikeRate = 0;
+    // if(countList != 0){
+    //     likeRate = Math.round(countGoodComment*1000.0/countList)/10
+    //     dislikeRate = Math.round((100 - likeRate)*10)/10
+    // }
+    // console.log(countList)
+    let commentList = await account.getCommentOfSeller(userID);
+    for (let i = commentList.length - 1; i >= 0; i--){
+        if (!commentList[i].details[0].isBidderComment )
+            commentList.splice(i, 1);
+        else{
+            try{
+                const files = fs.readdirSync(`./public/${commentList[i].details[0]._id}/`);
+                const mainThumb = files[0];
+                commentList[i].details[0].mainThumb = mainThumb;
+            } catch(e){
+                console.log(e);
+            }
+
+        }
+    }
+
+    const countList = commentList.length;
+    let likeRate = 0;
+    let dislikeRate = 0;
+    for (const comment of commentList){
+        if (comment.bidderRate)
+            likeRate++;
+        else
+            dislikeRate++;
+    }
+
+
+
+
+    //List comment cua seller
+    //Tên Product
+    //Nội dung Comment tu Bidder
+    //Đánh giá của Bidder: bidderRate
+
+    res.render('viewAccountBidder/comment-from-seller', {
+        layout: "seller.layout.hbs",
+        product: commentList,
+        //--Product
+        //  --details
+        //    --ProName
+        //    --ProID
+        //  --bidderRate
+        total: countList,
+        likeRate: likeRate,
+        dislikeRate: dislikeRate
+    });
 
 })
 

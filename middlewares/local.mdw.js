@@ -20,6 +20,9 @@ export default function (app) {
         if(typeof (req.session.user) !== 'undefined' && req.session.user !== null ){
             const user = req.session.user[0];
             res.locals.user = user;
+
+            res.locals.sellerID = user._id;
+
             if(user.role === 'bidder')
                 res.locals.bidderRole = true;
             else if(user.role === 'seller')
@@ -29,6 +32,7 @@ export default function (app) {
         }
         else
             res.locals.user = req.session.user;
+
         next();
     });
     app.use(async function (req, res, next) {

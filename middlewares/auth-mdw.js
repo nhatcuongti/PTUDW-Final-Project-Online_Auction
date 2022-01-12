@@ -26,6 +26,7 @@ export function authSeller(req, res, next) {
     }
     if (res.locals.sellerRole === false)
         return res.redirect('/');
+
     next();
 };
 

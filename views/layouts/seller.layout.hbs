@@ -32,25 +32,34 @@
             <div class="navbar-start">
 
                 <a href="/seller/channel" class="navbar-item text-decoration-none">
-                    Kênh người bán
+                    <strong>
+                        Kênh người bán
+                    </strong>
+
                 </a>
 
                 {{#if XemSanPham.isActive}}
                     <span class="navbar-item"> > </span>
                     <a href="/seller/channel/product" class="navbar-item text-decoration-none">
-                        Xem sản phẩm
+                        <strong>
+                            Xem sản phẩm
+                        </strong>
                     </a>
                     {{#if XemChiTiet.isActive}}
                         <span class="navbar-item"> > </span>
                         <p href="/seller/channel/product" class="navbar-item text-decoration-none">
-                            Xem Chi Tiết
+                            <strong>
+                                Xem Chi Tiết
+                            </strong>
                         </p>
                     {{/if}}
                 {{else if ThemSanPham.isActive}}
 
                     <span class="navbar-item"> > </span>
                     <a href="/seller/channel/product/insert" class="navbar-item text-decoration-none">
-                        Thêm Sản phẩm
+                        <strong>
+                            Thêm Sản phẩm
+                        </strong>
                     </a>
                 {{/if}}
 
@@ -92,7 +101,7 @@
             <div class="col-md-3 has-background-grey-light pt-6 min-vh-100">
                 <aside class="menu">
                     <ul class="menu-list h4 mb-5">
-                        <a class="menu-label {{#if ThongTinChung.isActive}}is-active{{/if}}" href="/seller/channel">
+                        <a class="menu-label text-decoration-none {{#if ThongTinChung.isActive}}is-active{{/if}}" href="/seller/channel">
                             <i class="fa fa-tachometer fa-2x " aria-hidden="true"></i>
                             Thông Tin Chung
                         </a>
@@ -100,19 +109,19 @@
 
                     <ul class="menu-list h4 mb-5">
                         <li>
-                            <a class="menu-label" href="/seller/channel/product">
+                            <a class="menu-label text-decoration-none" href="/seller/channel/product">
                                 <i class="fa fa-cube fa-2x" aria-hidden="true"></i>
                                 Quản lý Sản Phẩm
                             </a>
                             <ul>
-                                <li><a class="{{#if XemSanPham.isActive}}is-active{{/if}}" href="/seller/channel/product">Xem Sản phẩm</a></li>
-                                <li><a class="{{#if ThemSanPham.isActive}}is-active{{/if}}" href="/seller/channel/product/insert">Thêm Sản Phẩm</a></li>
+                                <li><a class="{{#if XemSanPham.isActive}}is-active{{/if}} text-decoration-none" href="/seller/channel/product">Xem Sản phẩm</a></li>
+                                <li><a class="{{#if ThemSanPham.isActive}}is-active{{/if}} text-decoration-none" href="/seller/channel/product/insert">Thêm Sản Phẩm</a></li>
                             </ul>
                         </li>
                     </ul>
 
                     <ul class="menu-list h4 mb-5">
-                        <a class="menu-label {{#if DanhGia.isActive}}is-active{{/if}}" href="/seller/channel">
+                        <a class="menu-label text-decoration-none {{#if DanhGia.isActive}}is-active{{/if}}" href="/user/comment-from-bidder/{{sellerID}}">
                             <i class="fa fa-users fa-2x " aria-hidden="true"></i>
                             Đánh giá của người mua
                         </a>

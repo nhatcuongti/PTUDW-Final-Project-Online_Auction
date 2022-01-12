@@ -17,12 +17,34 @@
         ul{
             list-style-type: none;
         }
+        body{
+            color: #4a4a4a;
+            font-size: 1em;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        aside a{
+            color: #4a4a4a;
+            font-size: 1em;
+            font-weight: 400;
+            line-height: 1.5;
+            display: block;
+            padding: 10px;
+
+        }
+
+        nav a{
+            color: #4a4a4a;
+            font-size: 1em;
+            font-weight: 400;
+            line-height: 1.5;
+        }
     </style>
 
     {{{_sections.css}}}
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-light bg-light">
+<nav class="navbar navbar-expand-md " style="background-color: #b5b5b5;">
     <div class="navbar-brand">
         <a class="navbar-brand" href="#">
             <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
@@ -42,7 +64,7 @@
 
                 {{#if XemSanPham.isActive}}
                     <span class="navbar-item"> > </span>
-                    <a href="/seller/channel/product" class="navbar-item text-decoration-none">
+                    <a href="/seller/channel/product" class="navbar-item text-decoration-none" >
                         Xem sản phẩm
                     </a>
                     {{#if XemChiTiet.isActive}}
@@ -70,16 +92,16 @@
                         </b>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item text-decoration-none">
+                        <a class="dropdown-item text-decoration-none" href="/user/update-profile">
                             <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
                             Thông tin cá nhân
                         </a>
-                        <a class="dropdown-item text-decoration-none">
+                        <a class="dropdown-item text-decoration-none" >
                             <i class="fa fa-cube fa-2x mr-1" aria-hidden="true"></i>
                             Kênh Người bán
                         </a>
                         <hr class="dropdown-divider">
-                        <a class="dropdown-item text-decoration-none">
+                        <a class="dropdown-item text-decoration-none"  href="javascript: $('#formLogout').submit();">
                             <i class="fa fa-sign-out fa-2x mr-2" aria-hidden="true"></i>
                             Đăng xuất
                         </a>
@@ -93,27 +115,33 @@
 
 <section>
     <div class="row">
-        <div class="col-sm-3 pt-6 min-vh-100" style="background-color: #bdc3c7">
-            <aside class="menu " >
-                <ul class="menu-list h4 mb-5">
+        <div class="col-sm-3 pt-6 min-vh-100" style="background-color: #b5b5b5">
+            <aside class="menu  p-3"  >
+                <ul class="menu-list h4 mb-5 pl-2 mt-5">
                     <a class="text-decoration-none menu-label {{#if ThongTinChung.isActive}}is-active{{/if}}" href="/seller/channel">
                         <i class="fa fa-tachometer fa-2x " aria-hidden="true"></i>
                         Thông Tin Chung
                     </a>
                 </ul>
 
-                <ul class="menu-list h4 mb-5">
-                    <li>
-                        <a class="text-decoration-none menu-label" href="/seller/channel/product">
-                            <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                <ul class="menu-list h4 mb-5 pl-2 ">
+                    <li >
+                        <a class="text-decoration-none menu-label " href="/seller/channel/product">
+                            <i class="fa fa-cube fa-2x" aria-hidden="true"></i>
                             Quản lý Sản Phẩm
                         </a>
-                        <ul class="mt-3">
+                        <ul class="mt-3" style="border-left: 1px solid #FFFFFF">
                             <li><a class="text-decoration-none {{#if XemSanPham.isActive}}is-active{{/if}}" href="/seller/channel/product">Xem Sản phẩm</a></li>
-                            <li class="mt-2"><a class="text-decoration-none {{#if ThemSanPham.isActive}}is-active{{/if}}" href="/seller/channel/product/insert">Thêm Sản Phẩm</a></li>
+                            <li class="mt-2"><a class="text-decoration-none w-100" style="background-color: #485fc7; color: #FFFFFF" href="/seller/channel/product/insert">Thêm Sản Phẩm</a></li>
                         </ul>
                     </li>
+                </ul>
 
+                <ul class="menu-list h4 mb-5 pl-2">
+                    <a class="menu-label {{#if DanhGia.isActive}}is-active{{/if}}" href="/seller/evaluate/{{sellerID}}">
+                        <i class="fa fa-users fa-2x " aria-hidden="true"></i>
+                        Đánh giá của người mua
+                    </a>
                 </ul>
 
             </aside>
