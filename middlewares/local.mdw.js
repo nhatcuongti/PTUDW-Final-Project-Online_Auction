@@ -7,6 +7,7 @@ export default function (app) {
         res.locals.XemSanPham = {isActive:false};
         res.locals.ThemSanPham = {isActive:false};
         res.locals.XemChiTiet = {isActive:false};
+        res.locals.DanhGia = {isActive:false};
         next();
     });
     app.use(async function (req, res, next) {

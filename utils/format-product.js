@@ -109,8 +109,17 @@ export default {
                     products.splice(index, 1);
                     continue;
                 }
+
             }
 
+            //Kiểm tra có bị hủy hợp đồng hay không
+            if (status != 2 && product.cancelTransaction){
+                const index = products.indexOf(product);
+                products.splice(index, 1);
+                continue;
+            }
+            else if (status === 2 && product.cancelTransaction)
+                continue;
 
             //Kiểm tra có người mua hay không
             // const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
@@ -146,7 +155,7 @@ export default {
         // const bidderHistory = await productModel.getBidderHistoryWithProID(product._id);
 
         if (endDate - currentDate <= 0) { // Nếu còn hạn
-            if (product.curBidderInfo === null || product.curBidderInfo === undefined || product.curBidderInfo.length === 0)
+            if (product.curBidderInfo === null || product.curBidderInfo === undefined || product.curBidderInfo.length === 0 || product.cancelTransaction === true)
                 return "<span class='text-danger'>Đấu giá thất bại</span>"
             else
                 return "<span class='text-success'>Đấu giá thành công</span>"

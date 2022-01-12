@@ -145,31 +145,31 @@
                                     {{/each}}
 
                                     {{#if isSuccess}}
-
-                                        <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#evaluateModal">
+                                        {{#unless this.product.cancelTransaction}}
+                                            <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#evaluateModal">
                                             <span>
                                                 Đánh giá
                                             </span>
-                                        </button>
+                                            </button>
 
-                                        <div class="modal fade" id="evaluateModal" tabindex="-1" aria-labelledby="evaluateModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="evaluateModalLabel">Đánh giá khách hàng</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
+                                            <div class="modal fade" id="evaluateModal" tabindex="-1" aria-labelledby="evaluateModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="evaluateModalLabel">Đánh giá khách hàng</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
 
 
                                                             <form method="post" action="/seller/channel/product/detail/{{this.product._id}}">
                                                                 <div class="form-group">
-                                                            {{#each this.product.curBidderInfo}}
-                                                                <p>Người mua : <b>{{email}}</b></p>
-                                                                <input type="text" name="userID" value="{{_id}}" hidden>
-                                                            {{/each}}
+                                                                    {{#each this.product.curBidderInfo}}
+                                                                        <p>Người mua : <b>{{email}}</b></p>
+                                                                        <input type="text" name="userID" value="{{_id}}" hidden>
+                                                                    {{/each}}
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <textarea class="form-control"
@@ -193,10 +193,11 @@
                                                             </form>
 
 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        {{/unless}}
                                     {{/if}}
                                 {{else}}
                                     <span class="h5">Chưa có</span>
@@ -248,21 +249,21 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">Hủy giao dịch</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            Bạn có chắc muốn hủy hợp đồng không ?
+                                            Bạn có chắc muốn hủy giao dịch không ?
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn " data-dismiss="modal">No</button>
+                                            <button type="button " class="btn btn-outline-secondary mr-5" data-dismiss="modal">No</button>
                                             <form method="post" action="/seller/channel/product/detail/{{this.product._id}}">
                                                 {{#each this.product.curBidderInfo}}
                                                     <input name="userID" value="{{_id}}" hidden>
                                                 {{/each}}
-                                                <button type="submit" class="btn btn-primary">Yes</button>
+                                                <button type="submit" class="btn btn-danger ml-5">Yes</button>
                                             </form>
                                         </div>
                                     </div>
@@ -280,7 +281,7 @@
             <div class="card-header d-flex justify-content-between">
                 <nav>
                     <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">
+                        <a class="nav-item nav-link" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">
                             <i class="fa fa-info-circle fa-2x mr-2" aria-hidden="true"></i>
                             Thông tin sản phẩm
                         </a>

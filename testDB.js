@@ -8,8 +8,7 @@ import bid from "./routes/bid.js";
 
 
 async function testFunc(){
-    const data = await productModel.getBidderHistoryWithProID("61dd56be195a3566089d33a4");
-    console.log(data);
+    const data = await productModel.updateSellerComment("61dd56be195a3566089d33a4", false);
 }
 
 await testFunc();

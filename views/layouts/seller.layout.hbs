@@ -101,7 +101,7 @@
                     <ul class="menu-list h4 mb-5">
                         <li>
                             <a class="menu-label" href="/seller/channel/product">
-                                <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                                <i class="fa fa-cube fa-2x" aria-hidden="true"></i>
                                 Quản lý Sản Phẩm
                             </a>
                             <ul>
@@ -109,7 +109,13 @@
                                 <li><a class="{{#if ThemSanPham.isActive}}is-active{{/if}}" href="/seller/channel/product/insert">Thêm Sản Phẩm</a></li>
                             </ul>
                         </li>
+                    </ul>
 
+                    <ul class="menu-list h4 mb-5">
+                        <a class="menu-label {{#if DanhGia.isActive}}is-active{{/if}}" href="/seller/channel">
+                            <i class="fa fa-users fa-2x " aria-hidden="true"></i>
+                            Đánh giá của người mua
+                        </a>
                     </ul>
 
                 </aside>

@@ -566,6 +566,13 @@ async function updateProNameEnglishFunc(collection, proID, proNameEnglish){
   await collection.updateOne(myQuery, myUpdate);
 }
 
+async function updateProductFunc(collection, ProID, attritubes){
+  const myQuery = {"_id" : new ObjectId(ProID)};
+  const myUpdate =  {$set : attritubes};
+
+  await collection.updateOne(myQuery, myUpdate);
+}
+
 async function searchVietnameseFunc(collection, keyword){
     return await collection.aggregate([
       {
@@ -586,6 +593,14 @@ async function updatePriceAndCurrentBidderFunc(collection, productID, currentPri
 
   await collection.updateOne(myQuery, myUpdate);
 }
+
+async function updateSellerCommentFunc(collection, ProID, isSellerComment){
+  const myQuery = {"_id" : new ObjectId(ProID)};
+  const myUpdate =  {$set : {isSellerComment: isSellerComment}};
+
+  await collection.updateOne(myQuery, myUpdate);
+}
+
 
 //----------------------------------------------------------------------------------------//
 export default {
@@ -907,6 +922,30 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       await updatePriceAndCurrentBidderFunc(collection, productID, currentPrice, userID, highestPrice);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updateSellerComment(ProID, isSellerComment) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateSellerCommentFunc(collection, ProID, isSellerComment);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updateProduct(ProID, attritubes){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateProductFunc(collection, ProID, attritubes);
     } catch (e) {
       console.error(e);
     } finally {

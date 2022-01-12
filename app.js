@@ -78,7 +78,6 @@ app.use(session({
 }));
 
 cron.schedule('* * * * *', async function () {
-    console.log("-------------------Cron Schedule--------------- ");
     const listResult = await productModel.getExpiredProduct(new Date());
     for (const product of listResult) {
         if (product.curBidderInfo.length === 0)

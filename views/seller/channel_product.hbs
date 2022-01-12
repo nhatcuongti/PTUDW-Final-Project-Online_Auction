@@ -112,27 +112,40 @@
 
 
      <div class="row back">
-         <nav class="navbar" id="homePageNavbar" role="navigation" aria-label="dropdown navigation">
-             <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product/{{this.initalPagePath}}{{this.statusPath}}">
-                 <strong> Tất cả</strong>
-             </a>
-             {{#each this.categories}}
-                 <div class="navbar-item has-dropdown is-hoverable">
-                     <a style="text-decoration:none "
-                        class="navbar-link {{#if isActive}} btn btn-secondary {{/if}} "
-                        href="/seller/channel/product/{{../initalPagePath}}{{../statusPath}}{{../keywordPath}}&catParent={{_id}}">
+         <div class="col-md-8">
+             <nav class="navbar" id="homePageNavbar" role="navigation" aria-label="dropdown navigation">
+                 <a style="text-decoration:none" class="navbar-link" href="/seller/channel/product/{{this.initalPagePath}}{{this.statusPath}}">
+                     <strong> Tất cả</strong>
+                 </a>
+                 {{#each this.categories}}
+                     <div class="navbar-item has-dropdown is-hoverable">
+                         <a style="text-decoration:none "
+                            class="navbar-link {{#if isActive}} btn btn-secondary {{/if}} "
+                            href="/seller/channel/product/{{../initalPagePath}}{{../statusPath}}{{../keywordPath}}&catParent={{_id}}">
                          <strong> {{catParent}}</strong>
-                     </a>
-                     <div class="navbar-dropdown">
-                         {{#each catChild}}
-                             <a class="navbar-item {{#if isActive}} btn btn-secondary {{/if}}" href="/seller/channel/product/{{../../initalPagePath}}{{../../this.statusPath}}{{../../this.keywordPath}}&catParent={{../_id}}&catChild={{@index}}">
+                         </a>
+                         <div class="navbar-dropdown">
+                             {{#each catChild}}
+                                 <a class="navbar-item {{#if isActive}} btn btn-secondary {{/if}}" href="/seller/channel/product/{{../../initalPagePath}}{{../../this.statusPath}}{{../../this.keywordPath}}&catParent={{../_id}}&catChild={{@index}}">
                                  {{name}}
-                             </a>
-                         {{/each}}
+                                 </a>
+                             {{/each}}
+                         </div>
                      </div>
-                 </div>
-             {{/each}}
-         </nav>
+                 {{/each}}
+             </nav>
+         </div>
+
+         <div class="col-md-4">
+             <select class="select mt-2 w-100" onchange="location = this.value;">
+                 <option value="/seller/channel/product{{this.initalPagePath}}{{this.catParentPath}}{{this.keywordPath}}{{this.catChildPath}}{{this.statusPath}}&select=1" selected>
+                     Sắp xếp theo thời gian
+                 </option>
+                 <option value="/seller/channel/product{{this.initalPagePath}}{{this.catParentPath}}{{this.keywordPath}}{{this.catChildPath}}{{this.statusPath}}&select=2">
+                     Sắp xếp theo giá
+                 </option>
+             </select>
+         </div>
      </div>
 
      {{#if emptyMsg}}

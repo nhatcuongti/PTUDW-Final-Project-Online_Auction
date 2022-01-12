@@ -79,6 +79,11 @@ router.get("/channel/product", async (req, res) => {
     let limitProduct = 6;
     let offset = ((+choosenPage - 1) * limitProduct) || 0;
 
+    //select
+    const select = req.query.select;
+    let searchWith = "";
+    if (select === "1")
+        searchWith = ""
 
     if (keyword !== undefined)
         products = await productModel.searchByType(keyword, 'name', limitProduct, offset, 'time-descending', catParentFind, catChildFind, userID);
@@ -245,11 +250,8 @@ router.get("/channel/product/detail/:id", authUserWithProduct, async function(re
     await formatProduct.formatCategory(product);
 
     const status = await formatProduct.getStatus(product);
-    const isSuccess = (status === "Đấu giá thành công") ? true : false;
+    const isSuccess = (status === "<span class='text-success'>Đấu giá thành công</span>") ? true : false;
 
-    const indexImage = [];
-    for (let index = 1; index < product.numberImage; index++)
-        indexImage.push(index);
 
     res.locals.XemSanPham.isActive = true;
     res.locals.XemChiTiet.isActive = true;
@@ -276,6 +278,7 @@ router.get("/channel/product/detail/:id", authUserWithProduct, async function(re
 })
 
 router.post("/channel/product/detail/:id", async (req, res) => {
+    console.time("postTime")
     console.log(req.body);
     const userID = req.body.userID;
     let ProID = req.params.id;
@@ -299,8 +302,17 @@ router.post("/channel/product/detail/:id", async (req, res) => {
         rate = false;
 
     if (userID != undefined){
+        // if (!isSuccess)
+        //     await productModel.updateCurrenBidderInfor(ProID, null);
+        const updateProduct = {};
         if (!isSuccess)
-            await productModel.updateCurrenBidderInfor(ProID, null);
+            updateProduct.cancelTransaction = true;
+
+        updateProduct.isSellerComment = true;
+
+        await productModel.updateProduct(ProID, updateProduct);
+
+        // await productModel.updateSellerComment(ProID, true);
 
         // Update lại commnet trong bidderHistory
         const rawData = await accountModel.getCommentWithProID(ProID);
@@ -344,8 +356,9 @@ router.post("/channel/product/detail/:id", async (req, res) => {
         await modelProduct.updateDescription(new ObjectId(ProID), insertedMessage);
     }
 
-
+    console.timeEnd("postTime")
     res.redirect(`/seller/channel/product/detail/${ProID}`);
+
 })
 
 router.get("/channel/product/detail/:id/list", authUserWithProduct, async (req, res) => {
@@ -416,6 +429,11 @@ router.post("/channel/product/detail/:id/list", authUserWithProduct, async (req,
 
     })
 
+
+})
+
+router.get("", async (req, res) => {
+    res.locals.DanhGia.isActive = true;
 
 })
 
