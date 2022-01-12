@@ -49,6 +49,7 @@ router.get('/auction-history',auth,  async function (req, res) {
     //console.log(list);
     list = account.getProductsOnAuction(list)
     list.sort((a, b) => b.dateBid - a.dateBid);
+    list = account.removeDuplicatesHistory(list)
     for(let i = 0; i< list.length; i++){
         list[i].dateBid = moment(list[i].dateBid).format('DD/MM/YYYY HH:mm')
         list[i].details[0].proEndDate = moment(list[i].details[0].proEndDate).format('DD/MM/YYYY HH:mm')

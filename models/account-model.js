@@ -276,9 +276,12 @@ export default {
         let listTemp = [];
         console.log(list)
         list.forEach(function (e) {
-            if(e.details.length !== 0)
-                if(e.details[0].proEndDate > new Date())
+            if(e.details.length !== 0){
+                let date = new Date()
+                if(e.details[0].proEndDate.getTime() > date.getTime())
                     listTemp.push(e)
+            }
+
         })
         return listTemp;
     },
@@ -293,6 +296,22 @@ export default {
 
             }
 
+        })
+        return listTemp;
+    },
+    removeDuplicatesHistory(list){
+        let listTemp = [];
+        console.log(list)
+        list.forEach(function (e) {
+            let check =0;
+            for(var i =0; i < listTemp.length; i++){
+                if(e.proID.toString === listTemp.proID.toString){
+                    check = 1;
+                    break
+                }
+            }
+            if(check === 0)
+                listTemp.push(e)
         })
         return listTemp;
     },
@@ -330,6 +349,7 @@ export default {
             await mongoClient.connect();
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('bidderHistory');
+            // await collection.deleteMany({})
             return await showBidderHistoryFunc(collection, id);
         } catch (e) {
             console.error(e);
