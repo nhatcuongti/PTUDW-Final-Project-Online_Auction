@@ -126,7 +126,10 @@ router.get('/category/:parentId', async function (req, res) {
 });
 
 router.post('/category/edit', async function (req, res) {
-    await categoryModel.editCatParent(req.body.id, req.body.name);
+    const check = await categoryModel.editCatParent(req.body.id, req.body.name);
+    const isEmpty = Object.keys(check).length === 0;
+    if (!isEmpty)
+        await productModel.updateCatParent(req.body.catParent, req.body.name);
     res.redirect('/admin/category');
 });
 
@@ -143,7 +146,10 @@ router.get('/category/:parentId/:childId/:childName', async function (req, res) 
 });
 
 router.post('/category/child/edit', async function (req, res) {
-    await categoryModel.editCatChild(req.body.parentId, req.body.childId, req.body.name);
+    const check = await categoryModel.editCatChild(req.body.parentId, req.body.childId, req.body.name);
+    const isEmpty = Object.keys(check).length === 0;
+    if (!isEmpty)
+        await productModel.updateCatChild(req.body.catParent, req.body.catChild, req.body.name);
     res.redirect('/admin/category');
 });
 
@@ -235,7 +241,7 @@ router.get('/user/upgrade', async function (req, res) {
     if (prevPage.value === 0) prevPage.check = false;
     if (total === 0) curPage.check = false;
     for (const item of listResult)
-        item.dateRequest = moment(item.dateRequest).format('DD/MM/YYYY HH:mm:ss')
+        item.date = moment(item.date).format('DD/MM/YYYY HH:mm:ss')
     res.render('admin/upgrade', {
         layout: 'admin.hbs',
         userTab: true,

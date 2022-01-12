@@ -39,6 +39,8 @@
                             --}}
                             <input type="hidden" value="{{this.catChildId}}" name="childId">
                             <input type="hidden" value="{{this.catParent._id}}" name="parentId">
+                            <input type="hidden" value="{{this.catParent.catParent}}" name="catParent">
+                            <input type="hidden" value="{{this.catChildName}}" name="catChild">
                             <div class="field">
                                 <label class="label">Danh mục cha</label>
                                 <div class="control">

@@ -602,6 +602,21 @@ async function updateSellerCommentFunc(collection, ProID, isSellerComment){
   await collection.updateOne(myQuery, myUpdate);
 }
 
+async function updateCatParentFunc(collection, catOld, catNew) {
+  return await collection.updateMany({
+        catParent: catOld},
+      {$set: {catParent: catNew}}
+  );
+}
+
+async function updateCatChildFunc(collection, catParent, catOld, catNew) {
+  return await collection.updateMany({
+        catParent: catParent,
+        catChild: catOld},
+      {$set: {catChild: catNew}}
+  );
+}
+
 
 //----------------------------------------------------------------------------------------//
 export default {
@@ -947,6 +962,30 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       await updateProductFunc(collection, ProID, attritubes);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updateCatParent(catOld, catNew){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateCatParentFunc(collection, catOld, catNew);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async updateCatChild(catParent, catOld, catNew){
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('product');
+      await updateCatChildFunc(collection, catParent, catOld, catNew)
     } catch (e) {
       console.error(e);
     } finally {

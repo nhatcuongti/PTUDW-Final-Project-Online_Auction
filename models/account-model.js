@@ -163,7 +163,7 @@ async function getLimitUpgradeListFunc(collection, limit, offset) {
         {
             $lookup: {
                 from: 'account',
-                localField: 'userId',
+                localField: 'userID',
                 foreignField: '_id',
                 as: 'info'
             }
