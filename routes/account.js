@@ -194,7 +194,7 @@ router.get("/comment-from-bidder/:id", async (req, res) => {
     //Nội dung Comment tu Bidder
     //Đánh giá của Bidder: bidderRate
 
-    res.render('viewAccountBidder/comment-from-seller', {
+    res.render('viewAccountBidder/comment-from-bidder', {
         product: commentList,
         //--Product
         //  --details
