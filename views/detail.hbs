@@ -217,11 +217,12 @@
                             {{/if}}
                         </div>
                         {{#each sellerInfo}}
-                            <p>Người bán: {{email}}</p>
+                            <p>Người bán: {{name}} ({{../sellerScore}}%)</p>
                         {{/each}}
                         {{#each curBidderInfo}}
-                            <p>Người giữ hiện tại: {{email}}</p>
+                            <p>Người giữ hiện tại: {{name}} ({{../bidderScore}}%)</p>
                         {{/each}}
+<<<<<<< Updated upstream
 
                         {{#if ../auth}}
                             {{#if ../isOutOfDate}}
@@ -242,6 +243,22 @@
                                 </form>
                             {{/if}}
                         {{/if}}
+=======
+                        <p>Thời gian đăng: {{proStartDate}}</p>
+                        <p>Thời gian kết thúc: {{proEndDate}}</p>
+                        <p>Bước giá: {{format_number proPriceStep}} VNĐ</p>
+                        <form action="/bid/checkout" method="get">
+                            <div class="add-to-cart">
+                                <input type="text" name="id" value="{{_id}}" hidden>
+<!--                                <div class="qty-label">-->
+<!--                                    <div class="input-number">-->
+<!--                                            -->
+<!--                                    </div>-->
+<!--                                </div>-->
+                                <button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đấu giá</button></a>
+                            </div>
+                        </form>
+>>>>>>> Stashed changes
                         <div>
                             <h3 class="product-price">Mua ngay: {{format_number proBuyNowPrice}} VNĐ</h3>
                         </div>

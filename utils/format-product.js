@@ -166,5 +166,17 @@ export default {
                 return "<span class='text-success'>Đang được đấu giá</span>"
         }
     },
-
+    maskBidderName(name) {
+        String.prototype.replaceAt = function(index, replacement) {
+            if (index >= this.length) {
+                return this.valueOf();
+            }
+            return this.substring(0, index) + replacement + this.substring(index + 1);
+        }
+        let result = name;
+        for (let i = 0; i < result.length; i++)
+            if (i % 2 === 0)
+                result = result.replaceAt(i, '*');
+        return result;
+    }
 }

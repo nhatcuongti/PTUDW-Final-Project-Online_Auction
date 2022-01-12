@@ -180,7 +180,7 @@ async function upgradeAccountFunc(collection, id) {
 }
 
 async function deleteUpgradeRequestFunc(collection, id) {
-    return await collection.findOneAndDelete({userId: new ObjectId(id)});
+    return await collection.findOneAndDelete({userID: new ObjectId(id)});
 }
 
 async function deleteAccountFunc(collection, id) {

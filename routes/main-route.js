@@ -6,6 +6,7 @@ import entryModel from '../models/entry-model.js'
 import bcrypt from 'bcryptjs';
 import randomstring from 'randomstring';
 import fs from 'fs'
+import fp from '../utils/format-product.js'
 
 const router = express.Router();
 
@@ -36,7 +37,18 @@ router.get('/product/:id', async function (req, res) {
     } catch (e){
         console.log(e);
     }
-    console.log(new Date())
+    proInfo[0].proStartDate = moment(proInfo[0].proStartDate).format('DD/MM/YYYY HH:mm:ss');
+    proInfo[0].proEndDate = moment(proInfo[0].proEndDate).format('DD/MM/YYYY HH:mm:ss');
+    if (proInfo[0].sellerInfo.length !== 0) {
+        proInfo[0].sellerScore = Math.ceil(proInfo[0].sellerInfo[0].goodScore / (proInfo[0].sellerInfo[0].goodScore + proInfo[0].sellerInfo[0].badScore) * 100);
+        if (isNaN(proInfo[0].sellerScore))
+            proInfo[0].sellerScore = 0;
+    }
+    if (proInfo[0].curBidderInfo.length !== 0) {
+        proInfo[0].bidderScore = Math.ceil(proInfo[0].curBidderInfo[0].goodScore / (proInfo[0].curBidderInfo[0].goodScore + proInfo[0].curBidderInfo[0].badScore) * 100);
+        if (isNaN(proInfo[0].bidderScore))
+            proInfo[0].bidderScore = 0;
+    }
     if(typeof (proInfo) === 'undefined')
         res.redirect('/');
     else {
@@ -105,6 +117,8 @@ router.get('/product', async function (req, res) {
             item.check1 = true;
         else
             item.check1 = false;
+        if (item.curBidderInfo.length !== 0)
+            item.curBidderInfo[0].name = fp.maskBidderName(item.curBidderInfo[0].name);
         try{
             const files = fs.readdirSync(`./public/${item._id}/`);
             const mainThumb = files[0];
@@ -132,9 +146,12 @@ router.get('/', async function (req, res) {
     let files = null;
     let mainThumb = null;
     for (let i = 0; i < listExpiration.length; i++) {
+        listExpiration[i].check = (now - listExpiration[i].proStartDate) / (1000 * 60) <= 30 && (now - listExpiration[i].proStartDate) / (1000 * 60) > 0;
         listExpiration[i].proStartDate = moment(listExpiration[i].proStartDate).format('DD/MM/YYYY')
         listExpiration[i].time = (listExpiration[i].proEndDate - now) / (1000 * 60 * 60);
-        listExpiration[i].check = (new Date() - listExpiration[i].proStartDate) / (1000 * 60) <= 30 && (new Date() - listExpiration[i].proStartDate) / (1000 * 60) > 0;
+        //console.log(fp.maskBidderName(listExpiration[i].sellerInfo[0].name));
+        if (listExpiration[i].curBidderInfo.length !== 0)
+            listExpiration[i].curBidderInfo[0].name = fp.maskBidderName(listExpiration[i].curBidderInfo[0].name);
         try{
             files = fs.readdirSync(`./public/${listExpiration[i]._id}/`);
             mainThumb = files[0];
@@ -142,9 +159,11 @@ router.get('/', async function (req, res) {
         } catch(e){
             console.log(e);
         }
+        listMostBid[i].check = (now - listMostBid[i].proStartDate) / (1000 * 60) <= 30 && (now - listMostBid[i].proStartDate) / (1000 * 60) > 0;
         listMostBid[i].proStartDate = moment(listMostBid[i].proStartDate).format('DD/MM/YYYY')
         listMostBid[i].time = (listMostBid[i].proEndDate - now) / (1000 * 60 * 60);
-        listMostBid[i].check = (new Date() - listMostBid[i].proStartDate) / (1000 * 60) <= 30 && (new Date() - listMostBid[i].proStartDate) / (1000 * 60) > 0;
+        if (listMostBid[i].curBidderInfo.length !== 0)
+            listMostBid[i].curBidderInfo[0].name = fp.maskBidderName(listMostBid[i].curBidderInfo[0].name);
         try{
             files = fs.readdirSync(`./public/${listMostBid[i]._id}/`);
             mainThumb = files[0];
@@ -152,9 +171,11 @@ router.get('/', async function (req, res) {
         } catch(e){
             console.log(e);
         }
+        listTopPrice[i].check = (now - listTopPrice[i].proStartDate) / (1000 * 60) <= 30 && (now - listTopPrice[i].proStartDate) / (1000 * 60) > 0;
         listTopPrice[i].proStartDate = moment(listTopPrice[i].proStartDate).format('DD/MM/YYYY')
         listTopPrice[i].time = (listTopPrice[i].proEndDate - now) / (1000 * 60 * 60);
-        listTopPrice[i].check = (new Date() - listTopPrice[i].proStartDate) / (1000 * 60) <= 30 && (new Date() - listTopPrice[i].proStartDate) / (1000 * 60) > 0;
+        if (listTopPrice[i].curBidderInfo.length !== 0)
+            listTopPrice[i].curBidderInfo[0].name = fp.maskBidderName(listTopPrice[i].curBidderInfo[0].name);
         try{
             files = fs.readdirSync(`./public/${listTopPrice[i]._id}/`);
             mainThumb = files[0];
@@ -201,6 +222,8 @@ router.get('/search', async function (req, res) {
             item.check1 = true;
         else
             item.check1 = false;
+        if (item.curBidderInfo.length !== 0)
+            item.curBidderInfo[0].name = fp.maskBidderName(item.curBidderInfo[0].name);
         try{
             const files = fs.readdirSync(`./public/${item._id}/`);
             const mainThumb = files[0];
