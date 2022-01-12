@@ -8,8 +8,19 @@
             $('#formAddFavorite').submit();
 
         });
-
     </script>
+    <script>
+        $('.equal-heights').each(function(){
+            var highestBox = 0;
+            $(this).children('[class*="col-"]').each(function(index, el){
+                if( $(el).height() > highestBox ) highestBox = $(el).height();
+            });
+            $(this).children('[class*="col-"]').css('height',highestBox);
+        });
+    </script>
+{{/section}}
+
+{{#section 'css'}}
     <style>
         .rediconcolor{
             color: #e74c3c;
@@ -21,6 +32,8 @@
     <input type="text" name="id" id="txtProID" hidden>
 </form>
 
+
+{{!--
 {{#if this.product}}
 {{else}}
     {{#if this.by}}
@@ -88,7 +101,7 @@
         {{/each}}
     </div>
     <p>&nbsp;</p>
-    --}}
+    -}}
     <div class="container">
         <div class="row mt-3 d-flex justify-content-center">
             {{#each this.listResult}}
@@ -220,4 +233,170 @@
         {{/section}}
     </p>
 {{/if}}
+--}}
 
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- ASIDE -->
+            <div id="aside" class="col-md-3">
+                <!-- aside Widget -->
+                <div class="aside">
+                    <h3 class="aside-title">Danh mục</h3>
+                    <div class="checkbox-filter">
+                        {{#each this.categories}}
+                            <div class="input-checkbox">
+                                <input type="checkbox" id="category-{{_id}}" onchange="window.location.href='/product?category={{catParent}}';">
+                                <label for="category-{{_id}}">
+                                    <span></span>
+                                    {{catParent}}
+                                    <small>{{quantity}}</small>
+                                </label>
+                            </div>
+                            {{#each catChild}}
+                                <div class="input-checkbox">
+                                    <input type="checkbox" id="category-{{_id}}" onchange="window.location.href='/product?category={{name}}';">
+                                    <label for="category-{{_id}}">
+                                        <span></span>
+                                        {{name}}
+                                        <small>{{quantity}}</small>
+                                    </label>
+                                </div>
+                            {{/each}}
+                        {{/each}}
+                    </div>
+                </div>
+                <!-- /aside Widget -->
+            </div>
+            <!-- STORE -->
+            <div id="store" class="col-md-9">
+                <!-- store top filter -->
+                {{#if keyword}}
+                    {{#if sortType}}
+                        <div class="store-filter clearfix">
+                            <div class="store-sort">
+                                <label>
+                                    Sắp xếp theo:
+                                    <select class="input-select" onchange="location = this.value;">
+                                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}" selected>Giá tăng dần</option>
+                                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending">Thời gian kết thúc giảm dần</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                    {{else}}
+                        <div class="store-filter clearfix">
+                            <div class="store-sort">
+                                <label>
+                                    Sắp xếp theo:
+                                    <select class="input-select" onchange="location = this.value;">
+                                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}">Giá tăng dần</option>
+                                        <option value="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.curPage.value}}&sort=time-descending" selected>Thời gian kết thúc giảm dần</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                    {{/if}}
+                {{/if}}
+
+                <!-- store products -->
+                {{#if this.product}}
+                {{else}}
+                    <div class="row">
+                        {{#if this.by}}
+                            <h3>Danh mục: {{this.category}}</h3>
+                        {{else}}
+                            <h3>Kết quả tìm kiếm: {{this.keyword}}</h3>
+                        {{/if}}
+                    </div>
+                {{/if}}
+                <div class="row">
+                    {{#if this.curPage.check}}
+                        {{#each this.listResult}}
+                            <div class="col-md-4 col-xs-6">
+                                <div class="product" style="height: 600px;">
+                                    <div class="product-img">
+                                        <img src="/public/{{_id}}/{{mainThumb}}" alt="">
+                                        <div class="product-label">
+                                            {{#if check}}
+                                                <span class="new">Mới</span>
+                                            {{/if}}
+                                            {{#if check1}}
+                                                <span class="sale">Hết hạn</span>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                    <div class="product-body">
+                                        <p class="product-category">{{catChild}}</p>
+                                        <h3 class="product-name"><a href="/product/{{_id}}">{{proName}}</a></h3>
+                                        <h4 class="product-price">{{format_number proCurBidPrice}}</h4>
+                                        <div class="product-details">
+                                            {{#each curBidderInfo}}
+                                                <p> Người đặt hiện tại: {{email}} </p>
+                                            {{/each}}
+                                            <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
+                                            {{#if check1}}
+                                            {{else}}
+                                                <p> Thời gian còn lại: {{format_number time}} giờ</p>
+                                            {{/if}}
+                                            <p> Số lượt ra giá: {{proBidQuantity}}</p>
+                                        </div>
+                                        <div class="product-btns">
+                                            {{#if ../../this.auth}}
+                                                <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                            {{/if}}
+                                            <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/each}}
+                        </div>
+                        <!-- /store products -->
+
+                        <!-- store bottom filter -->
+                        <div class="store-filter clearfix">
+                            <ul class="store-pagination">
+                                {{#if this.prevPage.check}}
+                                    {{#if this.sortType}}
+                                        <li><a href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                    {{else}}
+                                        {{#if this.product}}
+                                            <li><a href="/product?page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                        {{else}}
+                                            {{#if this.type}}
+                                                <li><a href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.prevPage.value}}&sort=time-descending">{{this.prevPage.value}}</a></li>
+                                            {{else}}
+                                                <li><a href="/product?category={{this.category}}&page={{this.prevPage.value}}">{{this.prevPage.value}}</a></li>
+                                            {{/if}}
+                                        {{/if}}
+                                    {{/if}}
+                                {{/if}}
+                                <li class="active">{{this.curPage.value}}</li>
+                                {{#if this.nexPage.check}}
+                                    {{#if this.sortType}}
+                                        <li><a href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                    {{else}}
+                                        {{#if this.product}}
+                                            <li><a href="/product?page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                        {{else}}
+                                            {{#if this.type}}
+                                                <li><a href="search?keyword={{this.keyword}}&with={{this.type}}&page={{this.nexPage.value}}&sort=time-descending">{{this.nexPage.value}}</a></li>
+                                            {{else}}
+                                                <li><a href="/product?category={{this.category}}&page={{this.nexPage.value}}">{{this.nexPage.value}}</a></li>
+                                            {{/if}}
+                                        {{/if}}
+                                    {{/if}}
+                                {{/if}}
+                            </ul>
+                        </div>
+                    {{else}}
+                        <h1>Không tìm thấy sản phẩm</h1>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
