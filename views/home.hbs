@@ -180,7 +180,7 @@
                                         </div>
                                         <div class="product-btns">
                                             {{#if ../this.auth}}
-                                                <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                                <button data-id="{{_id}}" class="add-to-wishlist addItemFavorite"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                             {{/if}}
                                             <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
                                         </div>
@@ -240,7 +240,7 @@
                                             </div>
                                             <div class="product-btns">
                                                 {{#if ../this.auth}}
-                                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                                    <button data-id="{{_id}}" class="add-to-wishlist addItemFavorite"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                                 {{/if}}
                                                 <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
                                             </div>
@@ -300,7 +300,7 @@
                                             </div>
                                             <div class="product-btns">
                                                 {{#if ../this.auth}}
-                                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                                    <button data-id="{{_id}}" class="add-to-wishlist addItemFavorite"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                                 {{/if}}
                                                 <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
                                             </div>

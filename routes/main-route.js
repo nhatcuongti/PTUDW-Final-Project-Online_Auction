@@ -23,8 +23,8 @@ router.get('/product/:id', async function (req, res) {
         if(i === 4)
             break
         proHistoryBid[i].dateBid = moment(proHistoryBid[i].dateBid).format('DD/MM/YYYY HH:mm')
-        var mask = proHistoryBid[i].sellerInfo[0].name
-        proHistoryBid[i].sellerInfo = mask.replace(/\D(?=\D{4})/g, "*");
+        var mask = proHistoryBid[i].bidderInfo[0].name
+        proHistoryBid[i].bidderInfo = mask.replace(/\D(?=\D{4})/g, "*");
         historyList.push(proHistoryBid[i])
     }
     let files = null;

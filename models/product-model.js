@@ -472,7 +472,8 @@ async function getBidderHistoryWithProIDFunc(collection, proID){
         _id: "$userID",
         "price":{$first:"$price"},
         "dateBid":{$first:"$dateBid"},
-        "isDenied":{$first:"$isDenied"}
+        "isDenied":{$first:"$isDenied"},
+        "curProPrice":{$first:"$price"},
       }
     },
     {
