@@ -90,8 +90,8 @@ async function bidderCommentFunc(dbo,collection, userID, proID, productDetail,ra
             sellerComment: "",
             bidderRate: rate,
             sellerRate: false,
-            bidderID: userID,
-            sellerID: productDetail.sellerInfo
+            bidderID: new ObjectId(userID),
+            sellerID: productDetail.sellerInfo[0]._id
         })
     }
     else{

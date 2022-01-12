@@ -4,7 +4,6 @@
             e.preventDefault();
             const id = $(this).data('id');
             $('#txtProID').val(id);
-            alert(id)
             $('#formAddFavorite').submit();
 
         });
@@ -145,7 +144,9 @@
                         {{#if ../auth}}
 
 <!--                                <input class="proIDFavorite" value="" hidden>-->
-                                <button data-id="{{_id}}" class="btn-lg bg-light btnFavorite"> Thêm vào yêu thích <i class="fa fa-heart rediconcolor" aria-hidden="true"></i></button>
+                                <button
+
+                           class="btn-lg bg-light btnFavorite"> Thêm vào yêu thích <i class="fa fa-heart rediconcolor" aria-hidden="true"></i></button>
 
                         {{/if}}
                     </div>
@@ -346,7 +347,7 @@
                                         </div>
                                         <div class="product-btns">
                                             {{#if ../this.auth}}
-                                                <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                                <button data-id="{{_id}}" class="add-to-wishlist btnFavorite"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                             {{/if}}
                                             <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
                                         </div>

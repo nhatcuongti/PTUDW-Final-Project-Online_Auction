@@ -213,7 +213,7 @@
                         <div>
                             <h3 class="product-price">{{format_number proCurBidPrice}} VNĐ</h3>
                             {{#if ../isOutOfDate}}
-                                <span class="product-available">Hết hàng</span>
+                                <span class="product-available">Hết hạn</span>
                             {{/if}}
                         </div>
                         {{#each sellerInfo}}
@@ -222,27 +222,43 @@
                         {{#each curBidderInfo}}
                             <p>Người giữ hiện tại: {{email}}</p>
                         {{/each}}
-                        <form action="/bid/checkout" method="get">
-                            <div class="add-to-cart">
-                                <input type="text" name="id" value="{{_id}}" hidden>
-<!--                                <div class="qty-label">-->
-<!--                                    <div class="input-number">-->
-<!--                                            -->
-<!--                                    </div>-->
-<!--                                </div>-->
-                                <button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đấu giá</button></a>
-                            </div>
-                        </form>
+
+                        {{#if ../auth}}
+                            {{#if ../isOutOfDate}}
+                                    <div class="add-to-cart">
+                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart" disabled></i>Đấu giá không khả dụng</button>
+                                    </div>
+                            {{else}}
+                                <form action="/bid/checkout" method="get">
+                                    <div class="add-to-cart">
+                                        <input type="text" name="id" value="{{_id}}" hidden>
+        <!--                                <div class="qty-label">-->
+        <!--                                    <div class="input-number">-->
+        <!--                                            -->
+        <!--                                    </div>-->
+        <!--                                </div>-->
+                                        <button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đấu giá</button></a>
+                                    </div>
+                                </form>
+                            {{/if}}
+                        {{/if}}
                         <div>
                             <h3 class="product-price">Mua ngay: {{format_number proBuyNowPrice}} VNĐ</h3>
                         </div>
-                        <form>
-                            <div class="add-to-cart">
-                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đặt mua</button>
-                            </div>
-                        </form>
+                        {{#if ../auth}}
+                            {{#if ../isOutOfDate}}
+                                    <div class="add-to-cart">
+                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Mua ngay không khả dụng</button>
+                                    </div>
+                            {{else}}
+                                <div class="add-to-cart">
+                                    <button data-id="{{_id}}" class="add-to-cart-btn buyNow"><i class="fa fa-shopping-cart"></i>Mua ngay</button>
+                                </div>
+                            {{/if}}
+                        {{/if}}
                         <ul class="product-btns">
                             {{#if ../auth}}
+
                                 <li><a href=""><i class="fa fa-heart-o"></i>Thêm vào yêu thích</a></li>
                             {{/if}}
                         </ul>
@@ -375,7 +391,7 @@
 {{/each}}
 
 
-{{!--
+
 <div class="modal fade has-background-grey-lighter" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -414,4 +430,3 @@
         </div>
     </div>
 </div>
---}}
