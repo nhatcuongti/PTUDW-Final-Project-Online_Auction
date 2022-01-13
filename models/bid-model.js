@@ -7,7 +7,7 @@ import randomstring from "randomstring";
 async function insertBidtoHistory(collection, userID, proID, price, curProPrice) {
     return collection.insertOne({
         dateBid: new Date(),
-        price: price,
+        price: +price,
         curProPrice: curProPrice.toString(),
         userID: new ObjectId(userID),
         proID: new ObjectId(proID),
@@ -56,11 +56,15 @@ async function buyNowFunc(db,collection, userID, proID,proInfo) {
 }
 
 async function processBidFunc(db,collection, userID, proID, priceString, productInfo) {
+    //productInfo : Sản phẩm vừa được đấu giá
+    //userID : nguwoif
+
+    //Format dữ liệu và lấy giá, giá cũ cao nhất, giá cũ của sản phẩm
     const price = parseInt(priceString)
     const oldHighestPrice = productInfo.proHighestPrice
     const oldProductPrice = productInfo.proCurBidPrice
 
-    let oldBidderMail
+    let oldBidderMail // mail của bidder nắm giá cũ
     if(productInfo.curBidderInfo.length !== 0)
         oldBidderMail = productInfo.curBidderInfo[0].email
     const sellerMail = productInfo.sellerInfo[0].email

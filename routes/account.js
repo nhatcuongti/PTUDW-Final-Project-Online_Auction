@@ -8,6 +8,7 @@ import entryModel from "../models/entry-model.js";
 import bcrypt from "bcryptjs";
 import {ObjectId} from "mongodb";
 import fs from "fs";
+import accountModel from "../models/account-model.js";
 
 const router = express.Router();
 
@@ -138,6 +139,8 @@ router.get('/comment-from-seller/:id', auth, async function (req, res) {
     // const temp = req.session.user;
     const id = req.params.id;
     const userID = new ObjectId(id);
+    const userAccount = await accountModel.getAccount(userID);
+
     let list = account.getCommentFromeSeller(await account.showAllComment(userID))
     const countList = Object.keys(list).length
     const countGoodComment = account.countGoodComment(list)
@@ -152,7 +155,8 @@ router.get('/comment-from-seller/:id', auth, async function (req, res) {
         product: list,
         total: countList,
         likeRate: likeRate,
-        dislikeRate: dislikeRate
+        dislikeRate: dislikeRate,
+        userAccount
     });
 });
 
@@ -176,7 +180,6 @@ router.get("/comment-from-bidder/:id", async (req, res) => {
 
         }
     }
-
     const countList = commentList.length;
     let likeRate = 0;
     let dislikeRate = 0;
@@ -187,7 +190,10 @@ router.get("/comment-from-bidder/:id", async (req, res) => {
             dislikeRate++;
     }
 
+    const percentLikeRate = Math.floor((likeRate * 100) / (likeRate + dislikeRate));
+    const percentDislikeRate = Math.floor((dislikeRate * 100) / (likeRate + dislikeRate));
 
+    const userAccount = await accountModel.getAccount(userID);
 
 
     //List comment cua seller
@@ -203,8 +209,9 @@ router.get("/comment-from-bidder/:id", async (req, res) => {
         //    --ProID
         //  --bidderRate
         total: countList,
-        likeRate: likeRate,
-        dislikeRate: dislikeRate
+        likeRate: percentLikeRate,
+        dislikeRate: percentDislikeRate,
+        userAccount
     });
 
 })

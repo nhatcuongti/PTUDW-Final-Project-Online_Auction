@@ -25,9 +25,12 @@ router.post('/checkout', auth ,async function (req, res) {
     const price = req.body.price
     const temp = req.session.user;
     const userID = temp[0]._id;
-    let proInfor = await product.findById(proID)
-    await bidModel.processBid(userID, proID, price, proInfor[0])
+    let proInfor = await product.findById(proID) // Tìm sản phẩm product với id vừa đấu giá
+
+    await bidModel.processBid(userID, proID, price, proInfor[0])     //
+
     proInfor = await product.findById(proID)
+
     if (parseInt(price) >= proInfor[0].proCurBidPrice)
         await bidModel.insertBidIntoHistory(userID,proID,price,proInfor[0].proCurBidPrice)
     res.redirect('back');

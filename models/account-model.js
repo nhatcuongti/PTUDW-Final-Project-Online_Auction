@@ -268,6 +268,11 @@ async function getCommentOfSellerFunc(collection, userID){
     ]).toArray();
 }
 
+async function getAccountFunc(collection, userID){
+    return await collection.findOne({"_id" : userID});
+}
+
+
 // >>>>>>> Stashed changes
 export default {
     async findByID(userID){
@@ -663,6 +668,18 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('comment');
             return await getCommentOfSellerFunc(collection, userID);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async getAccount(userID) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await getAccountFunc(collection, userID);
         } catch (e) {
             console.error(e);
         } finally {

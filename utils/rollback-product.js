@@ -11,9 +11,10 @@ export default{
         //Roll back giá sản phẩm
         const bidderHistories = await productModel.getBidderHistoryWithProID(productID);
         let currentPrice = product.proInitalPrice;
-        let highestPrice = product.proHighestPrice;
+        let highestPrice = product.proInitalPrice;
 
         let bidderWithHighest = bidderHistories[0];
+        let bidderHighestID = null;
 
         if (bidderHistories.length > 1){
             let highestUser = null;
@@ -40,12 +41,17 @@ export default{
                 else // Nếu thằng thứ hai tới sau thằng thứ nhất
                     currentPrice = secondUser.price;
             }
+
+            bidderHighestID = bidderWithHighest.bidderInfo[0]._id
+            highestPrice = bidderWithHighest.price;
+        }
+        else if (bidderWithHighest !== undefined){
+            highestPrice = bidderWithHighest.price;
+            bidderHighestID = bidderWithHighest.bidderInfo[0]._id
         }
 
-        if (bidderWithHighest !== undefined)
-            highestPrice = bidderWithHighest.price;
 
         //Update price and curent
-        await productModel.updatePriceAndCurrentBidder(productID, currentPrice, bidderWithHighest.bidderInfo[0]._id, highestPrice)
+        await productModel.updatePriceAndCurrentBidder(productID, currentPrice, bidderHighestID, highestPrice)
     }
 }
