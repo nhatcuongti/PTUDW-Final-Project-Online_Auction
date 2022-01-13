@@ -103,7 +103,10 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
                 proHighestPrice: curHighestPrice,
                 proBidQuantity:  productInfo.proBidQuantity + 1
             }
-        })
+        }, function(err, res) {
+            if (err) throw err;
+            console.log("1 document updated");
+        });
         }
 
         await mailing.sendEmail(sellerMail, 'Hệ thống auction online',

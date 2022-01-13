@@ -210,9 +210,15 @@
                 </div>
 
                 <!-- Product details -->
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <div class="product-details">
                         <h2 class="product-name">{{proName}}</h2>
+                        <ul class="product-links">
+                            <li>Danh mục:</li>
+                            <li><a href="/product?category={{catParent}}">{{catParent}}</a></li>
+                            <li> <i class="fa fa-chevron-right" aria-hidden="true"></i> </li>
+                            <li><a href="/product?category={{catChild}}">{{catChild}}</a></li>
+                        </ul>
                         <div>
                             <h3 class="product-price">{{format_number proCurBidPrice}} VNĐ</h3>
                             {{#if ../isOutOfDate}}
@@ -282,17 +288,16 @@
                                 </div>
                             {{/if}}
                         {{/if}}
-                        <ul class="product-btns">
-                            {{#if ../auth}}
-                                <li><a data-id="{{_id}}" class="add-to-wishlist addItemFavorite" href="#"><i class="fa fa-heart-o"></i>Thêm vào yêu thích</a></li>
-                            {{/if}}
-                        </ul>
-                        <ul class="product-links">
-                            <li>Danh mục:</li>
-                            <li><a href="/product?category={{catParent}}">{{catParent}}</a></li>
-                            <li><a href="/product?category={{catChild}}">{{catChild}}</a></li>
-                        </ul>
+
+
                     </div>
+                </div>
+                <div class="col-md-1">
+                    <ul class="product-btns">
+                        {{#if ../auth}}
+                            <li><a data-id="{{_id}}" class="add-to-wishlist addItemFavorite" href="#"><i class="fa fa-heart fa-2x" style="color: #e74c3c;"></i></a></li>
+                        {{/if}}
+                    </ul>
                 </div>
 
                 <!-- Product tab -->
