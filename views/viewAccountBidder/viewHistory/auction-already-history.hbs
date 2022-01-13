@@ -52,7 +52,7 @@
                                     <p class="card-text mt-1">Giá: {{format_number proCurBidPrice}}VNĐ</p>
                                     <div class="d-flex mt-2">
 <!--                                        <p class="card-text"><button class="btn btn-primary">Sản phẩm</button></p>-->
-                                        {{#if isBidderComment}}
+                                        {{#unless isBidderComment}}
                                             <div>
                                                 <form id="commentForm" method="get" action="/user/auction-already-comment">
                                                     <input type="text" name="id" value="{{_id}}" hidden>
@@ -63,7 +63,7 @@
                                             <div>
                                                 <button class="btn btn-secondary float-right" aria-hidden="true" disabled>Đã nhận xét</button>
                                             </div>
-                                        {{/if}}
+                                        {{/unless}}
                                     </div>
 
                                 </div>

@@ -358,8 +358,10 @@ router.post("/channel/product/detail/:id", async (req, res) => {
                     badScore++;
             }
 
-        score.goodScore = (goodScore) / (goodScore + badScore);
-        score.badScore =  (badScore) / (goodScore + badScore);
+        // score.goodScore = (goodScore) / (goodScore + badScore);
+        // score.badScore =  (badScore) / (goodScore + badScore);
+        score.goodScore = goodScore;
+        score.badScore = badScore;
 
         await accountModel.updateScore(userID, score);
 

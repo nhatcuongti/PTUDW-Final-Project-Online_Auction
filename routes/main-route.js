@@ -82,6 +82,9 @@ router.get('/product/:id', async function (req, res) {
                 isDenied = true;
         }
 
+        console.log("History _-----------------------------")
+        console.log(historyList);
+
         res.render('detail', {
             proInfo,
             listSimilarity,

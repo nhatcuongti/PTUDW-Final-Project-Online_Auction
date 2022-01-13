@@ -81,7 +81,7 @@ async function addOneFavoriteFunc(collection, userID, proID) {
 async function bidderCommentFunc(dbo,collection, userID, proID, productDetail,rate, comment) {
     if(productDetail.isBidderComment)
         return
-    const check = await collection.findOne({proID: proID});
+    const check = await collection.findOne({proID: new ObjectId(proID)});
     if(check === null) {
         dbo.collection('product').findOneAndUpdate({_id: new ObjectId(proID)}, {$set: {isBidderComment: true}})
         return collection.insertOne({

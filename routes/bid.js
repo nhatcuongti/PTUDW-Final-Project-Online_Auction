@@ -34,7 +34,8 @@ router.post('/checkout', auth ,async function (req, res) {
 
     if (parseInt(price) >= proInfor[0].proCurBidPrice)
         await bidModel.insertBidIntoHistory(userID,proID,price,proInfor[0].proCurBidPrice)
-    res.redirect('back');
+
+    res.redirect(`/product/${proID}`);
 });
 
 router.post('/buynow', auth ,async function (req, res) {

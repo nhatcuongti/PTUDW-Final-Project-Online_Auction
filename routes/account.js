@@ -154,8 +154,9 @@ router.get('/comment-from-seller/:id', auth, async function (req, res) {
     res.render('viewAccountBidder/comment-from-seller', {
         product: list,
         total: countList,
-        likeRate: likeRate,
-        dislikeRate: dislikeRate,
+        likeRate: countGoodComment,
+        dislikeRate: countList - countGoodComment,
+        score : likeRate,
         userAccount
     });
 });
@@ -209,8 +210,9 @@ router.get("/comment-from-bidder/:id", async (req, res) => {
         //    --ProID
         //  --bidderRate
         total: countList,
-        likeRate: percentLikeRate,
-        dislikeRate: percentDislikeRate,
+        likeRate,
+        dislikeRate,
+        score: percentLikeRate,
         userAccount
     });
 
