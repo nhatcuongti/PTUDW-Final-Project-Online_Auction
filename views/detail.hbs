@@ -2,6 +2,7 @@
     <script>
         $('.addItemFavorite').on('click', function (e){
             const id = $(this).data('id');
+            alert("Đã thêm vào danh sách yêu thích")
             $('#txtProID').val(id);
             $('#formAddFavorite').submit();
         });
@@ -26,12 +27,14 @@
                 }
             });
         });
+
     </script>
 {{/section}}
 {{#section 'css'}}
     <style>
         body {
             padding-right: 0px !important;
+            overflow-y: scroll;
         }
         .modal-backdrop {
             z-index: -1;
@@ -275,7 +278,7 @@
                         {{/if}}
                         <ul class="product-btns">
                             {{#if ../auth}}
-                                <li><a href=""><i class="fa fa-heart-o"></i>Thêm vào yêu thích</a></li>
+                                <li><a data-id="{{_id}}" class="add-to-wishlist addItemFavorite" href="#"><i class="fa fa-heart-o"></i>Thêm vào yêu thích</a></li>
                             {{/if}}
                         </ul>
                         <ul class="product-links">
@@ -388,7 +391,7 @@
                                                 </div>
                                                 <div class="product-btns">
                                                     {{#if ../../this.auth}}
-                                                        <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
+                                                        <button data-id="{{_id}}" class="add-to-wishlist addItemFavorite"><i class="fa fa-heart-o"></i><span class="tooltipp">Yêu thích</span></button>
                                                     {{/if}}
                                                     <button class="quick-view" onclick="location.href='/product/{{_id}}';"><i class="fa fa-eye"></i><span class="tooltipp">Xem chi tiết</span></button>
                                                 </div>

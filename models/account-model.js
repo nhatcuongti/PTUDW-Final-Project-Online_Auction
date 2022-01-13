@@ -213,8 +213,14 @@ async function getInforBidderAccountFunc(collection, id) {
 }
 
 async function updateBidderInforFunc(collection, userID, newName, newAddress) {
-
-    return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {name: newName, address: newAddress}})
+    if(newName === '' && newAddress !== '')
+        return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {address: newAddress}})
+    else if(newName !== '' && newAddress === '')
+        return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {name: newName}})
+    else if(newName !== '' && newAddress !== '')
+        return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {name: newName, address: newAddress}})
+    else
+        return
 }
 async function updateBidderPassFunc(collection, userID, newPass) {
     return collection.findOneAndUpdate({_id: new ObjectId(userID)}, {$set: {pass: newPass}})
