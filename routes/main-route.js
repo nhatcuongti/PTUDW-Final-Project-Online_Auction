@@ -7,6 +7,9 @@ import bcrypt from 'bcryptjs';
 import randomstring from 'randomstring';
 import fs from 'fs'
 import fp from '../utils/format-product.js'
+import product from "../models/product-model.js";
+import account from "./account.js";
+import accountModel from "../models/account-model.js";
 
 const router = express.Router();
 
@@ -82,8 +85,39 @@ router.get('/product/:id', async function (req, res) {
                 isDenied = true;
         }
 
+<<<<<<< Updated upstream
         console.log("History _-----------------------------")
         console.log(historyList);
+=======
+        let isBid
+
+        const temp = req.session.user;
+        if(typeof temp !== "undefined") {
+            const userID = temp[0]._id;
+            let userInfo = await accountModel.findByID(userID)
+            console.log(userID ,userInfo)
+            let goodPercent
+            let goodScore = userInfo.goodScore
+            let badScore = userInfo.badScore
+            if(goodScore === 0 && badScore ===0 )
+                goodPercent = 100
+            else
+                goodPercent =  Math.round(goodScore*1000.0/(badScore+goodScore))/10
+            if(proInfo[0].bidderType)
+                isBid = false
+            else{
+                if(goodPercent >= 80)
+                    isBid = false
+                else
+                    isBid = true
+            }
+            console.log(proInfo)
+
+            console.log("goodPercent: " + goodPercent)
+            console.log("isBid: " + isBid)
+            }
+
+>>>>>>> Stashed changes
 
         res.render('detail', {
             proInfo,
@@ -92,7 +126,8 @@ router.get('/product/:id', async function (req, res) {
             files,
             mainThumb,
             isOutOfDate,
-            isDenied
+            isDenied,
+            isBid
         });
     }
 });

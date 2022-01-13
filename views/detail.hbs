@@ -248,6 +248,10 @@
                                 <div class="add-to-cart">
                                     <button class="add-to-cart-btn"><i class="fa fa-shopping-cart" disabled></i>Đấu giá không khả dụng</button>
                                 </div>
+                            {{else if ../isBid}}
+                                <div class="add-to-cart">
+                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart" disabled></i>Độ tin cậy thấp</button>
+                                </div>
                             {{else}}
                                 <form action="/bid/checkout" method="get">
                                     <div class="add-to-cart">
@@ -270,6 +274,8 @@
                                 <div class="add-to-cart">
                                     <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Mua ngay không khả dụng</button>
                                 </div>
+                            {{else if ../isBid}}
+                                
                             {{else}}
                                 <div class="add-to-cart">
                                     <button data-id="{{_id}}" class="add-to-cart-btn buyNow"><i class="fa fa-shopping-cart"></i>Mua ngay</button>
