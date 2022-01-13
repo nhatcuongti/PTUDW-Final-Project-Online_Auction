@@ -38,34 +38,39 @@
         <div class="col-sm-9">
             {{#each this.product}}
                 {{#each details}}
-                    <div class="product mb-2 ml-auto mr-auto" style="width: 70vw;">
+                        <a href="/product/{{_id}}">
+                    <div class="product mb-2 ml-auto mr-auto">
                         <div class="row no-gutters">
                             <div class="col-md-4">
                                 <img src="/public/{{_id}}/main-thumb.jpg" class="product-img" alt="..." style="height: 200px; width: 200px">
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body">
-                                    <h5 class="card-title"><strong>{{proName}}</strong></h5>
+                                    <h5 class="product-name" style="margin-top: 10px"><strong>{{proName}}</strong></h5>
                                     <p class="card-text">Ngày đấu giá: {{../dateBid}}</p>
                                     <p class="card-text">Ngày hết hạn: {{proEndDate}}</p>
                                     <p class="card-text mt-1">Giá: {{format_number proCurBidPrice}}VNĐ</p>
                                     <div class="d-flex mt-2">
-                                        <p class="card-text"><a href="/product/{{_id}}"><button class="btn btn-primary">Sản phẩm</button></a></p>
-                                        {{#unless isBidderComment}}
-                                            <div class="flex-fill">
-                                                <a href="/user/auction-already-comment?id={{_id}}"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button>
+<!--                                        <p class="card-text"><button class="btn btn-primary">Sản phẩm</button></p>-->
+                                        {{#if isBidderComment}}
+                                            <div>
+                                                <form id="commentForm" method="get" action="/user/auction-already-comment">
+                                                    <input type="text" name="id" value="{{_id}}" hidden>
+                                                    <button type="submit" class="btn btn-primary float-right d-flex align-self-end" style="width: 100px" aria-hidden="true">Nhận xét</button>
+                                                </form>
                                             </div>
                                         {{else}}
-                                            <div class="flex-fill">
-                                                <a href="#"><button class="btn btn-secondary float-right" aria-hidden="true" disabled>Đã nhận xét</button></a>
+                                            <div>
+                                                <button class="btn btn-secondary float-right" aria-hidden="true" disabled>Đã nhận xét</button>
                                             </div>
-                                        {{/unless}}
+                                        {{/if}}
                                     </div>
 
                                 </div>
                             </div>
                         </div>
                     </div>
+                        </a>
                 {{/each}}
 
             {{else}}

@@ -53,36 +53,36 @@
                 {{#each this.product}}
                     {{#each details}}
                         <div class="d-flex justify-content-center">
-                            <div class="product mb-2 ml-auto mr-auto border" style="width: 70vw">
+                            <a class="d-flex flex-row-reverse p-3 h-100 w-100" href="/product/{{_id}}">
+                            <div class="product mb-2 ml-auto mr-auto border">
                                 <div class="row no-gutters">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <img src="/public/{{_id}}/main-thumb.jpg" class="card-img" alt="...">
                                     </div>
-                                    <div class="col-md-7">
+                                    <div class="col-md-8">
                                         <div class="card-body h-50">
-                                            <div class="d-flex">
+                                            <div class="d-flex" style="margin-top: 10px">
                                                 <span class="h5 product-name"><strong>{{proName}}</strong></span>
                                                 <span class="flex-fill">
                                             </span>
                                             </div>
+                                            <hr>
                                             <p class="card-text">Nội dung: {{../sellerComment}}</p>
-                                        </div>
-                                        <div class="card-footer h-50">
-                                            <a class="d-flex flex-row-reverse p-3 h-100 w-100" href="/product/{{_id}}"><button class="d-flex flex-column align-self-end btn btn-primary is-rounded" aria-hidden="true">Xem sản phẩm</button> </a>
                                         </div>
                                     </div>
 
                                     {{#if ../sellerRate}}
-                                        <div class="col-md-1">
-                                            <i class="fa fa-thumbs-o-up fa-4x mt-lg-3" aria-hidden="true"></i>
+                                        <div class="col-sm-1">
+                                            <i class="fa fa-thumbs-o-up fa-4x mt-lg-3" style="color: #77d970" aria-hidden="true"></i>
                                         </div>
                                     {{else}}
-                                        <div class="col-md-1">
-                                            <i class="fa fa-thumbs-o-down fa-4x mt-lg-3" aria-hidden="true"></i>
+                                        <div class="col-sm-1">
+                                            <i class="fa fa-thumbs-o-down fa-4x mt-lg-3" style="color: #e74c3c" aria-hidden="true"></i>
                                         </div>
                                     {{/if}}
                                 </div>
                             </div>
+                            </a>
                         </div>
                     {{/each}}
                 {{else}}

@@ -5,45 +5,70 @@
         $('#btn1').on('click', function (e) {
             $('#btn1').each(function () {
                 $(this).addClass('active');
+                $(this).css('color', '#ff1900');
             })
             $('#radioLike').each(function () {
                 $(this).prop("checked", true);
             })
             $('#btn2').each(function () {
                 $(this).removeClass('active');
+                $(this).css('color', '#000000');
             })
         });
         $('#btn2').on('click', function (e) {
             $('#btn2').each(function () {
                 $(this).addClass('active');
+                $(this).css('color', '#ff1900');
             })
             $('#radioDisLike').each(function () {
                 $(this).prop("checked", true);
             })
             $('#btn1').each(function () {
                 $(this).removeClass('active');
+
+                $(this).css('color', '#000000');
             })
         });
     </script>
 {{/section}}
+<<<<<<< Updated upstream
 
+=======
+{{#section 'css'}}
+    <style>
+        .row {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display:         flex;
+            flex-wrap: wrap;
+        }
+        .row > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+
+    </style>
+{{/section}}
+>>>>>>> Stashed changes
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-sm-3 has-background-grey-lighter">
+        <div class="col-sm-3 has-background-grey-lighter" style="background-color: #1b1e21">
             <ul class="nav flex-column">
-                <div class="h4 text-center ml-auto mr-auto p-4">Lịch sử đấu giá</div>
+                <div class="h3 text-center ml-auto mr-auto p-4" style="color: #FFFFFF">Lịch sử đấu giá</div>
                 <hr class="navbar-divider">
 
                 <li class="nav-item">
-                    <a class="nav-link h6 text-center" href="/user/auction-history">Đang đấu giá</a>
+                    <a class="nav-link h4 text-center" href="/user/auction-history" style="color: #FFFFFF">Đang đấu giá</a>
                 </li>
-                <li class="nav-item bg-light">
-                    <a class="nav-link h6 text-center" href="/user/auction-already-history">Đấu giá thành công</a>
+                <li class="nav-item">
+                    <a class="nav-link h4 text-center bg-light" style="background: #FFFFFF" href="/user/auction-already-history">Đấu giá thành công</a>
                 </li>
             </ul>
         </div>
         <div class="col-sm-9">
             {{#each this.product}}
+<<<<<<< Updated upstream
                 <div class="card mb-2 ml-auto mr-auto" style="width: 70vw;">
                     <div class="row no-gutters">
                         <div class="col-md-4">
@@ -52,31 +77,40 @@
                         <div class="col-md-8">
                             <div class="card-body">
                                 <h5 class="card-title">{{proName}}</h5>
+=======
+                        <div class="product mb-2 ml-auto mr-auto">
+                            <div class="row no-gutters">
+                                <div class="col-md-4">
+                                    <img src="/public/{{_id}}/main-thumb.jpg" class="product-img" alt="..." style="height: 200px; width: 200px">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="product-name" style="margin-top: 10px"><strong>{{proName}}</strong></h5>
+                                        <p class="card-text">Ngày đấu giá: {{../dateBid}}</p>
+                                        <p class="card-text">Ngày hết hạn: {{proEndDate}}</p>
+                                        <p class="card-text mt-1">Giá: {{format_number proCurBidPrice}}VNĐ</p>
+>>>>>>> Stashed changes
 
-                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                <div class="d-flex">
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-<!--                                    <div class="flex-fill"><a href="#"><button class="btn btn-primary float-right" aria-hidden="true">Nhận xét</button></a></div>-->
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
             <div>
                 <form id="formComment" action="/user/auction-already-comment" method="post">
                     <div class="container-fluid">
-                        <div class="row justify-content-start">
+                        <div class="row justify-content-center">
                             <div class="col-sm-2 mt-auto mb-auto flex-fill">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="rate" id="radioLike" value="true" hidden required>
                                     <label class="btn btn-outline-primary" id="btn1" for="btn-check-outlined"><i
-                                            class="fa fa-thumbs-o-up fa-2x" aria-hidden="true"></i></label><br>
+                                            class="fa fa-thumbs-o-up fa-4x" aria-hidden="true"></i></label><br>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="rate" id="radioDisLike" value="false" hidden required>
                                     <label class="btn btn-outline-primary" id="btn2" for="btn-check-outlined"><i
-                                            class="fa fa-thumbs-o-down fa-2x" aria-hidden="true"></i></label><br>
+                                            class="fa fa-thumbs-o-down fa-4x" aria-hidden="true"></i></label><br>
 
                                 </div>
                             </div>
@@ -87,13 +121,14 @@
                                         <textarea class="form-control" rows="5" id="comment" name="textArea"></textarea>
                                     </div>
                                 </div>
+                                <div class="text-center" style="margin-bottom: 30px !important;">
+                                    <button class="btn btn-primary btn-lg ml-auto mr-auto mb-3 text-center" type="submit">Gửi</button>
+                                </div>
                             </div>
                             <input type="text" name="proID" value="{{_id}}" hidden>
                         </div>
                     </div>
-                    <div class="align-content-center d-flex">
-                        <button class="btn btn-primary btn-lg ml-auto mr-auto mb-3 text-center" type="submit">Gửi</button>
-                    </div>
+
                 </form>
             </div>
             {{/each}}

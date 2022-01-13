@@ -12,9 +12,10 @@ const router = express.Router();
 
 router.get('/checkout', auth ,async function (req, res) {
     const proID = req.query.id;
-    const proInfor = await product.findById(proID)
+    let proInfor = await product.findById(proID)
     let priceRecommend = proInfor[0].proCurBidPrice + proInfor[0].proPriceStep
-    res.render('viewAccountBidder/bid/checkout', {
+    proInfor[0].proEndDate = moment(proInfor[0].proEndDate).format('DD/MM/YYYY HH:mm')
+    res.render('viewAccountBidder/bid/checkout2', {
         data:proInfor,
         priceRecommend: priceRecommend
     });

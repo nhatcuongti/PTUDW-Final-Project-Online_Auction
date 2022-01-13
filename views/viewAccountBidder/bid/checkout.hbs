@@ -155,7 +155,7 @@
 {{/section}}
     <div class="row justify-content-center ">
         <div class="col-xl-10">
-            <div class="card shadow-lg ">
+            <div class="product shadow-lg ">
                 <div class="row mx-auto justify-content-center text-center">
                     <div class="col-12 mt-3 ">
                         <nav aria-label="breadcrumb" class="second ">
@@ -169,7 +169,7 @@
                 <div class="row justify-content-around">
                     {{#each this.data}}
                     <div class="col-md-5">
-                        <div class="card border-0">
+                        <div class="product border-0">
                             <div class="card-header pb-0">
                                 <h2 class="card-title space"><strong>ĐẤU GIÁ</strong></h2>
                                 <hr class="my-0">
@@ -184,7 +184,6 @@
                                 </div>
 
                                 <form action="/bid/checkout" method="post" id="formcheckout">
-                                    <input type="text" name="proID" value="{{_id}}" hidden>
                                     <div class="form-group"> <label for="NAME" class="small text-muted mb-1">GIÁ TỐI ĐA CỦA BẠN</label> <input type="text" class="form-control form-control-sm" name="price" id="NAME" aria-describedby="helpId" > </div>
                                 </form>
                                 <div class="row mb-md-5">
@@ -194,7 +193,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card border-0">
+                        <div class="product border-0">
                             <div class="card-header">
                                 <p class="card-text text-muted"><strong>SẢN PHẨM BẠN ĐẤU GIÁ </strong>  </p>
                                 <hr class="my-2">
