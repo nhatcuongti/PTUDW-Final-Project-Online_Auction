@@ -258,6 +258,7 @@ router.get("/channel/product/detail/:id", authUserWithProduct, async function(re
     res.locals.XemChiTiet.isActive = true;
     let files = null;
     let mainThumb = null;
+
     try{
         files = fs.readdirSync(`./public/${product._id}/`);
         mainThumb = files[0];
@@ -302,7 +303,7 @@ router.post("/channel/product/detail/:id", async (req, res) => {
     else
         rate = false;
 
-    if (userID != undefined){
+    if (userID != undefined){ // Đánh giá
         // if (!isSuccess)
         //     await productModel.updateCurrenBidderInfor(ProID, null);
         const updateProduct = {};
@@ -342,8 +343,28 @@ router.post("/channel/product/detail/:id", async (req, res) => {
 
             await accountModel.insertNewComment(commentOfProduct);
         }
+
+        //Update score
+        const commentHistory = await accountModel.getCommentFromBidder(new ObjectId(userID));
+        const score = {};
+
+        let goodScore = 0, badScore = 0;
+
+        for (const comment of commentHistory)
+            if (comment.sellerComment !== ""){
+                if (comment.sellerRate)
+                    goodScore++;
+                else
+                    badScore++;
+            }
+
+        score.goodScore = (goodScore) / (goodScore + badScore);
+        score.badScore =  (badScore) / (goodScore + badScore);
+
+        await accountModel.updateScore(userID, score);
+
     }
-    else{
+    else{ // Thêm mô tả sản phẩm
         let Message = req.body.proDescription;
         Message =  `<p class="text-danger h3"> ${new Date().toLocaleString("en-GB")}</p> ${Message}`;
 

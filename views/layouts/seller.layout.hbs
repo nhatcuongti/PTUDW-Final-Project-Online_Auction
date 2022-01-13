@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>Online Auction - Kênh Người Bán</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
@@ -12,15 +12,28 @@
             border-radius: 50px !important;
             margin: 5px;
         }
+        .navLink:hover{
+            background-color: #D10024!important;
+        }
+
+        aside a:hover{
+            background-color: #485fc7!important;
+        }
+
+        @media screen and (min-width: 710px) {
+            .columnMenu{
+                min-height: 100vh;
+            }
+        }
     </style>
 
     {{{_sections.css}}}
 </head>
 <body>
-    <nav class="navbar has-background-grey-light "  role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="/">
-                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+    <nav class="navbar "  role="navigation" aria-label="main navigation" style="background-color: #15161D; border-bottom: 3px solid #D10024">
+        <div class="navbar-brand" >
+            <a class="navbar-item p-0" style="height: 70px" href="/">
+                <img src="https://hltcons.com/wp-content/uploads/2021/03/HLTCONS.png"  style="width: 200px; max-height: 100% !important; display: block!important;">
             </a>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
                 <span aria-hidden="true"></span>
@@ -31,24 +44,24 @@
         <div class="navbar-menu">
             <div class="navbar-start">
 
-                <a href="/seller/channel" class="navbar-item text-decoration-none">
-                    <strong>
+                <a href="/seller/channel" class="navbar-item text-decoration-none navLink">
+                    <strong class="text-white">
                         Kênh người bán
                     </strong>
 
                 </a>
 
                 {{#if XemSanPham.isActive}}
-                    <span class="navbar-item"> > </span>
-                    <a href="/seller/channel/product" class="navbar-item text-decoration-none">
-                        <strong>
+                    <span class="navbar-item text-white"> > </span>
+                    <a href="/seller/channel/product" class="navbar-item text-decoration-none navLink">
+                        <strong class="text-white">
                             Xem sản phẩm
                         </strong>
                     </a>
                     {{#if XemChiTiet.isActive}}
-                        <span class="navbar-item"> > </span>
+                        <span class="navbar-item text-white"> > </span>
                         <p href="/seller/channel/product" class="navbar-item text-decoration-none">
-                            <strong>
+                            <strong class="text-white">
                                 Xem Chi Tiết
                             </strong>
                         </p>
@@ -57,17 +70,16 @@
 
                     <span class="navbar-item"> > </span>
                     <a href="/seller/channel/product/insert" class="navbar-item text-decoration-none">
-                        <strong>
+                        <strong class="text-white">
                             Thêm Sản phẩm
                         </strong>
                     </a>
                 {{/if}}
-
-
             </div>
+
             <div class="navbar-end">
                 <div class="navbar-item has-dropdown is-hoverable">
-                    <div href="#" class="navbar-link">
+                    <div href="#" class="navbar-link text-white navLink">
                         <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>
                         <p class="ml-3">
                             {{user.name}}
@@ -110,10 +122,10 @@
 
     <section>
         <div class="row">
-            <div class="col-md-3 has-background-grey-light pt-6 min-vh-100">
+            <div class="col-md-3 has-background-grey-light pt-6 columnMenu " style="background-color: #15161D!important;">
                 <aside class="menu">
                     <ul class="menu-list h4 mb-5">
-                        <a class="menu-label text-decoration-none {{#if ThongTinChung.isActive}}is-active{{/if}}" href="/seller/channel">
+                        <a class="menu-label text-decoration-none text-white {{#if ThongTinChung.isActive}}is-active{{/if}}" href="/seller/channel">
                             <i class="fa fa-tachometer fa-2x " aria-hidden="true"></i>
                             Thông tin chung
                         </a>
@@ -121,19 +133,19 @@
 
                     <ul class="menu-list h4 mb-5">
                         <li>
-                            <a class="menu-label text-decoration-none" href="/seller/channel/product">
+                            <a class="menu-label text-decoration-none text-white" href="/seller/channel/product">
                                 <i class="fa fa-cube fa-2x" aria-hidden="true"></i>
                                 Quản lý sản phẩm
                             </a>
                             <ul>
-                                <li><a class="{{#if XemSanPham.isActive}}is-active{{/if}} text-decoration-none" href="/seller/channel/product">Xem sản phẩm</a></li>
-                                <li><a class="{{#if ThemSanPham.isActive}}is-active{{/if}} text-decoration-none" href="/seller/channel/product/insert">Thêm sản phẩm</a></li>
+                                <li><a class="text-white {{#if XemSanPham.isActive}}is-active{{/if}} text-decoration-none" href="/seller/channel/product">Xem sản phẩm</a></li>
+                                <li><a class="text-white {{#if ThemSanPham.isActive}}is-active{{/if}} text-decoration-none" href="/seller/channel/product/insert">Thêm sản phẩm</a></li>
                             </ul>
                         </li>
                     </ul>
 
                     <ul class="menu-list h4 mb-5">
-                        <a class="menu-label text-decoration-none {{#if DanhGia.isActive}}is-active{{/if}}" href="/user/comment-from-bidder/{{sellerID}}">
+                        <a class="menu-label text-decoration-none text-white {{#if DanhGia.isActive}}is-active{{/if}}" href="/user/comment-from-bidder/{{sellerID}}">
                             <i class="fa fa-users fa-2x " aria-hidden="true"></i>
                             Đánh giá của người mua
                         </a>

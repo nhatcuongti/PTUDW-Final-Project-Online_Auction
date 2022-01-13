@@ -274,8 +274,20 @@ async function getCommentOfSellerFunc(collection, userID){
     ]).toArray();
 }
 
+async function getCommentFromBidderFunc(collection, userID){
+    return await collection.aggregate([
+        { $match: { bidderID: userID } }
+    ]).toArray();
+}
+
 async function getAccountFunc(collection, userID){
     return await collection.findOne({"_id" : userID});
+}
+
+async function updateScoreFunc(collection, userID, score){
+    const query = {_id : new ObjectId(userID)};
+    const newValue = {$set : score};
+    await collection.updateOne(query, newValue);
 }
 
 
@@ -686,6 +698,30 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('account');
             return await getAccountFunc(collection, userID);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async getCommentFromBidder(userID) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('comment');
+            return await getCommentFromBidderFunc(collection, userID);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async updateScore(userID, score) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('account');
+            return await updateScoreFunc(collection, userID, score);
         } catch (e) {
             console.error(e);
         } finally {
