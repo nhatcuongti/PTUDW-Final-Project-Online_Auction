@@ -116,10 +116,11 @@
 
 							<div class="order-col">
 								<div><strong>GIÁ ĐỀ NGHỊ</strong></div>
-								<div><strong class="order-total">{{format_number ../this.priceRecommend}} VND</strong></div>
+								<div><strong class="order-total">{{format_number ../this.priceRecommend}}VNĐ</strong></div>
 							</div>
 						</div>
                         <form action="/bid/checkout" method="post" id="formcheckout">
+                            <input type="text" name="proID" value="{{_id}}" hidden>
                             <div class="form-group"> <label for="NAME" class="mb-1">GIÁ TỐI ĐA CỦA BẠN</label> <input type="text" class="form-control form-control-sm" name="price" id="frmPrice" aria-describedby="helpId" required></div>
                         </form>
 <!--						<a href="#" class="primary-btn order-submit">đấu giá</a>-->
