@@ -657,6 +657,19 @@ async function updateCatChildFunc(collection, catParent, catOld, catNew) {
   );
 }
 
+async function getBidderHistoryWithProIDUserIDFunc(collection, ProID, userID){
+  // // const myQuery = {"proID" : new ObjectId(ProID), "userID" : new ObjectId(userID)};
+  // const products = await collection.aggregate([
+  //   {
+  //     $match: {
+  //       userID: new ObjectId(ProID),
+  //       proID: new ObjectId(userID)
+  //     }
+  //   }
+  // ]).toArray();
+  // return products;
+  return await collection.find({proID : new ObjectId(ProID), userID : new ObjectId(userID), isDenied: 1}).toArray();
+}
 
 //----------------------------------------------------------------------------------------//
 export default {
@@ -1038,6 +1051,18 @@ export default {
       const db = mongoClient.db('onlineauction');
       const collection = db.collection('product');
       await updateCatChildFunc(collection)
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await mongoClient.close()
+    }
+  },
+  async getBidderHistoryWithProIDUserID(ProID, UserID) {
+    try {
+      await mongoClient.connect();
+      const db = mongoClient.db('onlineauction');
+      const collection = db.collection('bidderHistory');
+      return await getBidderHistoryWithProIDUserIDFunc(collection, ProID, UserID);
     } catch (e) {
       console.error(e);
     } finally {

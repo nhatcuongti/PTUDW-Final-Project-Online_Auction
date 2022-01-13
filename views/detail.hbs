@@ -220,7 +220,13 @@
                             <h3 class="product-price">Mua ngay: {{format_number proBuyNowPrice}} VNĐ</h3>
                         </div>
                         {{#each sellerInfo}}
-                            <p>Người bán: {{name}} ({{../sellerScore}}%)</p>
+                            <p>Người bán:
+                                <a title="Nhấp vào để xem điểm đánh giá"
+                                   href="/user/comment-from-bidder/{{_id}}"
+                                   style="text-decoration: none; font-size: 20px; color:#D10024">
+                                    {{name}}
+                                </a>
+                            </p>
                         {{/each}}
                         {{#each curBidderInfo}}
                             <p>Người giữ hiện tại: {{name}} ({{../bidderScore}}%)</p>
@@ -232,6 +238,10 @@
                         <p>Bước giá: {{format_number proPriceStep}} VNĐ</p>
                         {{#if ../auth}}
                             {{#if ../isOutOfDate}}
+                                <div class="add-to-cart">
+                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart" disabled></i>Đấu giá không khả dụng</button>
+                                </div>
+                            {{else if ../isDenied}}
                                 <div class="add-to-cart">
                                     <button class="add-to-cart-btn"><i class="fa fa-shopping-cart" disabled></i>Đấu giá không khả dụng</button>
                                 </div>
@@ -253,6 +263,10 @@
                                     <div class="add-to-cart">
                                         <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Mua ngay không khả dụng</button>
                                     </div>
+                            {{else if ../isDenied}}
+                                <div class="add-to-cart">
+                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Mua ngay không khả dụng</button>
+                                </div>
                             {{else}}
                                 <div class="add-to-cart">
                                     <button data-id="{{_id}}" class="add-to-cart-btn buyNow"><i class="fa fa-shopping-cart"></i>Mua ngay</button>

@@ -9,6 +9,18 @@
             max-height: 100%;
             max-width: 100%;
         }
+
+        .row {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .row > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 {{/section}}
 <div class="container-fluid min-vh-100">

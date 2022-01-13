@@ -80,6 +80,9 @@ async function processBidFunc(db,collection, userID, proID, priceString, product
 
     if(price > oldHighestPrice){
         curProductPrice = oldHighestPrice + proPriceStep
+        if (productInfo.curBidderInfo.length === 0) // Nếu product chưa có ai đấu giá
+            curProductPrice = oldHighestPrice;
+
         curHighestPrice = price
         curBidder = userID
 

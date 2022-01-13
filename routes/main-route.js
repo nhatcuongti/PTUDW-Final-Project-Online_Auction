@@ -71,13 +71,25 @@ router.get('/product/:id', async function (req, res) {
             if (item.curBidderInfo.length !== 0)
                 item.curBidderInfo[0].name = fp.maskBidderName(item.curBidderInfo[0].name);
         }
+
+        let isDenied;
+        const user = req.session.user;
+        if (user !== undefined){
+            const userID = user[0]._id;
+            const bidderHistory = await productModel.getBidderHistoryWithProIDUserID(id, userID.toString());
+
+            if (bidderHistory.length !== 0)
+                isDenied = true;
+        }
+
         res.render('detail', {
             proInfo,
             listSimilarity,
             historyList,
             files,
             mainThumb,
-            isOutOfDate
+            isOutOfDate,
+            isDenied
         });
     }
 });
