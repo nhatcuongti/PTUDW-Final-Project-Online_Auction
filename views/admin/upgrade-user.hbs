@@ -11,26 +11,21 @@
             --}}
 
         </div>
-        <div class="row justify-content-lg-between" style="border-bottom: 3px solid #000;">
+        <div class="row justify-content-lg-center" style="border-bottom: 3px solid #000;">
             <div class="col-lg-5 p-2 mb-5">
                 <div class="card text-white h-100" style="background-color : #2ECC71">
                     <div class="row card-body">
                         <div class="col-8">
                             <p>
-                                Sản phẩm đấu giá thành công
+                                Sản phẩm đấu giá thành công và đang giữ giá
                             </p>
                             <b class="h1">
-                                80%
+                                {{total}}
                             </b>
                         </div>
                         <div class="col-4">
                             <i class="fa fa-check-square fa-5x" aria-hidden="true"></i>
                         </div>
-                    </div>
-                    <div class="card-footer text-muted">
-                        <a class="m-auto h4" style="color:#2ECC71">
-                            Chi tiết
-                        </a>
                     </div>
                 </div>
             </div>
@@ -42,39 +37,12 @@
                                 Điểm đánh giá
                             </p>
                             <b class="h1">
-                                92%
+                                {{score}}%
                             </b>
                         </div>
                         <div class="col-4">
                             <i class="fa fa-exclamation-circle fa-5x" aria-hidden="true"></i>
                         </div>
-                    </div>
-                    <div class="card-footer text-muted">
-                        <a class="m-auto h4" style="color:#8E44AD">
-                            Chi tiết
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-5 p-2 mb-5">
-                <div class="card text-white h-100" style="background-color : #F1C40F">
-                    <div class="row card-body">
-                        <div class="col-8">
-                            <p>
-                                Thời gian sử dụng
-                            </p>
-                            <b class="h1">
-                                3 giờ / ngày
-                            </b>
-                        </div>
-                        <div class="col-4">
-                            <i class="fa fa-clock-o fa-5x" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer text-muted">
-                        <a class="m-auto h4" style="color:#F1C40F">
-                            Chi tiết
-                        </a>
                     </div>
                 </div>
             </div>
@@ -83,20 +51,15 @@
                     <div class="row card-body">
                         <div class="col-8">
                             <p>
-                                Số lượng sản phẩm tham gia
+                                Số lượt tham gia đấu giá sản phẩm
                             </p>
                             <b class="h1">
-                                52
+                                {{totalBid}} lượt
                             </b>
                         </div>
                         <div class="col-4">
                             <i class="fa fa-money fa-5x" aria-hidden="true"></i>
                         </div>
-                    </div>
-                    <div class="card-footer text-muted">
-                        <a class="m-auto h4" style="color:#2980b9">
-                            Chi tiết
-                        </a>
                     </div>
                 </div>
             </div>

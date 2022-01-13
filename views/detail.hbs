@@ -216,13 +216,15 @@
                                 <span class="product-available">Hết hạn</span>
                             {{/if}}
                         </div>
+                        <div>
+                            <h3 class="product-price">Mua ngay: {{format_number proBuyNowPrice}} VNĐ</h3>
+                        </div>
                         {{#each sellerInfo}}
                             <p>Người bán: {{name}} ({{../sellerScore}}%)</p>
                         {{/each}}
                         {{#each curBidderInfo}}
                             <p>Người giữ hiện tại: {{name}} ({{../bidderScore}}%)</p>
                         {{/each}}
-<<<<<<< Updated upstream
 
                         {{#if ../auth}}
                             {{#if ../isOutOfDate}}
@@ -243,7 +245,6 @@
                                 </form>
                             {{/if}}
                         {{/if}}
-=======
                         <p>Thời gian đăng: {{proStartDate}}</p>
                         <p>Thời gian kết thúc: {{proEndDate}}</p>
                         <p>Bước giá: {{format_number proPriceStep}} VNĐ</p>
@@ -258,10 +259,7 @@
                                 <button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đấu giá</button></a>
                             </div>
                         </form>
->>>>>>> Stashed changes
-                        <div>
-                            <h3 class="product-price">Mua ngay: {{format_number proBuyNowPrice}} VNĐ</h3>
-                        </div>
+
                         {{#if ../auth}}
                             {{#if ../isOutOfDate}}
                                     <div class="add-to-cart">
@@ -378,7 +376,7 @@
                                                 <h4 class="product-price">{{format_number proCurBidPrice}}</h4>
                                                 <div class="product-details">
                                                     {{#each curBidderInfo}}
-                                                        <p> Người đặt hiện tại: {{email}} </p>
+                                                        <p> Người đặt hiện tại: {{name}} </p>
                                                     {{/each}}
                                                     <p> Ngày đăng sản phẩm: {{proStartDate}}</p>
                                                     {{#if check1}}

@@ -68,6 +68,8 @@ router.get('/product/:id', async function (req, res) {
             } catch(e){
                 console.log(e)
             }
+            if (item.curBidderInfo.length !== 0)
+                item.curBidderInfo[0].name = fp.maskBidderName(item.curBidderInfo[0].name);
         }
         res.render('detail', {
             proInfo,

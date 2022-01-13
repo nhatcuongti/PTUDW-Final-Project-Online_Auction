@@ -121,16 +121,19 @@ router.get('/category/:parentId', async function (req, res) {
         layout: 'admin.hbs',
         categoryTab: true,
         edit: true,
-        category: result[0]
+        category: result[0],
+        link: req.headers.referer
     });
 });
 
 router.post('/category/edit', async function (req, res) {
     const check = await categoryModel.editCatParent(req.body.id, req.body.name);
     const isEmpty = Object.keys(check).length === 0;
-    if (!isEmpty)
+    if (!isEmpty) {
         await productModel.updateCatParent(req.body.catParent, req.body.name);
-    res.redirect('/admin/category');
+        return res.redirect('/admin/category');
+    }
+    res.redirect(req.headers.referer);
 });
 
 router.get('/category/:parentId/:childId/:childName', async function (req, res) {
@@ -141,16 +144,19 @@ router.get('/category/:parentId/:childId/:childName', async function (req, res) 
         edit: true,
         catParent: result[0],
         catChildName: req.params.childName,
-        catChildId: req.params.childId
+        catChildId: req.params.childId,
+        link: req.headers.referer
     });
 });
 
 router.post('/category/child/edit', async function (req, res) {
     const check = await categoryModel.editCatChild(req.body.parentId, req.body.childId, req.body.name);
     const isEmpty = Object.keys(check).length === 0;
-    if (!isEmpty)
+    if (!isEmpty) {
         await productModel.updateCatChild(req.body.catParent, req.body.catChild, req.body.name);
-    res.redirect('/admin/category');
+        return res.redirect('/admin/category');
+    }
+    res.redirect(req.headers.referer);
 });
 
 router.post('/category/delete', async function (req, res) {
@@ -254,12 +260,21 @@ router.get('/user/upgrade', async function (req, res) {
 });
 
 router.get('/user/upgrade/:id', async function (req, res) {
+    const result = await accountModel.getInforBidderAccount(req.params.id);
+    let score = Math.ceil(result.goodScore / (result.goodScore + result.badScore) * 100);
+    if (isNaN(score))
+        score = 0;
+    const totalBid = await accountModel.getTotalBid(req.params.id);
+    const total = await accountModel.getTotalProduct(req.params.id);
     res.render('admin/upgrade-user', {
         layout: 'admin.hbs',
         userTab: true,
         upgrade: true,
         detail: true,
-        id: req.params.id
+        id: req.params.id,
+        score,
+        total,
+        totalBid
     });
 });
 

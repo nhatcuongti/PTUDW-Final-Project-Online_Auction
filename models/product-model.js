@@ -102,7 +102,27 @@ async function findByCategoryParentFunc(collection, cat, numberProduct, userID) 
   if (numberProduct === undefined)
     return await collection.find({proType: new ObjectId(cat), sellerInfo: new ObjectId(userID)}).sort({proEndDate : 1}).toArray();
   else
-    return await collection.find({catParent: cat}).limit(numberProduct).toArray();
+    return await collection.aggregate([
+      {
+        $lookup: {
+          from: 'account',
+          localField: 'sellerInfo',
+          foreignField: '_id',
+          as: 'sellerInfo'
+        },
+      },
+      {
+        $lookup: {
+          from: 'account',
+          localField: 'curBidderInfo',
+          foreignField: '_id',
+          as: 'curBidderInfo'
+        }
+      },
+      {
+        $match: {catParent: cat}
+      }
+    ]).limit(numberProduct).toArray();
 }
 
 //sort({proCurBidPrice: 1}).skip(offset).limit(limit).toArray();

@@ -246,6 +246,14 @@ async function sendUpgradeSellerFunc(collection, userID) {
     // })
 }
 
+async function getTotalBidFunc(collection, id) {
+    return await collection.find({userID: new ObjectId(id)}).count();
+}
+
+async function getTotalProductFunc(collection, id) {
+    return await collection.find({curBidderInfo: new ObjectId(id)}).count();
+}
+
 async function getCommentOfSellerFunc(collection, userID){
     return await collection.aggregate([
         { $match: { sellerID: userID } },
@@ -573,6 +581,30 @@ export default {
             const db = mongoClient.db('onlineauction');
             const collection = db.collection('account');
             return await deleteAccountFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async getTotalBid(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('bidderHistory');
+            return await getTotalBidFunc(collection, id);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await mongoClient.close()
+        }
+    },
+    async getTotalProduct(id) {
+        try {
+            await mongoClient.connect();
+            const db = mongoClient.db('onlineauction');
+            const collection = db.collection('product');
+            return await getTotalProductFunc(collection, id);
         } catch (e) {
             console.error(e);
         } finally {
