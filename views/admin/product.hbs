@@ -1,14 +1,21 @@
-{{!--
+
 {{#section 'css'}}
     <style>
-        .card-footer{
-            background-color: #fff;
-            border-radius: 50px !important;
-            margin: 5px;
+        .modal{
+            z-index: 999999;
+        }
+        .modal {
+            overflow-y: auto;
+        }
+        .modal-open {
+            overflow: auto;
+        }
+        .modal-open[style] {
+            padding-right: 0px !important;
         }
     </style>
 {{/section}}
---}}
+
 
 <div class="col-sm-9">
     <div class="container">
@@ -91,7 +98,7 @@
                             <td class="text-right">
                                 <form action="/admin/product/delete" method="post">
                                     <input type="hidden" name="id" value="{{_id}}">
-                                    <button class="btn btn-outline-danger" type="submit">
+                                    <button class="btn btn-outline-danger" type="button" data-toggle="modal" data-target="#exampleModalCenter_{{_id}}">
                                         <i class="fa fa-trash mr-2" aria-hidden="true"></i>
                                         Xóa
                                     </button>
@@ -99,6 +106,27 @@
                                         <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
                                         Xem chi tiết
                                     </a>
+                                    <div class="modal fade" id="exampleModalCenter_{{_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title" id="exampleModalLongTitle">Cảnh báo</h1>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row justify-content-center d-flex">
+                                                        <strong>Bạn có chắc chắn xóa sản phẩm này?</strong>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </form>
                             </td>
                           </tr>
