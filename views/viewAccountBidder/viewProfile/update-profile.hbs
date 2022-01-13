@@ -32,9 +32,9 @@
 {{/section}}
 <div class="container-fluid" style="height: 400px !important;">
     <div class="row justify-content-center">
-        <div class="col-sm-3 has-background-grey-lighter" style="height: 400px !important; background: #1b1e21">
+        <div class="col-sm-3" style="height: 400px !important; background-color: #15161D;">
             <ul class="nav flex-column">
-                <div class="h3 text-center ml-auto mr-auto" style="color: #FFFFFF">Hồ sơ</div>
+                <div class="h3 text-center ml-auto mr-auto" style="color: #FFFFFF"><strong>Hồ sơ</strong></div>
                 <li class="nav-item bg-light">
                     <a class="nav-link h4 text-center" style="background: #FFFFFF" href="/user/update-profile">Cập nhật hồ sơ</a>
                 </li>
@@ -52,13 +52,13 @@
             {{#each this.data}}
             <form method="post" action="/user/update-profile">
                 <div class="form-group row ml-auto mr-auto mt-5">
-                    <label for="inputName" class="col-sm-2 col-form-label h4">Họ và tên</label>
+                    <label for="inputName" class="col-sm-2 col-form-label h4"><strong>Họ và tên</strong></label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="inputName" placeholder="{{name}}" name="name" required>
                     </div>
                 </div>
                 <div class="form-group row ml-auto mr-auto">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label h4">Địa chỉ</label>
+                    <label for="inputEmail3" class="col-sm-2 col-form-label h4"><strong>Địa chỉ</strong></label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="inputAddress3" placeholder="{{address}}" name="address" required>
                     </div>

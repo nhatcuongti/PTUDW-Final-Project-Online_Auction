@@ -96,6 +96,10 @@ app.use('/seller', authSeller, seller);
 app.use('/admin', authAdmin, admin);
 app.use('/bid', bid);
 
+app.use(function (req, res, next){
+    res.render('404', {layout: false});
+});
+
 const port = 3000;
 app.listen(port, function () {
     console.log(`Example app listening at http://localhost:${port}`);

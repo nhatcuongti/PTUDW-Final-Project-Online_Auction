@@ -235,6 +235,7 @@
     </div>
 </footer>
 --}}
+<form id="formLogout" action="/account/logout" method="post"></form>
 <body>
     <header>
         <div id="header">
@@ -244,7 +245,7 @@
                     <div class="col-md-3">
                         <div class="header-logo">
                             <a href="/" class="logo">
-                                <img src="">
+                                <img src="https://hltcons.com/wp-content/uploads/2021/03/HLTCONS.png" width="200px" height="70px">
                             </a>
                         </div>
                     </div>
@@ -267,7 +268,7 @@
                         <div class="header-ctn">
                             <!-- Right menu -->
                             {{#if auth}}
-
+                                {{!--
                                 <div style="display: block!important;">
                                     <a href="/user/favorite"  role="button" class="favBtn" style="text-align: left !important; padding: 5px; width: 100%">
                                         <i class="fa fa-heart-o fa-2x" aria-hidden="true" style="display: inline !important; font-size: 25px !important;"></i>
@@ -368,11 +369,31 @@
                                         </li>
                                     </ul>
                                 </div>
-
-
-
-
-
+                                --}}
+                                <div>
+                                    <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-user"></i>
+                                        <span>{{user.name}}</span>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        {{#if adminRole}}
+                                            <p><a class="dropdown-item" href="/admin"><i class="fa fa-cube"></i> Kênh quản trị</a></p>
+                                        {{/if}}
+                                        {{#if sellerRole}}
+                                            <p><a class="dropdown-item" href="/seller/channel"><i class="fa fa-cube"></i> Kênh người bán</a></p>
+                                        {{/if}}
+                                        <p><a class="dropdown-item" href="/user/update-profile"><i class="fa fa-user"></i> Thông tin cá nhân</a></p>
+                                        <p><a class="dropdown-item" href="/user/favorite"><i class="fa fa-heart"></i> Danh sách yêu thích</a></p>
+                                        <p><a class="dropdown-item" href="/user/auction-history"><i class="fa fa-history"></i> Lịch sử đấu giá</a></p>
+                                        <p><a class="dropdown-item" href="/user/comment-from-seller/{{user._id}}"><i class="fa fa-comment"></i> Đánh giá từ người bán</a></p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="javascript: $('#formLogout').submit();">
+                                        <i class="fa fa-sign-out"></i>
+                                        <span>Đăng xuất</span>
+                                    </a>
+                                </div>
                             {{else}}
                                 <div>
                                     <a href="/login">
@@ -430,7 +451,7 @@
                             <h3 class="footer-title">Về chúng tôi</h3>
                             <p></p>
                             <ul class="footer-links">
-                                <li><a><i class="fa fa-map-marker"></i>Đại học Khoa học tự nhiên</a></li>
+                                <li><a><i class="fa fa-map-marker"></i>Đại học Khoa học Tự nhiên</a></li>
                                 <li><a><i class="fa fa-phone"></i>+841-234-5678</a></li>
                                 <li><a><i class="fa fa-envelope-o"></i>fit@hcmus.edu.vn</a></li>
                             </ul>
@@ -443,8 +464,8 @@
                             <h3 class="footer-title">Dịch vụ</h3>
                             <ul class="footer-links">
                                 <li><a href="/product">Sản phẩm</a></li>
-                                <li><a href="#">Tài khoản</a></li>
-                                <li><a href="#">Danh sách yêu thích</a></li>
+                                <li><a href="/user/update-profile">Tài khoản</a></li>
+                                <li><a href="/user/favorite">Danh sách yêu thích</a></li>
                             </ul>
                         </div>
                     </div>

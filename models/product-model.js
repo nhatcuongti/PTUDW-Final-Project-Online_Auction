@@ -446,7 +446,27 @@ async function countTotalCategoryProductFunc(collection, category) {
 }
 
 async function getLimitCategoryProductFunc(collection, limit, offset, category) {
-  return await collection.find({$or: [{catParent: category }, {catChild: category}]}).skip(offset).limit(limit).toArray();
+  return await collection.aggregate([
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'sellerInfo',
+        foreignField: '_id',
+        as: 'sellerInfo'
+      },
+    },
+    {
+      $lookup: {
+        from: 'account',
+        localField: 'curBidderInfo',
+        foreignField: '_id',
+        as: 'curBidderInfo'
+      }
+    },
+    {
+      $match: {$or: [{catParent: category }, {catChild: category}]}
+    }
+  ]).skip(offset).limit(limit).toArray();
 }
 
 async function getExpiredProductFunc(collection, now) {

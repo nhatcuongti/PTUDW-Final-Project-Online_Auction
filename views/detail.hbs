@@ -226,40 +226,28 @@
                             <p>Người giữ hiện tại: {{name}} ({{../bidderScore}}%)</p>
                         {{/each}}
 
+
+                        <p>Thời gian đăng: {{proStartDate}}</p>
+                        <p>Thời gian kết thúc: {{proEndDate}}</p>
+                        <p>Bước giá: {{format_number proPriceStep}} VNĐ</p>
                         {{#if ../auth}}
                             {{#if ../isOutOfDate}}
-                                    <div class="add-to-cart">
-                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart" disabled></i>Đấu giá không khả dụng</button>
-                                    </div>
+                                <div class="add-to-cart">
+                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart" disabled></i>Đấu giá không khả dụng</button>
+                                </div>
                             {{else}}
                                 <form action="/bid/checkout" method="get">
                                     <div class="add-to-cart">
                                         <input type="text" name="id" value="{{_id}}" hidden>
-        <!--                                <div class="qty-label">-->
-        <!--                                    <div class="input-number">-->
-        <!--                                            -->
-        <!--                                    </div>-->
-        <!--                                </div>-->
                                         <button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đấu giá</button></a>
                                     </div>
                                 </form>
                             {{/if}}
-                        {{/if}}
-                        <p>Thời gian đăng: {{proStartDate}}</p>
-                        <p>Thời gian kết thúc: {{proEndDate}}</p>
-                        <p>Bước giá: {{format_number proPriceStep}} VNĐ</p>
-                        <form action="/bid/checkout" method="get">
+                        {{else}}
                             <div class="add-to-cart">
-                                <input type="text" name="id" value="{{_id}}" hidden>
-<!--                                <div class="qty-label">-->
-<!--                                    <div class="input-number">-->
-<!--                                            -->
-<!--                                    </div>-->
-<!--                                </div>-->
-                                <button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Đấu giá</button></a>
+                                <button class="add-to-cart-btn" onclick="location.href='/login';"><i class="fa fa-shopping-cart"></i>Đăng nhập để mua hàng</button></a>
                             </div>
-                        </form>
-
+                        {{/if}}
                         {{#if ../auth}}
                             {{#if ../isOutOfDate}}
                                     <div class="add-to-cart">
@@ -273,7 +261,6 @@
                         {{/if}}
                         <ul class="product-btns">
                             {{#if ../auth}}
-
                                 <li><a href=""><i class="fa fa-heart-o"></i>Thêm vào yêu thích</a></li>
                             {{/if}}
                         </ul>

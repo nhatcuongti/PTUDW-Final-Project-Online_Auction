@@ -107,13 +107,25 @@
                     <p class="ml-3">{{user.name}}</p>
                 </div>
                 <div class="navbar-dropdown">
-                    <a class="navbar-item text-decoration-none">
-                        <i class="fa fa-user fa-2x mr-2" aria-hidden="true"></i>
+                    <a class="navbar-item text-decoration-none" href="/">
+                        <i class="fa fa-home mr-2" aria-hidden="true"></i>
+                        Trang chủ
+                    </a>
+                    <a class="navbar-item text-decoration-none" href="/user/update-profile">
+                        <i class="fa fa-user mr-2" aria-hidden="true"></i>
                         Thông tin cá nhân
                     </a>
-                    <a class="navbar-item text-decoration-none" href="/admin">
-                        <i class="fa fa-cog fa-2x mr-2" aria-hidden="true"></i>
-                        Kênh quản trị
+                    <a class="navbar-item text-decoration-none" href="/user/favorite">
+                        <i class="fa fa-heart mr-2" aria-hidden="true"></i>
+                        Danh sách yêu thích
+                    </a>
+                    <a class="navbar-item text-decoration-none" href="/user/auction-history">
+                        <i class="fa fa-history mr-2" aria-hidden="true"></i>
+                        Lịch sử đấu giá
+                    </a>
+                    <a class="navbar-item text-decoration-none" href="/user/comment-from-seller/{{user._id}}">
+                        <i class="fa fa-comment mr-2" aria-hidden="true"></i>
+                        Đánh giá từ người bán
                     </a>
                     <hr class="navbar-divider">
                     <form id="formLogout" action="/account/logout" method="post"></form>
