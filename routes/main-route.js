@@ -77,7 +77,7 @@ router.get('/product/:id', async function (req, res) {
 
         let isDenied;
         const user = req.session.user;
-        if (user !== undefined){
+        if (typeof user !== "undefined"){
             const userID = user[0]._id;
             const bidderHistory = await productModel.getBidderHistoryWithProIDUserID(id, userID.toString());
 
@@ -85,10 +85,7 @@ router.get('/product/:id', async function (req, res) {
                 isDenied = true;
         }
 
-<<<<<<< Updated upstream
-        console.log("History _-----------------------------")
-        console.log(historyList);
-=======
+
         let isBid
 
         const temp = req.session.user;
@@ -117,7 +114,7 @@ router.get('/product/:id', async function (req, res) {
             console.log("isBid: " + isBid)
             }
 
->>>>>>> Stashed changes
+
 
         res.render('detail', {
             proInfo,
